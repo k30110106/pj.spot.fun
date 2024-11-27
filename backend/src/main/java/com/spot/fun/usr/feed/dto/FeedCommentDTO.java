@@ -1,8 +1,7 @@
 package com.spot.fun.usr.feed.dto;
 
-import com.spot.fun.usr.feed.entity.Feed;
 import com.spot.fun.usr.feed.entity.FeedComment;
-import com.spot.fun.usr.user.entity.User;
+import com.spot.fun.usr.user.dto.UserDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,8 +15,9 @@ public class FeedCommentDTO {
   private String content;
   private Boolean delYn;
   private LocalDateTime regDate;
-  private Feed feed;
-  private User user;
+
+  private FeedDTO feedDTO;
+  private UserDTO userDTO;
 
   public FeedComment toEntity() {
     return FeedComment.builder()

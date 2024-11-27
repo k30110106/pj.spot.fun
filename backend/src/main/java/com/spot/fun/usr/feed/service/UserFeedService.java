@@ -1,9 +1,8 @@
 package com.spot.fun.usr.feed.service;
 
-import com.spot.fun.usr.feed.dto.FeedDTO;
-
-import java.util.List;
+import com.spot.fun.usr.feed.dto.FeedRequestDTO;
+import com.spot.fun.usr.feed.dto.FeedResponseDTO;
 
 public interface UserFeedService {
-  List<FeedDTO> getList();
+  FeedResponseDTO getList(FeedRequestDTO feedRequestDTO);
 }

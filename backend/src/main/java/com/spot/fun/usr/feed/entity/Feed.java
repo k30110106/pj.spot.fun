@@ -41,12 +41,11 @@ public class Feed {
   private User user;
 
   @OneToMany(mappedBy = "feed")
-  private List<FeedComment> comments;
+  private List<FeedComment> feedComments;
 
   @OneToMany(mappedBy = "feed", fetch = FetchType.EAGER)
 //  @OneToMany(mappedBy = "feed")
-  private List<FeedImage> images;
-
+  private List<FeedImage> feedImages;
 
   @Builder
   public Feed(String content, boolean delYn, LocalDateTime regDate) {
@@ -54,4 +53,6 @@ public class Feed {
     this.delYn = delYn;
     this.regDate =regDate;
   }
+
+
 }
