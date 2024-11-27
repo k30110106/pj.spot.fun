@@ -5,11 +5,11 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Table(name = "tbl_feed")
 @NoArgsConstructor
@@ -21,11 +21,10 @@ public class Feed {
   @Column(name = "idx", unique = true, updatable = false)
   private Long idx;
 
-  @Column(name = "content", nullable = false)
+  @Column(name = "content", nullable = false, length = 300)
   private String content;
 
-  @ColumnDefault("false")
-  @Column(name = "del_yn", columnDefinition = "TINYINT(1)")
+  @Column(name = "del_yn", columnDefinition = "TINYINT(1) DEFAULT 0")
   private boolean delYn;
 
   @CreationTimestamp
@@ -36,9 +35,18 @@ public class Feed {
   @Column(name = "mod_date")
   private LocalDateTime modDate;
 
+//  @ManyToOne(fetch = FetchType.LAZY)
   @ManyToOne
   @JoinColumn(name = "user_idx")
   private User user;
+
+  @OneToMany(mappedBy = "feed")
+  private List<FeedComment> comments;
+
+  @OneToMany(mappedBy = "feed", fetch = FetchType.EAGER)
+//  @OneToMany(mappedBy = "feed")
+  private List<FeedImage> images;
+
 
   @Builder
   public Feed(String content, boolean delYn, LocalDateTime regDate) {

@@ -5,6 +5,7 @@ import com.spot.fun.usr.user.entity.User;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -15,7 +16,10 @@ public class FeedDTO {
   private String content;
   private Boolean delYn;
   private LocalDateTime regDate;
+
   private User user;
+  private List<FeedCommentDTO> feedComments;
+  private List<FeedImageDTO> feedImages;
 
   public Feed toEntity() {
     return Feed.builder()

@@ -6,7 +6,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -22,11 +21,10 @@ public class FeedComment {
   @Column(name = "idx", unique = true, updatable = false)
   private Long idx;
 
-  @Column(name = "content", nullable = false)
+  @Column(name = "content", nullable = false, length = 300)
   private String content;
 
-  @ColumnDefault("false")
-  @Column(name = "del_yn", columnDefinition = "TINYINT(1)")
+  @Column(name = "del_yn", columnDefinition = "TINYINT(1) DEFAULT 0")
   private boolean delYn;
 
   @CreationTimestamp
@@ -38,12 +36,12 @@ public class FeedComment {
   private LocalDateTime modDate;
 
   @ManyToOne
-  @JoinColumn(name = "feed_idx")
-  private Feed feed;
-
-  @ManyToOne
   @JoinColumn(name = "user_idx")
   private User user;
+
+  @ManyToOne
+  @JoinColumn(name = "feed_idx")
+  private Feed feed;
 
   @Builder
   public FeedComment(String content, boolean delYn, LocalDateTime regDate) {
