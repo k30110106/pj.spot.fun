@@ -60,8 +60,8 @@ public class FileUploadUtil {
         continue;
       }
 
-      String uploadName = UUID.randomUUID().toString();
       String originName = multipartFile.getOriginalFilename();
+      String uploadName = UUID.randomUUID().toString() + originName.substring(originName.lastIndexOf("."));
 
       Path savePath = Paths.get(uploadPath, uploadName);
 
