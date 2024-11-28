@@ -1,8 +1,10 @@
-package com.spot.fun.util;
+package com.spot.fun.paging;
 
 import lombok.*;
 
-@Data
+//@Data
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class ScrollPagingUtil {

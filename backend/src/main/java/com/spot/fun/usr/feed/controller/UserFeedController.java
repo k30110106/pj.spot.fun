@@ -6,10 +6,7 @@ import com.spot.fun.usr.feed.dto.FeedResponseDTO;
 import com.spot.fun.usr.feed.service.UserFeedService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Log4j2
 @RestController
@@ -23,8 +20,13 @@ public class UserFeedController {
     return userFeedService.getList(feedRequestDTO);
   }
 
-  @GetMapping("/feed/{idx}")
+  @GetMapping("/{idx}")
   public FeedDTO detail(@PathVariable int idx) {
+    return null;
+  }
+
+  @PostMapping("")
+  public FeedDTO insert(@RequestBody FeedDTO feedDTO) {
     return null;
   }
 }

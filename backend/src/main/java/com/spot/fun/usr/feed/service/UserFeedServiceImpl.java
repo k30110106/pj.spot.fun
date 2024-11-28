@@ -58,4 +58,9 @@ public class UserFeedServiceImpl implements UserFeedService {
                         .hasNext(hasNext)
                         .build();
   }
+
+  @Override
+  public void postInsert(FeedDTO feedDTO) {
+
+  }
 }

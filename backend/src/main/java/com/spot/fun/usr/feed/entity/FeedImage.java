@@ -15,8 +15,14 @@ public class FeedImage {
     @Column(name = "idx", unique = true, updatable = false)
     private Long idx;
 
-    @Column(name = "file_path")
+    @Column(name = "file_path", nullable = false)
     private String filePath;
+
+    @Column(name= "upload_name", nullable = false)
+    private String uploadName;
+
+    @Column(name= "origin_name", nullable = false)
+    private String originName;
 
     @Column(name = "del_yn", columnDefinition = "TINYINT(1) DEFAULT 0")
     private boolean delYn;
