@@ -1,12 +1,9 @@
-package com.spot.fun.chat.service;
+package com.spot.fun.usr.chat.service;
 
-import com.spot.fun.chat.dto.ChatMessageDTO;
-import com.spot.fun.chat.dto.ChatMessageOtherDTO;
-import com.spot.fun.chat.dto.ChatMessageRequestDTO;
-import com.spot.fun.chat.dto.ChatMessageUserDTO;
-import com.spot.fun.chat.entity.ChatMessage;
-import com.spot.fun.chat.repository.ChatMessageRepository;
-import com.spot.fun.chat.repository.ChatRoomRepository;
+import com.spot.fun.usr.chat.dto.*;
+import com.spot.fun.usr.chat.entity.ChatMessage;
+import com.spot.fun.usr.chat.repository.ChatMessageRepository;
+import com.spot.fun.usr.chat.repository.ChatRoomRepository;
 import com.spot.fun.usr.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -65,6 +62,38 @@ public class ChatMessageService implements ChatService{
             }
         }
         return chatMessageDTOMap;
+    }
+    public ChatRoomResponseDTO setChatRoomResponseDTO(Long roomId) {
+        ChatMessage recendChatMessage = chatMessageRepository.findTopByRoomIdOrderByTimestampDesc(roomId);
+        return ChatRoomResponseDTO.builder()
+                .recentMessage(recendChatMessage.getMsg())
+                .recentMessageTimestamp(recendChatMessage.getTimestamp())
+                .isRecentMessageRead(recendChatMessage.isRead())
+                .build();
+    }
+
+    public List<Long> findChatIdByRoomId(Long roomId) {
+        return chatMessageRepository.findChatIdByRoomId(roomId);
+    }
+
+    public ChatMessage findChatMessageById(Long chatId) {
+        return chatMessageRepository.findChatMessageByChatId(chatId);
+    }
+
+    public ChatMessageDTO setChatMessageDTO(Long userIdx, ChatMessage chatMessage) {
+        if(Objects.equals(userIdx,chatMessage.getFromId())) {
+            return ChatMessageUserDTO.builder()
+                    .msg(chatMessage.getMsg())
+                    .timestamp(chatMessage.getTimestamp())
+                    .build();
+        }
+        if(Objects.equals(userIdx,chatMessage.getToId())) {
+            return ChatMessageOtherDTO.builder()
+                    .msg(chatMessage.getMsg())
+                    .timestamp(chatMessage.getTimestamp())
+                    .build();
+        }
+        return null;
     }
 
 }

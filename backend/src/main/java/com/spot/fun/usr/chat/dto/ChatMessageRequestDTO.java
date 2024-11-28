@@ -1,6 +1,6 @@
-package com.spot.fun.chat.dto;
+package com.spot.fun.usr.chat.dto;
 
-import com.spot.fun.chat.entity.ChatMessage;
+import com.spot.fun.usr.chat.entity.ChatMessage;
 import lombok.*;
 
 // 채팅 메시지 create
