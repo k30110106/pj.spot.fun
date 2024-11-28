@@ -58,7 +58,9 @@ public class UserFeedServiceImpl implements UserFeedService {
                                                     .filter((img) -> !img.isDelYn())
                                                     .map((img) -> FeedImageDTO.builder()
                                                                             //.idx(img.getIdx())
-                                                                            .filePath(img.getFilePath())
+                                                                            //.filePath(img.getFilePath())
+                                                                            .originName(img.getOriginName())
+                                                                            .uploadName(img.getUploadName())
                                                                             //.delYn(img.isDelYn())
                                                                             .build()
                                                     ).toList()
@@ -99,14 +101,25 @@ public class UserFeedServiceImpl implements UserFeedService {
                                      .regDate(item.getRegDate())
                                      .build();
               }).toList())
+            .feedImages(
+              feed.getFeedImages().stream()
+                      .filter((item) -> !item.isDelYn())
+                      .map((item) -> {
+                        return FeedImageDTO.builder()
+                                          //.filePath(item.getFilePath())
+                                          .uploadName(item.getUploadName())
+                                          .originName(item.getOriginName())
+                                          .build();
+              }).toList())
             .build();
   }
 
   @Transactional
   @Override
   public Long postInsert(FeedDTO feedDTO) {
-    String accessToken = JwtTokenUtil.getJwtToken();
-    Long userIdx = jwtTokenProvider.getUserIdx(accessToken);
+//    String accessToken = JwtTokenUtil.getJwtToken();
+//    Long userIdx = jwtTokenProvider.getUserIdx(accessToken);
+    Long userIdx = 1L;
 
     List<FeedImage> feedImages = new ArrayList<>();
     List<MultipartFile> uploadFiles = feedDTO.getUploadFiles();
@@ -122,7 +135,7 @@ public class UserFeedServiceImpl implements UserFeedService {
       for(Map<String, Object> file : savedFiles) {
         feedImages.add(
                 FeedImage.builder()
-                      .filePath(String.valueOf(file.get("filePath")))
+                      //.filePath(String.valueOf(file.get("filePath")))
                       .uploadName(String.valueOf(file.get("uploadName")))
                       .originName(String.valueOf(file.get("originName")))
                       .build()

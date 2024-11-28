@@ -16,8 +16,8 @@ public class FeedImage {
     @Column(name = "idx", unique = true, updatable = false)
     private Long idx;
 
-    @Column(name = "file_path", nullable = false)
-    private String filePath;
+//    @Column(name = "file_path", nullable = false)
+//    private String filePath;
 
     @Column(name= "upload_name", nullable = false)
     private String uploadName;
@@ -34,8 +34,8 @@ public class FeedImage {
     private Feed feed;
 
     @Builder
-    public FeedImage(String filePath, boolean delYn, String uploadName, String originName) {
-        this.filePath = filePath;
+    public FeedImage(boolean delYn, String uploadName, String originName) {
+//        this.filePath = filePath;
         this.delYn = delYn;
         this.uploadName = uploadName;
         this.originName = originName;

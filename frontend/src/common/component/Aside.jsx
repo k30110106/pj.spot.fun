@@ -19,6 +19,9 @@ const Aside = () => {
                 <li>
                     <Link to={"/signup"}>회원가입</Link>
                 </li>
+                <li>
+                    <Link to={"/feed"}>피드</Link>
+                </li>
                 {/*<li>
                     <button type={"button"}
                             onClick={() => {

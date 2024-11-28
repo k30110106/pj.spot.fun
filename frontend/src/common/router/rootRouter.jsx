@@ -8,6 +8,7 @@ const MainPage = lazy(() => import("../../usr/main/page/MainPage"));
 const LoginPage = lazy(() => import("../../usr/login/page/LoginPage"));
 const MyPage = lazy(() => import("../../usr/mypage/page/MyPage"));
 const SignupPage = lazy(() => import("../../usr/signup/page/SignupPage"));
+const FeedPage = lazy(() => import("../../usr/feed/page/FeedPage"));
 
 
 const rootRouter = createBrowserRouter(
@@ -36,14 +37,22 @@ const rootRouter = createBrowserRouter(
                 </Suspense>
             ),
         },
-     {
-                path: "Signup",
-                element:(
-                    <Suspense fallback={Loading}>
-                        <SignupPage/>
-                    </Suspense>
-                ),
-            },
+        {
+            path: "Signup",
+            element:(
+                <Suspense fallback={Loading}>
+                    <SignupPage/>
+                </Suspense>
+            ),
+        },
+        {
+            path: "feed",
+            element:(
+                <Suspense fallback={Loading}>
+                    <FeedPage/>
+                </Suspense>
+            ),
+        },
 
     ], {
         future: {

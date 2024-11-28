@@ -11,7 +11,7 @@ import lombok.*;
 @Builder
 public class FeedImageDTO {
     private Long idx;
-    private String filePath;
+//    private String filePath;
     private String uploadName;
     private String originName;
     private Boolean delYn;
@@ -19,7 +19,7 @@ public class FeedImageDTO {
 
     public FeedImage toEntity() {
         return FeedImage.builder()
-                .filePath(this.filePath)
+//                .filePath(this.filePath)
                 .delYn(this.delYn)
                 .build();
     }

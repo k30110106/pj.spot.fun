@@ -59,9 +59,10 @@ public class User implements UserDetails {
     private UserRole userRole = UserRole.ROLE_USER;
 
     @Builder
-    public User(String userId, String password, String name, String birthDate,
+    public User(Long idx, String userId, String password, String name, String birthDate,
                 String nickname, String email, String phone, String zonecode,
                 String address, String detaileAdd, UserRole userRole) {
+        this.idx = idx;
         this.userId = userId;
         this.name = name;
         this.password = password;

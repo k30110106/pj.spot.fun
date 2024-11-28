@@ -42,11 +42,12 @@ public class FileUploadUtil {
       return List.of();
     }
 
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-    Calendar c1 = Calendar.getInstance();
-    String strToday = sdf.format(c1.getTime());
+//    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+//    Calendar c1 = Calendar.getInstance();
+//    String strToday = sdf.format(c1.getTime());
+//    String uploadPath = FILE_DEFAULT_PATH + FILE_SEPARATOR + menuName + FILE_SEPARATOR + strToday;
 
-    String uploadPath = FILE_DEFAULT_PATH + FILE_SEPARATOR + menuName + FILE_SEPARATOR + strToday;
+    String uploadPath = FILE_DEFAULT_PATH + FILE_SEPARATOR + menuName;
     File folderPath = new File(uploadPath);
     if(!folderPath.exists()) {
       folderPath.mkdirs();
@@ -75,7 +76,7 @@ public class FileUploadUtil {
                 .toFile(thumbnailPath.toFile());
 
         Map<String, Object> fileMap = new HashMap<>();
-        fileMap.put("filePath", uploadPath);
+        //fileMap.put("filePath", uploadPath);
         fileMap.put("uploadName", uploadName);
         fileMap.put("originName", originName);
 
