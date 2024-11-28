@@ -20,3 +20,7 @@ export const postSignupApi = async (param) => {
 export const checkDuplicateApi = (data) => {
     return axios.post(`${API_BASE_URL}/api/usr/signup/check-duplicate`, data);
 };
+
+export const sendEmailVerificationApi = (data) => {
+    return axios.post(`${API_BASE_URL}/api/usr/email/send-verification`, data);
+};

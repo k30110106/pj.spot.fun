@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { postSignupApi, checkDuplicateApi } from "../api/SignupApi";
+import { postSignupApi, checkDuplicateApi, sendEmailVerificationApi } from "../api/SignupApi";
 import AddressModal from "../../../common/AddressModal";
 import AlertModal from "../../../common/AlertModal";
 
@@ -25,6 +25,10 @@ const SignupComponent = () => {
     const [alertModalConfig, setAlertModalConfig] = useState({ isOpen: false, message: "", callback: null });
     const [isUserIdChecked, setIsUserIdChecked] = useState(false); // 아이디 중복 확인 상태
     const [isNicknameChecked, setIsNicknameChecked] = useState(false); // 닉네임 중복 확인 상태
+    const [isEmailVerified, setIsEmailVerified] = useState(false); // 이메일 인증 상태
+    const [verificationCode, setVerificationCode] = useState(""); // 사용자 입력 인증 코드
+    const [serverCode, setServerCode] = useState(null); // 서버 생성 인증 코드
+    const [callback, setCallback] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -99,6 +103,34 @@ const SignupComponent = () => {
         setIsTouched((prev) => ({ ...prev, [name]: true }));
     };
 
+    const handleSendEmailVerification = async () => {
+        if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            setAlertModalConfig({ isOpen: true, message: "유효한 이메일 주소를 입력해주세요." });
+            return;
+        }
+
+        try {
+            const response = await sendEmailVerificationApi({ email: formData.email });
+            if (response.status === 200) {
+                setServerCode(response.data.verificationCode); // 서버에서 보낸 인증 코드 저장
+                setAlertModalConfig({ isOpen: true, message: "인증 코드가 이메일로 전송되었습니다." });
+            } else {
+                setAlertModalConfig({ isOpen: true, message: "이메일 인증 요청 실패. 다시 시도해주세요." });
+            }
+        } catch (error) {
+            setAlertModalConfig({ isOpen: true, message: "서버와의 통신 중 문제가 발생했습니다." });
+        }
+    };
+
+    const handleVerifyCode = () => {
+        if (verificationCode === serverCode) {
+            setIsEmailVerified(true);
+            setAlertModalConfig({ isOpen: true, message: "이메일 인증이 완료되었습니다." });
+        } else {
+            setAlertModalConfig({ isOpen: true, message: "인증 코드가 일치하지 않습니다." });
+        }
+    };
+
      const handleDuplicateCheck = async (field) => {
             try {
                 const value = formData[field];
@@ -138,6 +170,11 @@ const SignupComponent = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!isEmailVerified) {
+                setAlertModalConfig({ isOpen: true, message: "이메일 인증을 완료해주세요." });
+                return;
+            }
+
          if (!isUserIdChecked) {
                     setAlertModalConfig({ isOpen: true, message: "아이디 중복 확인을 해주세요." });
                     return;
@@ -157,14 +194,13 @@ const SignupComponent = () => {
                 }
 
                 try {
-                    const response = await postSignupApi(formData);
-                    if (response.status === 200) {
-                        setAlertModalConfig({
-                            isOpen: true,
-                            message: response.data.message,
-                            field: "",
-                            callback: () => navigate("/login"),
-                        });
+                   const response = await postSignupApi(formData);
+                           if (response.status === 200) {
+                               setCallback(() => () => navigate("/login")); // Callback 상태로 분리
+                               setAlertModalConfig({
+                                   isOpen: true,
+                                   message: response.data.message,
+                               });
                     } else {
                         const { field, message } = response.data;
                         setAlertModalConfig({
@@ -287,8 +323,34 @@ const SignupComponent = () => {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
+                        disabled={isEmailVerified} // 이메일 인증 완료 시 비활성화
                     />
+                    <button
+                        type="button"
+                        onClick={handleSendEmailVerification}
+                        disabled={isEmailVerified} // 이메일 인증 완료 시 버튼 비활성화
+                    >
+                        인증 메일 보내기
+                    </button>
                     {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}
+                </div>
+
+                <div>
+                    <label>인증 코드: </label>
+                    <input
+                        type="text"
+                        placeholder="인증코드 입력"
+                        value={verificationCode}
+                        onChange={(e) => setVerificationCode(e.target.value)}
+                        disabled={isEmailVerified} // 이메일 인증 완료 시 비활성화
+                    />
+                    <button
+                        type="button"
+                        onClick={handleVerifyCode}
+                        disabled={isEmailVerified} // 이메일 인증 완료 시 버튼 비활성화
+                    >
+                        인증 코드 확인
+                    </button>
                 </div>
 
                 <div>
@@ -337,11 +399,15 @@ const SignupComponent = () => {
                 isOpen={alertModalConfig.isOpen}
                 message={alertModalConfig.message}
                 onClose={() => {
-                   setAlertModalConfig({ isOpen: false, message: "", field: "" });
-                     if (alertModalConfig.field) {
-                       document.getElementsByName(alertModalConfig.field)[0]?.focus();
-                      }
-                   }}
+                    console.log("AlertModal onClose triggered");
+
+                    setAlertModalConfig({ isOpen: false, message: "", field: "" });
+
+                    if (callback) {
+                        console.log("Executing callback");
+                        callback(); // 분리된 상태에서 callback 호출
+                    }
+                }}
             />
         </div>
     );
