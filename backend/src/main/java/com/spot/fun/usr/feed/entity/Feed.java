@@ -40,18 +40,18 @@ public class Feed {
   @JoinColumn(name = "user_idx")
   private User user;
 
-  @OneToMany(mappedBy = "feed")
-  private List<FeedComment> feedComments;
+//  @OneToMany(mappedBy = "feed")
+//  private List<FeedComment> feedComments;
 
   @OneToMany(mappedBy = "feed", fetch = FetchType.EAGER)
 //  @OneToMany(mappedBy = "feed")
   private List<FeedImage> feedImages;
 
   @Builder
-  public Feed(String content, boolean delYn, LocalDateTime regDate) {
+  public Feed(String content, boolean delYn, List<FeedImage> feedImages) {
     this.content = content;
     this.delYn = delYn;
-    this.regDate =regDate;
+    this.feedImages = feedImages;
   }
 
 

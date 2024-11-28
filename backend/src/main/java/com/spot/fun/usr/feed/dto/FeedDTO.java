@@ -3,12 +3,15 @@ package com.spot.fun.usr.feed.dto;
 import com.spot.fun.usr.feed.entity.Feed;
 import com.spot.fun.usr.user.dto.UserDTO;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class FeedDTO {
@@ -20,12 +23,14 @@ public class FeedDTO {
   private UserDTO userDTO;
   private List<FeedCommentDTO> feedComments;
   private List<FeedImageDTO> feedImages;
+  private List<MultipartFile> uploadFiles;
 
   public Feed toEntity() {
     return Feed.builder()
             .content(this.content)
             .delYn(this.delYn)
-            .regDate(this.regDate)
             .build();
   }
+
+
 }

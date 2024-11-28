@@ -55,7 +55,7 @@ public class FileUploadUtil {
     List<Map<String, Object>> results = new ArrayList<>();
     for(MultipartFile multipartFile : files) {
       String contentType = multipartFile.getContentType();
-      if(!StringUtils.isBlank(contentType) && contentType.startsWith("image")) { // 이미지 타입만 업로드가능
+      if(!StringUtils.isBlank(contentType) && !contentType.startsWith("image")) { // 이미지 타입만 업로드가능
         log.info("[File Type Check] not image type! .. contentType : {}", contentType);
         continue;
       }

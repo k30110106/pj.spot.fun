@@ -6,8 +6,10 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class FeedCommentDTO {

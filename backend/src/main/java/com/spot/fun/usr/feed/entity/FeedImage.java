@@ -32,8 +32,10 @@ public class FeedImage {
     private Feed feed;
 
     @Builder
-    public FeedImage(String filePath, boolean delYn) {
+    public FeedImage(String filePath, boolean delYn, String uploadName, String originName) {
         this.filePath = filePath;
         this.delYn = delYn;
+        this.uploadName = uploadName;
+        this.originName = originName;
     }
 }

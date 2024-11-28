@@ -4,8 +4,10 @@ import lombok.*;
 
 import java.util.List;
 
-@Data
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class FeedResponseDTO {

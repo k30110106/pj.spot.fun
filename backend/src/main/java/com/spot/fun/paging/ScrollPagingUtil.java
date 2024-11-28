@@ -1,14 +1,14 @@
 package com.spot.fun.paging;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-//@Data
-@Getter
-@Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class ScrollPagingUtil {
-    private Long lastId = (getLastId()==null)?0L:getLastId();
-    private Integer pageSize = (getPageSize()==null)?6:getPageSize();
-    private Boolean hasNext = (getHasNext()==null)?false:getHasNext();
+    private Long lastId = 0L; // 기본값을 0L로 설정
+    private Integer pageSize = 6; // 기본값 6
+    private Boolean hasNext = false; // 기본값 false
 }
