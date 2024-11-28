@@ -91,12 +91,12 @@ public class FileUploadUtil {
 
   /***
    * 이미지 출력
-   * @param uploadPath
+   * @param menuType
    * @param uploadName
    * @return
    */
-  public ResponseEntity<Resource> outputImage(String uploadPath, String uploadName) {
-    Resource resource = new FileSystemResource(FILE_DEFAULT_PATH + FILE_SEPARATOR + uploadPath + FILE_SEPARATOR + uploadName);
+  public ResponseEntity<Resource> outputImage(String menuType, String uploadName) {
+    Resource resource = new FileSystemResource(FILE_DEFAULT_PATH + FILE_SEPARATOR + menuType + FILE_SEPARATOR + uploadName);
 
     if(!resource.exists()) {
       String archivePath = FILE_DEFAULT_PATH + FILE_SEPARATOR + "archive";
