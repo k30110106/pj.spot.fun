@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { postSignupApi, checkDuplicateApi, sendEmailVerificationApi } from "../api/SignupApi";
-import AddressModal from "../../../common/AddressModal";
-import AlertModal from "../../../common/AlertModal";
+import AddressModal from "../../../common/signupmodal/AddressModal";
+import AlertModal from "../../../common/signupmodal/AlertModal";
 
 const SignupComponent = () => {
     const [formData, setFormData] = useState({
