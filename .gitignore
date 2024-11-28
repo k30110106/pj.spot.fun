@@ -1,2 +1,5 @@
 # IntelliJ IDEA 관련 설정 무시
 .idea/
+
+# File Upload Folder
+/uploadFolder/
