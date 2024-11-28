@@ -1,4 +1,4 @@
-package com.spot.fun.chat.entity;
+package com.spot.fun.usr.chat.entity;
 
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -34,18 +34,18 @@ public class ChatMessage {
     @Column(name = "timestamp", updatable = false, nullable = false)
     private Timestamp timestamp;
 
-    @Column(name = "checked", nullable = false)
+    @Column(name = "is_read", nullable = false)
     @ColumnDefault("0")
-    private boolean checked;
+    private boolean isRead;
 
     @Builder
-    public ChatMessage(Long fromId, Long toId, String msg, Long roomId, boolean checked) {
+    public ChatMessage(Long fromId, Long toId, String msg, Long roomId, boolean isRead) {
 //        this.chatId = chatId;
         this.fromId = fromId;
         this.toId = toId;
         this.msg = msg;
         this.roomId = roomId;
         this.timestamp = Timestamp.from(Instant.now());
-        this.checked = checked;
+        this.isRead = isRead;
     }
 }

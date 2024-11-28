@@ -1,6 +1,6 @@
-package com.spot.fun.chat.repository;
+package com.spot.fun.usr.chat.repository;
 
-import com.spot.fun.chat.entity.ChatMessage;
+import com.spot.fun.usr.chat.entity.ChatMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,4 +18,5 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, String
     Long findFromIdByChatId(Long chatId);
     Long findToIdByChatId(Long chatId);
 //    List<Long> findAllChatIdByRoomId(Long roomId);
+    ChatMessage findChatMessageByChatId(Long chatId);
 }

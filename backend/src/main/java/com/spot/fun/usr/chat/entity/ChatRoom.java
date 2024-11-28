@@ -1,4 +1,4 @@
-package com.spot.fun.chat.entity;
+package com.spot.fun.usr.chat.entity;
 
 import com.spot.fun.usr.user.entity.User;
 import jakarta.persistence.*;
@@ -17,11 +17,11 @@ public class ChatRoom {
     private Long roomId;
 
     @ManyToOne
-    @JoinColumn(name = "userid")
+    @JoinColumn(name = "useridx")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "otherid")
+    @JoinColumn(name = "otheridx")
     private User other;
 
     @Builder
