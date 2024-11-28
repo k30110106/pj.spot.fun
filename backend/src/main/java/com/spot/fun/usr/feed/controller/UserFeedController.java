@@ -8,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @Log4j2
 @RestController
 @RequiredArgsConstructor
@@ -23,8 +21,8 @@ public class UserFeedController {
   }
 
   @GetMapping("/{idx}")
-  public FeedDTO detail(@PathVariable int idx) {
-    return null;
+  public FeedDTO detail(@PathVariable("idx") Long idx) {
+    return userFeedService.getDetail(idx);
   }
 
   @PostMapping("")
@@ -32,9 +30,4 @@ public class UserFeedController {
     return userFeedService.postInsert(feedDTO);
   }
 
-  @GetMapping("/test")
-  public Map<String, Object> list2() {
-    return Map.of("123", "asd");
-//    return userFeedService.getList(feedRequestDTO);
-  }
 }

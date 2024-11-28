@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "tbl_feed")
@@ -45,14 +46,12 @@ public class Feed {
 
   @OneToMany(mappedBy = "feed", fetch = FetchType.EAGER)
 //  @OneToMany(mappedBy = "feed")
-  private List<FeedImage> feedImages;
+  private List<FeedImage> feedImages = new ArrayList<>();
 
   @Builder
-  public Feed(String content, boolean delYn, List<FeedImage> feedImages) {
+  public Feed(String content, boolean delYn, User user) {
     this.content = content;
     this.delYn = delYn;
-    this.feedImages = feedImages;
+    this.user = user;
   }
-
-
 }

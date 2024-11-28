@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Table(name = "tbl_feed_image")
 @NoArgsConstructor
@@ -27,6 +28,7 @@ public class FeedImage {
     @Column(name = "del_yn", columnDefinition = "TINYINT(1) DEFAULT 0")
     private boolean delYn;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "feed_idx")
     private Feed feed;
@@ -38,4 +40,5 @@ public class FeedImage {
         this.uploadName = uploadName;
         this.originName = originName;
     }
+
 }

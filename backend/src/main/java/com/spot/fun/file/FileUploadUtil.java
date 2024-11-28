@@ -74,11 +74,12 @@ public class FileUploadUtil {
                 .size(200, 200)
                 .toFile(thumbnailPath.toFile());
 
-        results.add(Map.of(
-                "uploadPath", uploadPath,
-                "uploadName", uploadName,
-                "originName", originName
-        ));
+        Map<String, Object> fileMap = new HashMap<>();
+        fileMap.put("filePath", uploadPath);
+        fileMap.put("uploadName", uploadName);
+        fileMap.put("originName", originName);
+
+        results.add(fileMap);
       } catch(IOException e) {
         log.info("<--- saveFiles method failed --->");
         throw new RuntimeException(e.getMessage());

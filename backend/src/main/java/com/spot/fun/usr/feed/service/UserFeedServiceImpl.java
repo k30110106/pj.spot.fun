@@ -1,14 +1,17 @@
 package com.spot.fun.usr.feed.service;
 
+import com.spot.fun.config.jwt.JwtTokenProvider;
+import com.spot.fun.config.jwt.JwtTokenUtil;
 import com.spot.fun.file.FileUploadUtil;
-import com.spot.fun.usr.feed.dto.FeedDTO;
-import com.spot.fun.usr.feed.dto.FeedImageDTO;
-import com.spot.fun.usr.feed.dto.FeedRequestDTO;
-import com.spot.fun.usr.feed.dto.FeedResponseDTO;
+import com.spot.fun.usr.feed.dto.*;
 import com.spot.fun.usr.feed.entity.Feed;
+import com.spot.fun.usr.feed.entity.FeedComment;
 import com.spot.fun.usr.feed.entity.FeedImage;
+import com.spot.fun.usr.feed.repository.UserFeedCommentRepository;
+import com.spot.fun.usr.feed.repository.UserFeedImageRepository;
 import com.spot.fun.usr.feed.repository.UserFeedRepository;
 import com.spot.fun.usr.user.dto.UserDTO;
+import com.spot.fun.usr.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.ObjectUtils;
@@ -28,36 +31,39 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserFeedServiceImpl implements UserFeedService {
   private final UserFeedRepository userFeedRepository;
+  private final UserFeedImageRepository userFeedImageRepository;
+  private final UserFeedCommentRepository userFeedCommentRepository;
   private final FileUploadUtil fileUploadUtil;
+  private final JwtTokenProvider jwtTokenProvider;
 
   @Override
   public FeedResponseDTO getList(FeedRequestDTO feedRequestDTO) {
     Pageable pageable = PageRequest.of(0, feedRequestDTO.getPageSize(), Sort.by("idx").descending());
     List<Feed> list = userFeedRepository.findFeedsOrderByIdxDesc(feedRequestDTO, pageable);
     List<FeedDTO> dtos = list.stream().map((feed) -> {
-                              return FeedDTO.builder()
-                                      .idx(feed.getIdx())
-                                      .content(feed.getContent())
-                                      .regDate(feed.getRegDate())
-                                      .userDTO(
-                                              UserDTO.builder()
-                                                      .idx(feed.getUser().getIdx())
-                                                      .userId(feed.getUser().getUserId())
-                                                      //.name(feed.getUser().getName())
-                                                      .nickname(feed.getUser().getNickname())
-                                                      .build()
-                                      )
-                                      .feedImages(
-                                              feed.getFeedImages().stream()
-                                                      .filter((img) -> !img.isDelYn())
-                                                      .map((img) -> FeedImageDTO.builder()
-                                                                              //.idx(img.getIdx())
-                                                                              .filePath(img.getFilePath())
-                                                                              //.delYn(img.isDelYn())
-                                                                              .build()
-                                                      ).toList()
-                                      )
-                                      .build();
+                            return FeedDTO.builder()
+                                    .idx(feed.getIdx())
+                                    .content(feed.getContent())
+                                    .regDate(feed.getRegDate())
+                                    .userDTO(
+                                            UserDTO.builder()
+                                                    .idx(feed.getUser().getIdx())
+                                                    .userId(feed.getUser().getUserId())
+                                                    //.name(feed.getUser().getName())
+                                                    .nickname(feed.getUser().getNickname())
+                                                    .build()
+                                    )
+                                    .feedImages(
+                                            feed.getFeedImages().stream()
+                                                    .filter((img) -> !img.isDelYn())
+                                                    .map((img) -> FeedImageDTO.builder()
+                                                                            //.idx(img.getIdx())
+                                                                            .filePath(img.getFilePath())
+                                                                            //.delYn(img.isDelYn())
+                                                                            .build()
+                                                    ).toList()
+                                    )
+                                    .build();
                           }).toList();
     boolean hasNext = (dtos.size()==feedRequestDTO.getPageSize());
 
@@ -67,9 +73,41 @@ public class UserFeedServiceImpl implements UserFeedService {
                         .build();
   }
 
+  @Override
+  public FeedDTO getDetail(Long idx) {
+    Feed feed = userFeedRepository.findByIdxAndDelYnFalse(idx)
+            .orElseThrow(IllegalArgumentException::new);
+
+    List<FeedComment> feedComments = userFeedCommentRepository.findByFeedIdxAndDelYnFalse(idx);
+
+    return FeedDTO.builder()
+            .idx(feed.getIdx())
+            .content(feed.getContent())
+            .regDate(feed.getRegDate())
+            .userDTO(
+              UserDTO.builder()
+                    .idx(feed.getUser().getIdx())
+                    .userId(feed.getUser().getUserId())
+                    .name(feed.getUser().getName())
+                    .nickname(feed.getUser().getNickname())
+                    .build())
+            .feedComments(
+              feedComments.stream().map((item) -> {
+                 return FeedCommentDTO.builder()
+                                     .idx(item.getIdx())
+                                     .content(item.getContent())
+                                     .regDate(item.getRegDate())
+                                     .build();
+              }).toList())
+            .build();
+  }
+
   @Transactional
   @Override
   public Long postInsert(FeedDTO feedDTO) {
+    String accessToken = JwtTokenUtil.getJwtToken();
+    Long userIdx = jwtTokenProvider.getUserIdx(accessToken);
+
     List<FeedImage> feedImages = new ArrayList<>();
     List<MultipartFile> uploadFiles = feedDTO.getUploadFiles();
 
@@ -92,10 +130,20 @@ public class UserFeedServiceImpl implements UserFeedService {
       }
     }
 
-    Feed feed = userFeedRepository.save(Feed.builder()
-                                  .content(feedDTO.getContent())
-                                  .feedImages(feedImages)
-                                  .build());
+    Feed feed = userFeedRepository.save( // feed table insert
+            Feed.builder() // feed entity
+                .content(feedDTO.getContent())
+                .user(User.builder()
+                        .idx(userIdx)
+                        .build())
+                .build());
+
+    if(!feedImages.isEmpty()) {
+      for(FeedImage feedImage : feedImages) {
+        feedImage.setFeed(feed);
+      }
+      userFeedImageRepository.saveAll(feedImages);
+    }
 
     return feed.getIdx();
   }

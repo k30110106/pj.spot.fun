@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserFeedRepository extends JpaRepository<Feed, Long> {
 
@@ -16,4 +17,6 @@ public interface UserFeedRepository extends JpaRepository<Feed, Long> {
             "AND (:#{#feed.searchValue} is NULL or :#{#feed.searchValue}='' or f.content LIKE %:#{#feed.searchValue}%)"
     )
     List<Feed> findFeedsOrderByIdxDesc(@Param("feed") FeedRequestDTO feedRequestDTO, Pageable pageable);
+
+    Optional<Feed> findByIdxAndDelYnFalse(Long idx);
 }
