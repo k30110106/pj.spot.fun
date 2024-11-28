@@ -32,7 +32,7 @@ public class Feed {
   @Column(name = "reg_date")
   private LocalDateTime regDate;
 
-  @UpdateTimestamp
+  //@UpdateTimestamp
   @Column(name = "mod_date")
   private LocalDateTime modDate;
 
@@ -53,5 +53,19 @@ public class Feed {
     this.content = content;
     this.delYn = delYn;
     this.user = user;
+  }
+
+  @PrePersist
+  public void prePersist() {
+    if (modDate == null) {
+      modDate = null;
+    }
+  }
+
+  @PreUpdate
+  public void preUpdate() {
+    if (modDate == null) {
+      modDate = LocalDateTime.now();
+    }
   }
 }

@@ -96,7 +96,7 @@ public class FileUploadUtil {
    * @return
    */
   public ResponseEntity<Resource> outputImage(String uploadPath, String uploadName) {
-    Resource resource = new FileSystemResource(uploadPath + FILE_SEPARATOR + uploadName);
+    Resource resource = new FileSystemResource(FILE_DEFAULT_PATH + FILE_SEPARATOR + uploadPath + FILE_SEPARATOR + uploadName);
 
     if(!resource.exists()) {
       String archivePath = FILE_DEFAULT_PATH + FILE_SEPARATOR + "archive";
