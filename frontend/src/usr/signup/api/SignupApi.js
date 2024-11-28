@@ -16,3 +16,7 @@ export const postSignupApi = async (param) => {
         return { status, data: err.response ? err.response.data : "Unknown error" };
     }
 };
+
+export const checkDuplicateApi = (data) => {
+    return axios.post(`${API_BASE_URL}/api/usr/signup/check-duplicate`, data);
+};

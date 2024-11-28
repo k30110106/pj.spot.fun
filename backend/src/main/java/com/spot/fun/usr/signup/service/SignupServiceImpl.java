@@ -24,17 +24,51 @@ public class SignupServiceImpl implements SignupService {
 
 
     // 유효성 검사: 중복된 userId, email, nickname, phone 체크
+    if (userDTO.getUserId() == null || !userDTO.getUserId().matches("^[a-zA-Z0-9]{4,12}$")) {
+      throw new IllegalArgumentException("userId:아이디를 입력해주세요");
+    }
     if (userRepository.existsByUserId(userDTO.getUserId())) {
-      throw new IllegalArgumentException("UserId is already taken");
+      throw new IllegalArgumentException("userId:해당 아이디는 중복입니다.");
+    }
+    
+    if (userDTO.getName() == null || !userDTO.getName().matches("^[a-zA-Z가-힣]+$")) {
+      throw new IllegalArgumentException("username:이름을 입력해주세요");
+    }
+
+    if (userDTO.getEmail() == null || !userDTO.getEmail().matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")) {
+      throw new IllegalArgumentException("email:유효한 이메일 형식이 아닙니다.");
     }
     if (userRepository.existsByEmail(userDTO.getEmail())) {
-      throw new IllegalArgumentException("Email is already registered");
+      throw new IllegalArgumentException("email:해당 이메일은 중복입니다.");
+    }
+
+    if (userDTO.getNickname() == null || !userDTO.getNickname().matches("^[a-zA-Z0-9가-힣]{1,12}$")) {
+      throw new IllegalArgumentException("nickname:닉네임을 입력해주세요");
     }
     if (userRepository.existsByNickname(userDTO.getNickname())) {
-      throw new IllegalArgumentException("Nickname is already in use");
+      throw new IllegalArgumentException("nickname:해당 닉네임은 중복입니다.");
+    }
+
+    if (userDTO.getPhone() == null || !userDTO.getPhone().matches("^(01[016789])-?[0-9]{3,4}-?[0-9]{4}$")) {
+      throw new IllegalArgumentException("phone:유효한 핸드폰 번호를 입력해주세요.");
     }
     if (userRepository.existsByPhone(userDTO.getPhone())) {
-      throw new IllegalArgumentException("Phone number is already registered");
+      throw new IllegalArgumentException("phone:해당 핸드폰 번호는 중복입니다.");
+    }
+
+    if (userDTO.getPassword() == null || !userDTO.getPassword().matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,16}$")) {
+      throw new IllegalArgumentException("password:비밀번호를 입력해주세요");
+    }
+
+    if (userDTO.getZonecode() == null || userDTO.getZonecode().trim().isEmpty()) {
+      throw new IllegalArgumentException("zonecode:우편번호를 입력해주세요");
+    }
+    if (userDTO.getAddress() == null || userDTO.getAddress().trim().isEmpty()) {
+      throw new IllegalArgumentException("address:주소를 입력해주세요");
+    }
+
+    if (userDTO.getBirthDate() == null || userDTO.getBirthDate().trim().isEmpty()) {
+      throw new IllegalArgumentException("birthDate:생년월일을 입력해주세요");
     }
 
     User user = User.builder()
