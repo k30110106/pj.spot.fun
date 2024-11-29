@@ -48,4 +48,15 @@ public class ChatMessage {
         this.timestamp = Timestamp.from(Instant.now());
         this.isRead = isRead;
     }
+
+    // 채팅 생성
+    public static ChatMessage createChatMessage(Long fromId, Long toId, String msg, Long roomId, boolean isRead) {
+        return ChatMessage.builder()
+                .fromId(fromId)
+                .toId(toId)
+                .msg(msg)
+                .roomId(roomId)
+                .isRead(isRead)
+                .build();
+    }
 }
