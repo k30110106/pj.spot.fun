@@ -9,14 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, String> {
-    Optional<ChatMessage> findByRoomId(Long roomId);
-    Optional<ChatMessage> findByChatId(Long chatId);
-    Optional<ChatMessage> findByRoomIdAndFromId(Long roomId, Long fromId);
-    Optional<ChatMessage> findByRoomIdAndToId(Long roomId, Long toId);
     ChatMessage findTopByRoomIdOrderByTimestampDesc(Long roomId);
     List<Long> findChatIdByRoomId(Long roomId);
-    Long findFromIdByChatId(Long chatId);
-    Long findToIdByChatId(Long chatId);
-//    List<Long> findAllChatIdByRoomId(Long roomId);
     ChatMessage findChatMessageByChatId(Long chatId);
 }

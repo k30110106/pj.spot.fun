@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Data
 @NoArgsConstructor
-public class ChatRoomResponseDTO {
+public class ChatRoomListResponseDTO {
 //    private Long roomId;
     private String otherNickname;
     private String recentMessage;
@@ -19,7 +19,7 @@ public class ChatRoomResponseDTO {
     private String otherProfileImg;
     private String otherPeedUrl;
 
-    public ChatRoomResponseDTO(String otherNickname, String recentMessage, java.sql.Timestamp recentMessageTimestamp, boolean isRecentMessageRead, String otherProfileImg, String otherFeedUrl) {
+    public ChatRoomListResponseDTO(String otherNickname, String recentMessage, java.sql.Timestamp recentMessageTimestamp, boolean isRecentMessageRead, String otherProfileImg, String otherFeedUrl) {
 //        this.roomId = roomId;
         this.otherNickname = otherNickname;
         this.recentMessage = recentMessage;

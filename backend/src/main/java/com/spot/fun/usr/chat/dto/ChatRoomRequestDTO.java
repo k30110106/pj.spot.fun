@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ChatRoomRequestDTO {
-    private Long userId;
+    private Long otherIdx;
 
     @Builder
-    public ChatRoomRequestDTO(Long userId) {
-        this.userId = userId;
+    public ChatRoomRequestDTO(Long otherIdx) {
+        this.otherIdx = otherIdx;
     }
 
 }
