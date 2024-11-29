@@ -20,6 +20,7 @@ public class AuthTokenServiceImpl implements AuthTokenService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthTokenRepository authTokenRepository;
     private final UserRepository userRepository;
+    private final HttpServletRequest request;
 
     @Override
     public AuthTokenDTO doRefreshToken(HttpServletRequest request) {
@@ -60,5 +61,8 @@ public class AuthTokenServiceImpl implements AuthTokenService {
                 .build();
     }
 
-
+    public Long getCurrentUserIdx() {
+        String token = request.getHeader("Authorization").replace("Bearer ", "");
+        return jwtTokenProvider.getUserIdx(token);
+    }
 }
