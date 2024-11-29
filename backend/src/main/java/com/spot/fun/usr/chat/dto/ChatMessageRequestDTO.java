@@ -10,16 +10,16 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class ChatMessageRequestDTO {
-    private Long fromId;
-    private Long toId;
+    private Long fromIdx;
+    private Long toIdx;
     private String msg;
     private Long roomId;
     private java.sql.Timestamp timestamp;
 
     @Builder
-    public ChatMessageRequestDTO(Long fromId, Long toId, String msg, Long roomId) {
-        this.fromId = fromId;
-        this.toId = toId;
+    public ChatMessageRequestDTO(Long fromIdx, Long toIdx, String msg, Long roomId) {
+        this.fromIdx = fromIdx;
+        this.toIdx = toIdx;
         this.msg = msg;
         this.roomId = roomId;
         this.timestamp = new java.sql.Timestamp(System.currentTimeMillis());
@@ -27,8 +27,8 @@ public class ChatMessageRequestDTO {
 
     public ChatMessage toEntity() {
         return ChatMessage.builder()
-                .fromId(fromId)
-                .toId(toId)
+                .fromId(fromIdx)
+                .toId(toIdx)
                 .msg(msg)
                 .roomId(roomId)
                 .build();

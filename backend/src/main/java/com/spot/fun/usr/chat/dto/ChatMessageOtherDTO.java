@@ -10,12 +10,12 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class ChatMessageOtherDTO implements ChatMessageDTO{
-    private String otherName;
+    private String otherNickname;
     private String msg;
     private java.sql.Timestamp timestamp;
 
-    public ChatMessageOtherDTO(String otherName, String msg, java.sql.Timestamp timestamp) {
-        this.otherName = otherName;
+    public ChatMessageOtherDTO(String otherNickname, String msg, java.sql.Timestamp timestamp) {
+        this.otherNickname = otherNickname;
         this.msg = msg;
         this.timestamp = timestamp;
     }
