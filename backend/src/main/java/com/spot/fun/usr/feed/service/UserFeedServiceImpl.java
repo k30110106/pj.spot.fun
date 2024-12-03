@@ -1,20 +1,15 @@
 package com.spot.fun.usr.feed.service;
 
+import com.spot.fun.config.jwt.JwtTokenProvider;
+import com.spot.fun.config.jwt.JwtTokenUtil;
 import com.spot.fun.file.FileUploadUtil;
-import com.spot.fun.usr.feed.dto.FeedDTO;
-import com.spot.fun.usr.feed.dto.FeedRequestDTO;
-import com.spot.fun.usr.feed.dto.FeedResponseDTO;
-import com.spot.fun.usr.feed.dto.comment.FeedCommentDTO;
-import com.spot.fun.usr.feed.dto.hashtag.FeedHashtagDTO;
-import com.spot.fun.usr.feed.dto.image.FeedImageDTO;
+import com.spot.fun.usr.feed.dto.*;
 import com.spot.fun.usr.feed.entity.Feed;
-import com.spot.fun.usr.feed.entity.image.FeedImage;
+import com.spot.fun.usr.feed.entity.FeedComment;
+import com.spot.fun.usr.feed.entity.FeedImage;
+import com.spot.fun.usr.feed.repository.UserFeedCommentRepository;
+import com.spot.fun.usr.feed.repository.UserFeedImageRepository;
 import com.spot.fun.usr.feed.repository.UserFeedRepository;
-import com.spot.fun.usr.feed.repository.comment.UserFeedCommentRepository;
-import com.spot.fun.usr.feed.repository.hashtag.UserFeedHashtagRepository;
-import com.spot.fun.usr.feed.repository.image.UserFeedImageRepository;
-import com.spot.fun.usr.feed.repository.like.UserFeedLikeRepository;
-import com.spot.fun.usr.feed.util.UserFeedUtil;
 import com.spot.fun.usr.user.dto.UserDTO;
 import com.spot.fun.usr.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Log4j2
 @Service
@@ -39,32 +33,20 @@ public class UserFeedServiceImpl implements UserFeedService {
     private final UserFeedRepository userFeedRepository;
     private final UserFeedImageRepository userFeedImageRepository;
     private final UserFeedCommentRepository userFeedCommentRepository;
-    private final UserFeedLikeRepository userFeedLikeRepository;
-    private final UserFeedHashtagRepository userFeedHashtagRepository;
-
     private final FileUploadUtil fileUploadUtil;
-    private final UserFeedUtil userFeedUtil;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public FeedResponseDTO getList(FeedRequestDTO feedRequestDTO) {
-        // 로그인
-        Long loginUserIdx = userFeedUtil.getLoginUserIdx(feedRequestDTO.getLoginUserDTO());
-
-
-        // 목록 조회
         Pageable pageable = PageRequest.of(0, feedRequestDTO.getPageSize(), Sort.by("idx").descending());
         List<Feed> list = userFeedRepository.findFeedsOrderByIdxDesc(feedRequestDTO, pageable);
-
         List<FeedDTO> dtos = list.stream()
-                .map((feed) -> {
-                    Long feedIdx = feed.getIdx();
-                    boolean likedYn = !Objects.isNull(loginUserIdx) && userFeedUtil.isFeedLikedYn(feedIdx, loginUserIdx);
-
-                        return FeedDTO.builder()
-                                .idx(feedIdx)
+                .map((feed) ->
+                        FeedDTO.builder()
+                                .idx(feed.getIdx())
                                 .content(feed.getContent())
-                                .regDateStr(userFeedUtil.getDateFormat(feed.getRegDate()))
-                                .user(
+                                .regDate(feed.getRegDate())
+                                .userDTO(
                                         UserDTO.builder()
                                                 .idx(feed.getUser().getIdx())
                                                 .userId(feed.getUser().getUserId())
@@ -85,22 +67,9 @@ public class UserFeedServiceImpl implements UserFeedService {
                                                                 .build()
                                                 ).toList()
                                 )
-                                .likedYn(likedYn)
-                                .likeCount(userFeedLikeRepository.countByFeedIdx(feedIdx))
-                                .commentCount(userFeedCommentRepository.countByFeedIdxAndDelYnFalse(feedIdx))
-                                .feedHashtags(
-                                        userFeedHashtagRepository.findByFeedIdx(feedIdx).stream()
-                                                .map((tag) ->
-                                                        FeedHashtagDTO.builder()
-                                                                //.idx(tag.getIdx())
-                                                                //.hashtagIdx(tag.getHashtag().getIdx())
-                                                                .tagName(tag.getHashtag().getTagName())
-                                                                .build()
-                                                ).toList()
-                                ).build();
-                }).toList();
-
-        boolean hasNext = ((dtos.size() == feedRequestDTO.getPageSize()) && !ObjectUtils.isEmpty(dtos));
+                                .build()
+                ).toList();
+        boolean hasNext = (dtos.size() == feedRequestDTO.getPageSize());
 
         return FeedResponseDTO.builder()
                 .feedDTOS(dtos)
@@ -109,18 +78,17 @@ public class UserFeedServiceImpl implements UserFeedService {
     }
 
     @Override
-    public FeedDTO getDetail(Long idx, Long userIdx) {
+    public FeedDTO getDetail(Long idx) {
         Feed feed = userFeedRepository.findByIdxAndDelYnFalse(idx)
                 .orElseThrow(IllegalArgumentException::new);
-      boolean likedYn = !Objects.isNull(userIdx) && userFeedUtil.isFeedLikedYn(idx, userIdx);
 
-        //List<FeedComment> feedComments = userFeedCommentRepository.findByFeedIdxAndDelYnFalse(idx);
+        List<FeedComment> feedComments = userFeedCommentRepository.findByFeedIdxAndDelYnFalse(idx);
 
         return FeedDTO.builder()
                 .idx(feed.getIdx())
                 .content(feed.getContent())
-                .regDateStr(userFeedUtil.getDateFormat(feed.getRegDate()))
-                .user(
+                .regDate(feed.getRegDate())
+                .userDTO(
                         UserDTO.builder()
                                 .idx(feed.getUser().getIdx())
                                 .userId(feed.getUser().getUserId())
@@ -128,58 +96,36 @@ public class UserFeedServiceImpl implements UserFeedService {
                                 .nickname(feed.getUser().getNickname())
                                 .build()
                 )
-//                .feedComments(
-//                        feedComments.stream()
-//                                .map((item) ->
-//                                        FeedCommentDTO.builder()
-//                                                .idx(item.getIdx())
-//                                                .content(item.getContent())
-//                                                .regDate(item.getRegDate())
-//                                                .build()
-//                                ).toList()
-//                )
+                .feedComments(
+                        feedComments.stream()
+                                .map((item) ->
+                                        FeedCommentDTO.builder()
+                                                .idx(item.getIdx())
+                                                .content(item.getContent())
+                                                .regDate(item.getRegDate())
+                                                .build()
+                                ).toList()
+                )
                 .feedImages(
                         feed.getFeedImages().stream()
                                 .filter((item) -> !item.isDelYn())
                                 .map((item) ->
                                         FeedImageDTO.builder()
-                                                .idx(item.getIdx())
                                                 //.filePath(item.getFilePath())
                                                 .uploadName(item.getUploadName())
                                                 .originName(item.getOriginName())
                                                 .build()
                                 ).toList()
                 )
-                .likedYn(likedYn)
-                .likeCount(userFeedLikeRepository.countByFeedIdx(idx))
-                .commentCount(userFeedCommentRepository.countByFeedIdxAndDelYnFalse(idx))
-                .feedHashtags(
-                        userFeedHashtagRepository.findByFeedIdx(idx).stream()
-                                .map((tag) ->
-                                        FeedHashtagDTO.builder()
-                                                //.idx(tag.getIdx())
-                                                //.hashtagIdx(tag.getHashtag().getIdx())
-                                                .tagName(tag.getHashtag().getTagName())
-                                                .build()
-                                ).toList()
-                )
-                .feedComments(
-                        userFeedCommentRepository.findByFeedIdxAndDelYnFalse(idx).stream()
-                                .map((comment) ->
-                                        FeedCommentDTO.builder()
-                                                .idx(comment.getIdx())
-                                                .content(comment.getContent())
-                                                .userIdx(comment.getUser().getIdx())
-                                                .regDateStr(userFeedUtil.getDateFormat(comment.getRegDate()))
-                                                .build()
-                                ).toList()
-                ).build();
+                .build();
     }
 
     @Transactional
     @Override
     public Long postInsert(FeedDTO feedDTO) {
-        Long userIdx = feedDTO.getUser().getIdx();
+//    String accessToken = JwtTokenUtil.getJwtToken();
+//    Long userIdx = jwtTokenProvider.getUserIdx(accessToken);
+        Long userIdx = 6L;
 
         List<FeedImage> feedImages = new ArrayList<>();
         List<MultipartFile> uploadFiles = feedDTO.getUploadFiles();
@@ -220,5 +166,4 @@ public class UserFeedServiceImpl implements UserFeedService {
 
         return feed.getIdx();
     }
-
 }

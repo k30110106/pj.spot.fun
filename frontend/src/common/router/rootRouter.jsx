@@ -10,8 +10,6 @@ const LoginPage = lazy(() => import("../../usr/login/page/LoginPage"));
 const MyPage = lazy(() => import("../../usr/mypage/page/MyPage"));
 const SignupPage = lazy(() => import("../../usr/signup/page/SignupPage"));
 const FeedIndexPage = lazy(() => import("../../usr/feed/page/IndexPage"));
-const CoursePage = lazy(() => import("../../usr/course/page/CourseListPage"));
-// const AddDatePage = lazy(() => import("../../usr/course/page/AddDatePage")); // 수정된 부분
 
 const rootRouter = createBrowserRouter(
   [
@@ -56,22 +54,6 @@ const rootRouter = createBrowserRouter(
       ),
       children: feedRouter(),
     },
-    {
-      path: "datecourses",
-      element: (
-        <Suspense fallback={Loading}>
-          <CoursePage />
-        </Suspense>
-      ),
-    },
-    // {
-    //   path: "addDate",
-    //   element: (
-    //     <Suspense fallback={Loading}>
-    //       <AddDatePage /> {/* 수정된 부분 */}
-    //     </Suspense>
-    //   ),
-    // },
   ],
   {
     future: {

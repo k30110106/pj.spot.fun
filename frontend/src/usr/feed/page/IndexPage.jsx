@@ -1,20 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
+import React from "react";
 import BasicLayout from "../../../common/layout/BasicLayout";
 import { Outlet } from "react-router-dom";
-import { useBasic } from "../../../common/context/BasicContext";
-import usePostTokenCheck from "../../../common/hook/usePostTokenCheck";
 
 const IndexPage = () => {
-  const { userIdx } = useBasic();
-  usePostTokenCheck();
-
-  console.log(">>>>>> " + userIdx);
-
   return (
     <BasicLayout>
-      <div className="border border-gray-200 w-full">
+      <div id="feed-index-page" style={{ border: "1px solid black" }}>
         피드 인덱스 페이지
-        <div className="border border-red-200 flex w-full">
+        <div className="flex flex-wrap w-full ">
           <Outlet />
         </div>
       </div>
