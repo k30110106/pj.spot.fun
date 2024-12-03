@@ -15,11 +15,10 @@ import java.util.Objects;
 public class ChatMessageService implements ChatService{
     private final ChatMessageRepository chatMessageRepository;
 
-    // 채팅 전송
-//    public void save(ChatMessageRequestDTO chatMessageRequestDTO) {
-//        ChatMessage chatMessage = chatMessageRequestDTO.toEntity();
-//        chatMessageRepository.save(chatMessage);
-//    }
+    // 채팅 메시지 저장 - 하나의 메시지만 저장
+    public ChatMessage save(ChatMessage chatMessage) {
+        return chatMessageRepository.save(chatMessage);
+    }
 
     public ChatRoomListResponseDTO setChatRoomListResponseDTO(Long roomId) {
         ChatMessage recendChatMessage = chatMessageRepository.findTopByRoomIdOrderByTimestampDesc(roomId);
@@ -38,14 +37,37 @@ public class ChatMessageService implements ChatService{
         return chatMessageRepository.findChatMessageByChatId(chatId);
     }
 
+    // 양쪽 채팅방에 메시지 저장
+    public ChatMessage saveMessageForBothRooms(Long userRoomId, Long otherRoomId, ChatMessageRequestDTO messageRequest, Long fromIdx, Long toIdx) {
+        // 송신자 채팅방 메시지
+        ChatMessage userMessage = chatMessageRepository.save(ChatMessage.builder()
+                .fromIdx(fromIdx)
+                .toIdx(toIdx)
+                .msg(messageRequest.getMsg())
+                .roomId(userRoomId)
+                .isRead(false)
+                .build());
+
+        // 수신자 채팅방 메시지
+        chatMessageRepository.save(ChatMessage.builder()
+                .fromIdx(fromIdx)
+                .toIdx(toIdx)
+                .msg(messageRequest.getMsg())
+                .roomId(otherRoomId)
+                .isRead(false)
+                .build());
+
+        return userMessage;
+    }
+
     public ChatMessageDTO setChatMessageDTO(Long userIdx, ChatMessage chatMessage) {
-        if(Objects.equals(userIdx,chatMessage.getFromId())) {
+        if(Objects.equals(userIdx,chatMessage.getFromIdx())) {
             return ChatMessageUserDTO.builder()
                     .msg(chatMessage.getMsg())
                     .timestamp(chatMessage.getTimestamp())
                     .build();
         }
-        if(Objects.equals(userIdx,chatMessage.getToId())) {
+        if(Objects.equals(userIdx,chatMessage.getToIdx())) {
             return ChatMessageOtherDTO.builder()
                     .msg(chatMessage.getMsg())
                     .timestamp(chatMessage.getTimestamp())
@@ -53,10 +75,5 @@ public class ChatMessageService implements ChatService{
         }
         return null;
     }
-
-//    public ChatMessage createChatMessageForUser(ChatMessage chatMessage) {
-//        return ChatMessage.builder()
-//                .
-//    }
 
 }

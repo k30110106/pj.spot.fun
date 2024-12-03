@@ -27,8 +27,8 @@ public class ChatMessageRequestDTO {
 
     public ChatMessage toEntity() {
         return ChatMessage.builder()
-                .fromId(fromIdx)
-                .toId(toIdx)
+                .fromIdx(fromIdx)
+                .toIdx(toIdx)
                 .msg(msg)
                 .roomId(roomId)
                 .build();

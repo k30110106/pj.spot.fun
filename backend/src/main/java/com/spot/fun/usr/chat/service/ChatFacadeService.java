@@ -1,9 +1,7 @@
 package com.spot.fun.usr.chat.service;
 
 import com.spot.fun.token.service.AuthTokenServiceImpl;
-import com.spot.fun.usr.chat.dto.ChatMessageDTO;
-import com.spot.fun.usr.chat.dto.ChatRoomContentDTO;
-import com.spot.fun.usr.chat.dto.ChatRoomListResponseDTO;
+import com.spot.fun.usr.chat.dto.*;
 import com.spot.fun.usr.chat.entity.ChatMessage;
 import com.spot.fun.usr.user.dto.UserDTO;
 import com.spot.fun.usr.user.service.UserServiceImpl;
@@ -11,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -64,11 +61,30 @@ public class ChatFacadeService {
             .build();
   }
 
-//  public ChatMessage createChatMessageForUser(ChatMessage chatMessage){
-//    return null;
-//  }
-//
-//  public ChatMessage createChatMessageForOther(ChatMessage chatMessage){
-//    return null;
-//  }
+  public RoomIdPairDTO getOrCreateChatRooms(Long otherIdx) {
+    Long userIdx = authTokenService.getCurrentUserIdx();
+
+    // 각각의 채팅방 ID 조회
+    Long userRoomId = chatRoomService.getRoomId(userIdx, otherIdx);
+    Long otherRoomId = chatRoomService.getRoomId(otherIdx, userIdx);
+
+    // 채팅방이 없으면 생성
+    if (userRoomId == null && otherRoomId == null) {
+      RoomIdPairDTO newRooms = chatRoomService.createChatRooms(userIdx, otherIdx);
+      userRoomId = newRooms.getUserRoomId();
+      otherRoomId = newRooms.getOtherRoomId();
+    }
+
+    return RoomIdPairDTO.builder()
+            .userRoomId(userRoomId)
+            .otherRoomId(otherRoomId)
+            .build();
+  }
+
+  public ChatMessage saveChatMessage(Long roomId, Long otherRoomId, ChatMessageRequestDTO messageRequest) {
+    Long userIdx = authTokenService.getCurrentUserIdx();
+    Long otherIdx = chatRoomService.getOtherIdx(roomId);
+
+    return chatMessageService.saveMessageForBothRooms(roomId, otherRoomId, messageRequest, userIdx, otherIdx);
+  }
 }

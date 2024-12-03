@@ -8,6 +8,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Log4j2
 @Service
 @RequiredArgsConstructor
@@ -60,6 +62,10 @@ public class UserServiceImpl implements UserService {
             log.error("비밀번호 변경 중 오류 발생", e);
             throw new RuntimeException("비밀번호 변경 중 문제가 발생했습니다.", e);
         }
+    }
+
+    public Optional<User> findUserByIdx(Long idx){
+        return userRepository.findByIdx(idx);
     }
 
 }

@@ -19,11 +19,11 @@ public class ChatMessage {
     @Column(name = "chat_id", unique = true, updatable = false, nullable = false)
     private Long chatId;
 
-    @Column(name = "from_id", nullable = false)
-    private Long fromId;
+    @Column(name = "from_idx", nullable = false)
+    private Long fromIdx;
 
-    @Column(name = "to_id", nullable = false)
-    private Long toId;
+    @Column(name = "to_idx", nullable = false)
+    private Long toIdx;
 
     @Column(name = "msg", updatable = false, nullable = false)
     private String msg;
@@ -39,10 +39,10 @@ public class ChatMessage {
     private boolean isRead;
 
     @Builder
-    public ChatMessage(Long fromId, Long toId, String msg, Long roomId, boolean isRead) {
+    public ChatMessage(Long fromIdx, Long toIdx, String msg, Long roomId, boolean isRead) {
 //        this.chatId = chatId;
-        this.fromId = fromId;
-        this.toId = toId;
+        this.fromIdx = fromIdx;
+        this.toIdx = toIdx;
         this.msg = msg;
         this.roomId = roomId;
         this.timestamp = Timestamp.from(Instant.now());
@@ -50,10 +50,10 @@ public class ChatMessage {
     }
 
     // 채팅 생성
-    public static ChatMessage createChatMessage(Long fromId, Long toId, String msg, Long roomId, boolean isRead) {
+    public static ChatMessage createChatMessage(Long fromIdx, Long toIdx, String msg, Long roomId, boolean isRead) {
         return ChatMessage.builder()
-                .fromId(fromId)
-                .toId(toId)
+                .fromIdx(fromIdx)
+                .toIdx(toIdx)
                 .msg(msg)
                 .roomId(roomId)
                 .isRead(isRead)

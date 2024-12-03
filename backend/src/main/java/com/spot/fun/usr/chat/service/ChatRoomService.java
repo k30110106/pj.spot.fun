@@ -1,9 +1,12 @@
 package com.spot.fun.usr.chat.service;
 
 import com.spot.fun.usr.chat.dto.ChatRoomListResponseDTO;
+import com.spot.fun.usr.chat.dto.RoomIdPairDTO;
 import com.spot.fun.usr.chat.entity.ChatRoom;
 import com.spot.fun.usr.chat.repository.ChatRoomRepository;
 import com.spot.fun.usr.user.dto.UserDTO;
+import com.spot.fun.usr.user.entity.User;
+import com.spot.fun.usr.user.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatRoomService implements ChatService{
     private final ChatRoomRepository chatRoomRepository;
+    private final UserServiceImpl userService;
+
 
     public List<ChatRoom> findAll(Long userIdx) {
       return chatRoomRepository.findAllByUserIdx(userIdx);
@@ -35,12 +40,28 @@ public class ChatRoomService implements ChatService{
       return chatRoomRepository.findRoomIdByUserIdxAndOtherIdx(userIdx, otherIdx);
     }
 
-    // 채팅방 개설(사용자가 메시지를 보내거나 받으면 user chatroom, other chatroom 생성)
-//    public List<ChatRoom> createChatRoom(ChatRoomRequestDTO chatRoomRequestDTO) {
-//
-//
-//    }
+    // 양방향 채팅방 생성
+    public RoomIdPairDTO createChatRooms(Long userIdx, Long otherIdx) {
+      User user = userService.findUserByIdx(userIdx)
+              .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+      User other = userService.findUserByIdx(otherIdx)
+            .orElseThrow(() -> new IllegalArgumentException("상대방을 찾을 수 없습니다."));
 
+      // user -> other 채팅방
+      ChatRoom userChatRoom = chatRoomRepository.save(ChatRoom.builder()
+              .user(user)
+              .other(other)
+              .build());
 
+      // other -> user 채팅방
+      ChatRoom otherChatRoom = chatRoomRepository.save(ChatRoom.builder()
+              .user(other)
+              .other(user)
+              .build());
 
+      return RoomIdPairDTO.builder()
+              .userRoomId(userChatRoom.getRoomId())
+              .otherRoomId(otherChatRoom.getRoomId())
+              .build();
+    }
 }
