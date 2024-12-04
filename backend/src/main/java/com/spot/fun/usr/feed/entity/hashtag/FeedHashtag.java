@@ -2,6 +2,7 @@ package com.spot.fun.usr.feed.entity.hashtag;
 
 import com.spot.fun.usr.feed.entity.Feed;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,4 +26,10 @@ public class FeedHashtag {
 
     @Column(name = "del_yn", columnDefinition = "TINYINT(1) DEFAULT 0")
     private boolean delYn;
+
+    @Builder
+    public FeedHashtag(Feed feed, Hashtag hashtag) {
+        this.feed = feed;
+        this.hashtag = hashtag;
+    }
 }

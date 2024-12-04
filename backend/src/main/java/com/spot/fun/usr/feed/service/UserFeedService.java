@@ -6,6 +6,6 @@ import com.spot.fun.usr.feed.dto.FeedResponseDTO;
 
 public interface UserFeedService {
   FeedResponseDTO getList(FeedRequestDTO feedRequestDTO);
-  FeedDTO getDetail(Long idx);
+  FeedDTO getDetail(Long idx, Long userIdx);
   Long postInsert(FeedDTO feedDTO);
 }

@@ -44,6 +44,9 @@ public class FeedComment {
   @JoinColumn(name = "feed_idx")
   private Feed feed;
 
+  @Column(name = "parent_idx")
+  private Long parentIdx;
+
   @Builder
   public FeedComment(String content, Feed feed, User user) {
     this.content = content;

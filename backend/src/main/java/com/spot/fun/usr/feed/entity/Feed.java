@@ -1,5 +1,6 @@
 package com.spot.fun.usr.feed.entity;
 
+import com.spot.fun.usr.feed.entity.hashtag.FeedHashtag;
 import com.spot.fun.usr.feed.entity.image.FeedImage;
 import com.spot.fun.usr.user.entity.User;
 import jakarta.persistence.*;
@@ -47,6 +48,9 @@ public class Feed {
   @OneToMany(mappedBy = "feed", fetch = FetchType.EAGER)
 //  @OneToMany(mappedBy = "feed")
   private List<FeedImage> feedImages = new ArrayList<>();
+
+  @OneToMany(mappedBy = "feed", fetch = FetchType.EAGER)
+  private List<FeedHashtag> feedHashtags;
 
   @Builder
   public Feed(String content, boolean delYn, User user) {
