@@ -1,103 +1,175 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { postLoginApi } from "../api/LoginApi";
+import { postLogoutApi } from "../api/LogoutApi";
 import { useNavigate } from "react-router-dom";
 import Searchid from "../../../common/searchuserinfomodal/Searchid";
 import Searchpw from "../../../common/searchuserinfomodal/Searchpw";
-import SearchModal from "../../../common/searchuserinfomodal/SearchModal"; // 파일 이름 대소문자 확인
+import SearchModal from "../../../common/searchuserinfomodal/SearchModal";
+import { useBasic } from "../../../common/context/BasicContext";
 
 const LoginComponent = () => {
-    const [userId, setUserId] = React.useState("");
-    const [password, setPassword] = React.useState("");
-    const [isIdModalOpen, setIsIdModalOpen] = React.useState(false); // 아이디 찾기 모달 상태
-    const [isPwModalOpen, setIsPwModalOpen] = React.useState(false); // 비밀번호 찾기 모달 상태
+  const [userId, setUserId] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
+  const [isIdModalOpen, setIsIdModalOpen] = useState(false);
+  const [isPwModalOpen, setIsPwModalOpen] = useState(false);
+  // const [nickname, setNickname] = useState(null);
+  const [isTouched, setIsTouched] = useState({});
+  const { setUserInfo } = useBasic();
 
-    const navigate = useNavigate();
+  const idInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
 
-    const doLogin = () => {
-        const formData = new FormData(document.querySelector("#login-form"));
+  const navigate = useNavigate();
 
-        postLoginApi(formData, (result) => {
-            if (result.status !== 200) {
-                window.alert("로그인 실패");
-                localStorage.removeItem("access_token");
-                return;
-            }
+  const validateInputs = () => {
+    const newErrors = {};
+    if (!userId.trim()) {
+      newErrors.userId = "아이디를 입력해주세요.";
+    }
+    if (!password.trim()) {
+      newErrors.password = "비밀번호를 입력해주세요.";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-            localStorage.setItem("access_token", result.data.accessToken);
-            navigate({ pathname: "/" }, { replace: true });
-        });
-    };
+  const doLogin = async () => {
+    if (!validateInputs()) {
+      if (!userId.trim()) {
+        alert("아이디를 입력해주세요.");
+        idInputRef.current?.focus();
+      } else if (!password.trim()) {
+        alert("비밀번호를 입력해주세요.");
+        passwordInputRef.current?.focus();
+      }
+      return;
+    }
 
-    const handleCancel = () => {
+    const formData = new FormData();
+    formData.append("userId", userId);
+    formData.append("password", password);
+
+    try {
+      const result = await postLoginApi(formData);
+      if (result.status === 200 && result.data) {
+        alert(`${result.data}님, 환영합니다!`);
+        // console.log("Before setNickname:", result.data); // 디버깅
+        setUserInfo(result.data.userId); // userIdx 업데이트
+        setUserInfo(result.data.nickname); // 닉네임 업데이트
         navigate("/");
-    };
+        // console.log("After setNickname:", nickname); // 디버깅
+      } else {
+        alert("로그인 실패. 아이디와 비밀번호를 확인해주세요.");
+      }
+    } catch (error) {
+      alert("로그인 중 오류가 발생했습니다. 다시 시도해주세요.");
+    }
+  };
 
-    return (
+  // const handleLogout = async () => {
+  //   try {
+  //     const result = await postLogoutApi();
+  //     if (result.status >= 200 && result.status < 300) {
+  //       setNickname(null);
+  //       alert("로그아웃 되었습니다.");
+  //       navigate("/");
+  //     } else {
+  //       alert("로그아웃 중 문제가 발생했습니다. 다시 시도해주세요.");
+  //     }
+  //   } catch (error) {
+  //     alert("로그아웃 요청 실패");
+  //   }
+  // };
+
+  const handleCancle = () => {
+    navigate("/");
+  };
+
+  return (
+    <div>
+      <form id="login-form">
         <div>
-            <form id="login-form">
-                <input
-                    type="text"
-                    name="userId"
-                    value={userId}
-                    placeholder="ID"
-                    onChange={(e) => setUserId(e.target.value)}
-                />
-                <br />
-                <input
-                    type="password"
-                    name="password"
-                    value={password}
-                    placeholder="Password"
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <br />
-                <button type="button" onClick={doLogin}>
-                    로그인
-                </button>
-                <button type="button" onClick={handleCancel}>
-                    취소
-                </button>
-            </form>
-            <div id="search-user-info">
-                <div>
-                    <b
-                        style={{ marginLeft: "15px", cursor: "pointer" }}
-                        onClick={() => setIsIdModalOpen(true)}
-                    >
-                        아이디 찾기
-                    </b>
-                </div>
-                <div>
-                    <b
-                        style={{ cursor: "pointer" }}
-                        onClick={() => setIsPwModalOpen(true)}
-                    >
-                        비밀번호 찾기
-                    </b>
-                </div>
-            </div>
-
-            {/* 아이디 찾기 모달 */}
-            {isIdModalOpen && (
-                <SearchModal
-                    isOpen={isIdModalOpen}
-                    onClose={() => setIsIdModalOpen(false)}
-                >
-                    <Searchid onClose={() => setIsIdModalOpen(false)} />
-                </SearchModal>
-            )}
-
-            {/* 비밀번호 찾기 모달 */}
-            {isPwModalOpen && (
-                <SearchModal
-                    isOpen={isPwModalOpen}
-                    onClose={() => setIsPwModalOpen(false)}
-                >
-                    <Searchpw onClose={() => setIsPwModalOpen(false)} />
-                </SearchModal>
-            )}
+          <label>아이디</label>
+          <input
+            type="text"
+            name="userId"
+            ref={idInputRef}
+            value={userId}
+            placeholder="ID"
+            onChange={(e) => {
+              setUserId(e.target.value);
+              setIsTouched((prev) => ({ ...prev, userId: true }));
+            }}
+            onBlur={() => setIsTouched((prev) => ({ ...prev, userId: true }))}
+          />
+          {isTouched.userId && errors.userId && (
+            <p style={{ color: "red" }}>{errors.userId}</p>
+          )}
         </div>
-    );
+        <div>
+          <label>비밀번호</label>
+          <input
+            type="password"
+            name="password"
+            ref={passwordInputRef}
+            value={password}
+            placeholder="Password"
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setIsTouched((prev) => ({ ...prev, password: true }));
+            }}
+            onBlur={() => setIsTouched((prev) => ({ ...prev, password: true }))}
+          />
+          {isTouched.password && errors.password && (
+            <p style={{ color: "red" }}>{errors.password}</p>
+          )}
+        </div>
+        <button type="button" onClick={doLogin}>
+          로그인
+        </button>
+        <button type="button" onClick={handleCancle}>
+          취소
+        </button>
+      </form>
+      <div id="search-user-info">
+        <div>
+          <b
+            style={{ marginLeft: "15px", cursor: "pointer" }}
+            onClick={() => setIsIdModalOpen(true)}
+          >
+            아이디 찾기
+          </b>
+        </div>
+        <div>
+          <b
+            style={{ cursor: "pointer" }}
+            onClick={() => setIsPwModalOpen(true)}
+          >
+            비밀번호 찾기
+          </b>
+        </div>
+      </div>
+
+      {isIdModalOpen && (
+        <SearchModal
+          isOpen={isIdModalOpen}
+          onClose={() => setIsIdModalOpen(false)}
+        >
+          <Searchid onClose={() => setIsIdModalOpen(false)} />
+        </SearchModal>
+      )}
+
+      {isPwModalOpen && (
+        <SearchModal
+          isOpen={isPwModalOpen}
+          onClose={() => setIsPwModalOpen(false)}
+        >
+          <Searchpw onClose={() => setIsPwModalOpen(false)} />
+        </SearchModal>
+      )}
+    </div>
+  );
 };
 
 export default LoginComponent;

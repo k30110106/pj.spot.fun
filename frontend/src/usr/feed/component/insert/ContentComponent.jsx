@@ -3,6 +3,10 @@ import React, { useState } from "react";
 const ContentComponent = ({ useTextRef }) => {
   const [feedContent, setFeedContent] = useState("");
 
+  const handleContentEvent = (e) => {
+    setFeedContent(e.target.value);
+  };
+
   return (
     <>
       <textarea
@@ -12,7 +16,7 @@ const ContentComponent = ({ useTextRef }) => {
         maxLength="100"
         ref={useTextRef}
         value={feedContent}
-        onChange={(e) => setFeedContent(e.target.value)}
+        onChange={handleContentEvent}
       />
     </>
   );

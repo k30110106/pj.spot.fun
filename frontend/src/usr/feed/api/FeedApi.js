@@ -59,3 +59,9 @@ export const postCommentApi = async (param) => {
   const res = await axios.post(`/api/usr/feed/comment/${idx}`, null, config);
   return res.data;
 };
+
+// 해시태그 목록
+export const getHashtagApi = async () => {
+  const res = await axios.get(`/api/usr/feed/hashtag`);
+  return res.data;
+};

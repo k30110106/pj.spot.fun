@@ -6,6 +6,7 @@ import ContentComponent from "../component/item/ContentComponent";
 import ButtonComponent from "../component/item/ButtonComponent";
 import ListComponent from "../component/comment/ListComponent";
 import InputComponent from "../component/comment/InputComponent";
+import { useBasic } from "../../../common/context/BasicContext";
 
 const DetailModal = ({
   feed,
@@ -13,6 +14,9 @@ const DetailModal = ({
   handleLikesEvent,
   handleCommentCountEvent,
 }) => {
+  const { userInfo } = useBasic();
+  //console.log(userInfo);
+
   // 댓글목록 조회
   const [commentList, setCommentList] = useState([]);
   useEffect(() => {
@@ -101,8 +105,9 @@ const DetailModal = ({
 
           <div className="flex space-x-3 border border-gray-200 justify-end w-full">
             {/*댓글 입력 + 등록*/}
-            {/*{isLogin && <InputComponent />}*/}
-            <InputComponent handleCommentEvent={handleCommentEvent} />
+            {userInfo != null && (
+              <InputComponent handleCommentEvent={handleCommentEvent} />
+            )}
           </div>
         </div>
       </div>

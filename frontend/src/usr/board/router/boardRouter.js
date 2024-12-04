@@ -7,7 +7,7 @@ const BoardCreatePage = lazy(() => import("../page/BoardCreatePage"));
 
 const boardRouter = () => [
   {
-    path: "boardlist", // 상대 경로로 수정
+    path: "list", // 상대 경로로 수정
     element: (
       <Suspense fallback={Loading}>
         <BoardListPage />
@@ -23,7 +23,7 @@ const boardRouter = () => [
     ),
   },
   {
-    path: "boardcreate", // 상대 경로로 수정
+    path: "create", // 상대 경로로 수정
     element: (
       <Suspense fallback={Loading}>
         <BoardCreatePage />

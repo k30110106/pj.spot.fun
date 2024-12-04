@@ -3,8 +3,12 @@ import { feedLikeApi, getFeedDetailApi, getFeedListApi } from "../api/FeedApi";
 import ListComponent from "../component/ListComponent";
 import InsertModal from "../modal/InsertModal";
 import DetailModal from "../modal/DetailModal";
+import { useBasic } from "../../../common/context/BasicContext";
 
 const ListPage = () => {
+  const { userInfo } = useBasic();
+  //console.log(userInfo);
+
   // 모달
   const [isInsertModalOpen, setIsInsertModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -155,17 +159,19 @@ const ListPage = () => {
   }, [isBottom]);
 
   return (
-    <div className="border border-amber-200 w-1/2">
+    <div className="border border-amber-200 w-full">
       피드 리스트 페이지
-      <button
-        type="button"
-        className="bg-blue-500 text-white border-2 border-black"
-        onClick={() => {
-          setIsInsertModalOpen(true);
-        }}
-      >
-        !!!! 등록 버튼 (비로그인은 숨겨야함)!!!!
-      </button>
+      {userInfo != null && (
+        <button
+          type="button"
+          className="bg-blue-500 text-white border-2 border-black"
+          onClick={() => {
+            setIsInsertModalOpen(true);
+          }}
+        >
+          !!!! 등록 버튼 (비로그인은 숨겨야함)!!!!
+        </button>
+      )}
       <ListComponent
         feedList={feedList}
         handleSelectedFeed={handleSelectedFeed}
