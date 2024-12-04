@@ -26,5 +26,5 @@ const BasicLayout = ({ children }) => {
             <Footer />
         </div>
     );
-
+}
 export default BasicLayout;

@@ -5,7 +5,7 @@ function BoardIndexPage() {
     return (
         <div>
             <h3>
-                여기는 BoardMain 입니다
+                여기는 BoardMain 입니다.
                 <h1>
                     <Link to="boardlist">[BoardList로 이동하기]</Link>
                     <Link to="boardcreate">[글쓰기]</Link>
