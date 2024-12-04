@@ -1,27 +1,24 @@
 import React, { useRef, useState } from "react";
 import HashTagModal from "./HashTagModal";
-import { API_BASE_URL, postFeedInsertApi } from "../api/FeedApi";
-
-// 이미지 초기정보
-const initImageSrc = `${API_BASE_URL}/api/usr/feed/image/no_image.jpg`;
-const initImage = {
-  upload_1: initImageSrc,
-  upload_2: initImageSrc,
-  upload_3: initImageSrc,
-};
+import { postFeedInsertApi } from "../api/FeedApi";
+import ImageComponent from "../component/insert/ImageComponent";
+import ProfileComponent from "../component/item/ProfileComponent";
+import { useBasic } from "../../../common/context/BasicContext";
+import ContentComponent from "../component/insert/ContentComponent";
 
 const InsertModal = ({ closeInsertModal }) => {
-  const [feedContent, setFeedContent] = useState("");
+  // 전역 값
+  const { userInfo } = useBasic();
 
   // 이미지
-  const [feedImage, setFeedImage] = useState(initImage);
   const useFileRef = useRef([]);
+
+  // 콘텐츠
+  const useTextRef = useRef(null);
 
   // 해시태그
   const [selectedHashtags, setSelectedHashtags] = useState([]);
   const [isHashtagModalOpen, setIsHashtagModalOpen] = useState(false);
-
-  // 해시태그 선택 모달 닫기
   const closeHashtagModal = () => {
     setIsHashtagModalOpen(false);
   };
@@ -31,19 +28,14 @@ const InsertModal = ({ closeInsertModal }) => {
     setSelectedHashtags((prevHashtags) => [...prevHashtags, hashtag]);
   };
 
-  // 이미지 파일 선택
-  const handleImageChange = (e) => {
-    const fileId = e.target.id;
-    const file = e.target.files[0];
-    const getUrl = file ? URL.createObjectURL(file) : initImageSrc;
-    setFeedImage({
-      ...feedImage,
-      [fileId]: getUrl,
-    });
-  };
-
   // 글 등록
   const handleFeedSubmit = () => {
+    const content = useTextRef.current.value;
+    if (content.trim().length < 1) {
+      console.log("내용을 입력해주세요..");
+      return false;
+    }
+
     const form = new FormData();
 
     useFileRef.current.forEach((item) => {
@@ -52,16 +44,15 @@ const InsertModal = ({ closeInsertModal }) => {
         form.append("uploadFiles", itemFile);
       }
     });
-    form.append("content", feedContent);
+    form.append("content", content);
 
     postFeedInsertApi(form)
       .then((res) => {
-        if (res.status !== 201) {
-          console.log("등록 실패 에러코드 .." + res.status);
+        if (res) {
+          closeInsertModal(res);
           return;
         }
-
-        closeInsertModal();
+        console.log("등록 실패 에러코드 .." + res.status);
       })
       .catch((err) => {
         console.log(err);
@@ -74,7 +65,7 @@ const InsertModal = ({ closeInsertModal }) => {
         {/* 상단 툴바 X 버튼 */}
         <div className="flex justify-end items-center mb-4">
           <button
-            onClick={closeInsertModal}
+            onClick={() => closeInsertModal(null)}
             className="text-gray-500 hover:text-gray-800"
           >
             <svg
@@ -95,28 +86,14 @@ const InsertModal = ({ closeInsertModal }) => {
         </div>
 
         {/* 상단영역: 프로필 정보 */}
-        <div className="flex items-center space-x-4">
-          <img
-            src={initImageSrc}
-            alt="프로필"
-            className="w-12 h-12 rounded-full"
-          />
-          <div>
-            <p className="font-semibold text-lg">사용자 이름</p>
-            <p className="text-sm text-gray-500">@user_id</p>
-          </div>
-        </div>
+        <ProfileComponent user={{ ...userInfo, idx: userInfo.userIdx }} />
 
         {/* 중간영역: 글 내용 및 해시태그 */}
         <div className="mt-4">
-          <textarea
-            className="w-full p-3 border border-gray-300 rounded-md"
-            placeholder="내용을 입력해주세요..(최대 80자)"
-            rows="5"
-            maxLength="80"
-            value={feedContent}
-            onChange={(e) => setFeedContent(e.target.value)}
-          />
+          {/* 컨텐츠 */}
+          <ContentComponent useTextRef={useTextRef} />
+
+          {/* 해시태그 */}
           <div className="mt-2 flex items-center space-x-2">
             <button
               className="text-blue-500"
@@ -138,62 +115,18 @@ const InsertModal = ({ closeInsertModal }) => {
         {/* 하단영역: 이미지 업로드 */}
         <div className="mt-4">
           <div className="flex justify-center">
-            <div className="w-1/3 h-full">
-              <img
-                src={feedImage.upload_1}
-                alt="upload_1"
-                className="mt-4 border-solid border-2 border-indigo-400 rounded-md cursor-pointer w-full min-h-48 max-h-48 object-contain"
-                onClick={() => {
-                  document.querySelector("#upload_1").click();
-                }}
-              />
-              <input
-                type="file"
-                id="upload_1"
-                accept="image/*"
-                ref={(e) => (useFileRef.current[0] = e)}
-                onChange={handleImageChange}
-                className="hidden"
-              />
-            </div>
-
-            <div className="w-1/3 ml-2 mr-2 h-full">
-              <img
-                src={feedImage.upload_2}
-                alt="upload_2"
-                className="mt-4 border-solid border-2 border-indigo-400 rounded-md cursor-pointer w-full min-h-48 max-h-48 object-contain"
-                onClick={() => {
-                  document.querySelector("#upload_2").click();
-                }}
-              />
-              <input
-                type="file"
-                id="upload_2"
-                accept="image/*"
-                ref={(e) => (useFileRef.current[1] = e)}
-                onChange={handleImageChange}
-                className="hidden"
-              />
-            </div>
-
-            <div className="w-1/3 h-full">
-              <img
-                src={feedImage.upload_3}
-                alt="upload_3"
-                className="mt-4 border-solid border-2 border-indigo-400 rounded-md cursor-pointer w-full min-h-48 max-h-48 object-contain"
-                onClick={() => {
-                  document.querySelector("#upload_3").click();
-                }}
-              />
-              <input
-                type="file"
-                id="upload_3"
-                accept="image/*"
-                ref={(e) => (useFileRef.current[2] = e)}
-                onChange={handleImageChange}
-                className="hidden"
-              />
-            </div>
+            <ImageComponent
+              id={"upload1"}
+              useFileRef={(e) => (useFileRef.current[0] = e)}
+            />
+            <ImageComponent
+              id={"upload2"}
+              useFileRef={(e) => (useFileRef.current[1] = e)}
+            />
+            <ImageComponent
+              id={"upload3"}
+              useFileRef={(e) => (useFileRef.current[2] = e)}
+            />
           </div>
         </div>
 

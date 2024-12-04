@@ -1,13 +1,12 @@
-import React from "react";
 import BasicLayout from "../../../common/layout/BasicLayout";
 import { Outlet } from "react-router-dom";
 
 const IndexPage = () => {
   return (
     <BasicLayout>
-      <div id="feed-index-page" style={{ border: "1px solid black" }}>
+      <div className="border border-gray-200 w-full">
         피드 인덱스 페이지
-        <div className="flex flex-wrap w-full ">
+        <div className="border border-red-200 flex w-full">
           <Outlet />
         </div>
       </div>

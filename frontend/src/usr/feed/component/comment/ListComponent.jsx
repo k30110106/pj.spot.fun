@@ -1,7 +1,6 @@
 import React from "react";
 
 const ListComponent = ({ commentList }) => {
-  //console.log(commentList);
   return (
     <>
       {(commentList ?? []).length > 0 ? (
@@ -13,10 +12,10 @@ const ListComponent = ({ commentList }) => {
               className="w-10 h-10 rounded-full object-cover"
             />
             <div>
-              <p className="font-semibold text-gray-800">사용자 1</p>
-              <p className="text-sm text-gray-600">
-                댓글 내용입니다.댓글 내용입니다.댓글 내용입니다.댓글 내용입니다.
+              <p className="font-semibold text-gray-800">
+                {comment.user.nickname}
               </p>
+              <p className="text-sm text-gray-600">{comment.content}</p>
             </div>
           </div>
         ))

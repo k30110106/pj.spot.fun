@@ -6,12 +6,13 @@ import ContentComponent from "../component/item/ContentComponent";
 import ButtonComponent from "../component/item/ButtonComponent";
 import ListComponent from "../component/comment/ListComponent";
 import InputComponent from "../component/comment/InputComponent";
-import { useBasic } from "../../../common/context/BasicContext";
 
-const DetailModal = ({ feed, closeDetailModal, handleLikesEvent }) => {
-  const { userIdx, setUserIdx } = useBasic();
-  console.log("modal.. " + userIdx);
-
+const DetailModal = ({
+  feed,
+  closeDetailModal,
+  handleLikesEvent,
+  handleCommentCountEvent,
+}) => {
   // 댓글목록 조회
   const [commentList, setCommentList] = useState([]);
   useEffect(() => {
@@ -26,23 +27,27 @@ const DetailModal = ({ feed, closeDetailModal, handleLikesEvent }) => {
     }
   }, []);
 
-  const handleCommentEvent = useCallback((targetContent) => {
-    const param = {
-      idx: feed.idx,
-      content: targetContent,
-    };
+  // 댓글 등록
+  const handleCommentEvent = useCallback(
+    (targetContent) => {
+      const param = {
+        idx: feed.idx,
+        content: targetContent,
+      };
 
-    postCommentApi(param)
-      .then((data) => {
-        console.log(data);
-        if (data) {
-          setCommentList((prevCommentList) => [...prevCommentList, data]);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+      postCommentApi(param)
+        .then((data) => {
+          if (data) {
+            setCommentList((prevCommentList) => [...prevCommentList, data]);
+            handleCommentCountEvent(feed.idx, "new");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    [feed.idx]
+  );
 
   return (
     <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">

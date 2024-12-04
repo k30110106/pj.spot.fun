@@ -1,8 +1,10 @@
 import { FaRegHeart } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
 import { BiMessageRoundedDots } from "react-icons/bi";
+import { useBasic } from "../../../../common/context/BasicContext";
 
 const ButtonComponent = ({ feed, handleSelectedFeed, handleLikesEvent }) => {
+  const { userIdx } = useBasic();
   const { idx, commentCount, likeCount, likedYn, regDateStr } = feed;
 
   // 좋아요 토클 이벤트
@@ -19,7 +21,12 @@ const ButtonComponent = ({ feed, handleSelectedFeed, handleLikesEvent }) => {
         <div className="flex justify-start pl-3 space-x-3 w-2/3">
           <div className="flex items-center">
             <button
-              className="flex items-center rounded-full p-1 justify-center border border-transparent hover:bg-red-100 focus:outline-none transition-all duration-200"
+              className={`flex items-center rounded-full p-1 justify-center border border-transparent 
+                ${
+                  userIdx
+                    ? "hover:bg-red-100 focus:outline-none transition-all duration-200"
+                    : ""
+                }`}
               onClick={toggleLikes}
             >
               {likedYn ? (
