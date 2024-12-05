@@ -1,6 +1,13 @@
 package com.spot.fun.config;
 
 import com.spot.fun.config.jwt.JwtTokenFilter;
+import com.spot.fun.config.jwt.JwtTokenProvider;
+import com.spot.fun.token.util.AuthTokenUtil;
+import com.spot.fun.usr.oauthlogin.service.CustomOAuth2UserService;
+import com.spot.fun.usr.user.entity.User;
+import com.spot.fun.usr.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -10,20 +17,35 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Optional;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
     private final JwtTokenFilter jwtTokenFilter;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthTokenUtil authTokenUtil;
 
     @Value("${security.check.path.none}")
     private String[] PERMITTED_PATHS;
@@ -46,6 +68,13 @@ public class WebSecurityConfig {
                 )
                 .sessionManagement((auth) -> auth // 세션방식 -> jwt 사용
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .oauth2Login((oauth2) -> oauth2
+                        .userInfoEndpoint(userInfo ->
+                                userInfo.userService(customOAuth2UserService) // 최신 방식 적용
+                        )
+                        .successHandler(oAuth2AuthenticationSuccessHandler()) // OAuth2 성공 핸들러 추가
+                        .failureHandler(oAuth2AuthenticationFailureHandler())
+                )
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
@@ -73,7 +102,41 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public AuthenticationFailureHandler oAuth2AuthenticationFailureHandler() {
+        return (request, response, exception) -> {
+            response.sendRedirect("http://localhost:3000/login?error=true");
+        };
+    }
+
+    @Bean
+    public SimpleUrlAuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
+        return new SimpleUrlAuthenticationSuccessHandler() {
+            @Override
+            protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+                DefaultOAuth2User oAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
+                String email = (String) oAuth2User.getAttributes().get("email");
+
+                Optional<User> userOptional = userRepository.findByEmail(email);
+                if (userOptional.isPresent()) {
+                    // 기존 사용자: JWT 생성 후 로그인 성공 페이지로 리다이렉트
+                    User user = userOptional.get();
+                    String accessToken = jwtTokenProvider.generateAccessToken(user);
+                    String refreshToken = jwtTokenProvider.generateRefreshToken(user);
+
+                    authTokenUtil.makeAccessToken(response, accessToken);
+                    authTokenUtil.makeRefreshToken(response, refreshToken);
+
+                    response.sendRedirect("http://localhost:3000/login-success");
+                } else {
+                    // 비회원: 회원가입 페이지로 리다이렉트
+                    response.sendRedirect("http://localhost:3000/signup");
+                }
+            }
+        };
     }
 }

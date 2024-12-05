@@ -38,6 +38,7 @@ public class AuthTokenUtil {
         ResponseCookie responseCookie =
                 ResponseCookie.from(cookieName, cookieValue)
                         .httpOnly(true) // 자바스크립트 접근불가
+//                        .sameSite("None") // SameSite 설정
                         //.secure(true) // https에서만 전송처리
                         .path("/")
                         .maxAge(duration) // 유효 기간

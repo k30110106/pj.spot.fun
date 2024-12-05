@@ -13,7 +13,6 @@ const LoginPage = () => {
       <LoginComponent />
       <Footer />
     </div>
-
   );
 };
 

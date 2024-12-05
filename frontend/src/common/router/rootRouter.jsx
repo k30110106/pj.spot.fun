@@ -10,11 +10,16 @@ const Loading = <div>Loading....</div>;
 
 const MainPage = lazy(() => import("../../usr/main/page/MainPage"));
 const LoginPage = lazy(() => import("../../usr/login/page/LoginPage"));
+const LoginSuccessPage = lazy(() =>
+  import("../../usr/login/page/LoginSuccess")
+);
 const MyPage = lazy(() => import("../../usr/mypage/page/MyPage"));
 const SignupPage = lazy(() => import("../../usr/signup/page/SignupPage"));
 const FeedIndexPage = lazy(() => import("../../usr/feed/page/IndexPage"));
 const CoursePage = lazy(() => import("../../usr/course/page/CourseListPage"));
-const BoardIndexPage = lazy(() => import("../../usr/board/page/BoardIndexPage"));
+const BoardIndexPage = lazy(() =>
+  import("../../usr/board/page/BoardIndexPage")
+);
 // const AddDatePage = lazy(() => import("../../usr/course/page/AddDatePage")); // 수정된 부분
 const ChatListPage = lazy(() => import("../../usr/chat/page/ChatListPage"));
 
@@ -36,6 +41,14 @@ const rootRouter = createBrowserRouter(
       element: (
         <Suspense fallback={Loading}>
           <LoginPage />
+        </Suspense>
+      ),
+    },
+    {
+      path: "login-success",
+      element: (
+        <Suspense fallback={Loading}>
+          <LoginSuccessPage />
         </Suspense>
       ),
     },
@@ -67,22 +80,20 @@ const rootRouter = createBrowserRouter(
     {
       path: "datecourses",
       element: (
-
         <Suspense fallback={Loading}>
           <CoursePage />
         </Suspense>
-
       ),
     },
     {
-        path: "board",
-          element: (
-            <Suspense fallback={Loading}>
-              <BoardIndexPage />
-            </Suspense>
-          ),
-          children: boardRouter(),
-        },
+      path: "board",
+      element: (
+        <Suspense fallback={Loading}>
+          <BoardIndexPage />
+        </Suspense>
+      ),
+      children: boardRouter(),
+    },
     // {
     //   path: "addDate",
     //   element: (

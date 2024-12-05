@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { postLoginApi } from "../api/LoginApi";
-import { postLogoutApi } from "../api/LogoutApi";
 import { useNavigate } from "react-router-dom";
 import Searchid from "../../../common/searchuserinfomodal/Searchid";
 import Searchpw from "../../../common/searchuserinfomodal/Searchpw";
@@ -57,6 +56,7 @@ const LoginComponent = () => {
         // console.log("Before setNickname:", result.data); // 디버깅
         setUserInfo(result.data.userId); // userIdx 업데이트
         setUserInfo(result.data.nickname); // 닉네임 업데이트
+        setUserInfo(result.data);
         navigate("/");
         // console.log("After setNickname:", nickname); // 디버깅
       } else {
@@ -67,23 +67,12 @@ const LoginComponent = () => {
     }
   };
 
-  // const handleLogout = async () => {
-  //   try {
-  //     const result = await postLogoutApi();
-  //     if (result.status >= 200 && result.status < 300) {
-  //       setNickname(null);
-  //       alert("로그아웃 되었습니다.");
-  //       navigate("/");
-  //     } else {
-  //       alert("로그아웃 중 문제가 발생했습니다. 다시 시도해주세요.");
-  //     }
-  //   } catch (error) {
-  //     alert("로그아웃 요청 실패");
-  //   }
-  // };
-
   const handleCancle = () => {
     navigate("/");
+  };
+
+  const handleSocialLogin = (provider) => {
+    window.location.href = `http://localhost:8080/oauth2/authorization/${provider}`;
   };
 
   return (
@@ -168,6 +157,16 @@ const LoginComponent = () => {
           <Searchpw onClose={() => setIsPwModalOpen(false)} />
         </SearchModal>
       )}
+
+      <div id="social-login">
+        <button onClick={() => handleSocialLogin("google")}>구글 로그인</button>
+        <button onClick={() => handleSocialLogin("kakao")}>
+          카카오 로그인
+        </button>
+        <button onClick={() => handleSocialLogin("naver")}>
+          네이버 로그인
+        </button>
+      </div>
     </div>
   );
 };

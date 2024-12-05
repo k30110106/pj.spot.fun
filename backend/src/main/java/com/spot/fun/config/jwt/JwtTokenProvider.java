@@ -55,6 +55,7 @@ public class JwtTokenProvider {
                     .setSubject(user.getUserId())
                     .claim("idx", user.getIdx())
                     .claim("nickname", user.getNickname())
+                    .claim("email", user.getEmail())
                     .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
                     .compact();
     }
@@ -67,6 +68,7 @@ public class JwtTokenProvider {
             return true;
         } catch (Exception e) {
             log.info("\n======== validToken method fail ========");
+            log.error("Token validation failed: {}", e.getMessage());
             return false;
         }
     }
