@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 function BoardListPage() {
-    const [boards, setBoards] = useState([]);
+    const [posts, setPosts] = useState([]);
 
     useEffect(() => {
-        // 서버에서 게시글 데이터를 불러오는 가상의 API 호출
-        fetch("/api/BoardApi")
-            .then((response) => response.json())
-            .then((data) => setBoards(data))
-            .catch((error) => console.error("Error fetching boards:", error));
+        fetch('https://jsonplaceholder.typicode.com/posts')
+            .then(response => response.json())
+            .then(data => setPosts(data));
     }, []);
 
     return (
         <div>
             <h1>게시판 리스트 페이지</h1>
             <ul>
-                {boards.map((board) => (
-                    <li key={board.id}>{board.title}</li>
+                {posts.map(post => (
+                    <li key={post.id}>
+                        <Link to={`/board/detail/${post.id}`}>[{post.id}] {post.title} {post.userId} </Link>
+                    </li>
                 ))}
             </ul>
         </div>
@@ -24,8 +25,6 @@ function BoardListPage() {
 }
 
 export default BoardListPage;
-
-
 //   const [bbsList, setBbsList] = useState([]);
 //
 //   // 검색용 Hook

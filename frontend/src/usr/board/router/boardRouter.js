@@ -15,7 +15,7 @@ const boardRouter = () => [
     ),
   },
   {
-    path: "board/:id", // 상대 경로로 수정
+    path: "detail/:id", // 상대 경로로 수정
     element: (
       <Suspense fallback={Loading}>
         <BoardDetailPage />
