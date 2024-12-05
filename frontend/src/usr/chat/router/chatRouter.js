@@ -8,11 +8,13 @@ const chatRouter = () => [
     {
         path: "",
         element: <ChatListPage />,
-    },
-    {
-        path: ":otherIdx",
-        element: <ChatRoomPage />,
-    },
+        children: [
+            {
+                path: ":otherIdx",
+                element: <ChatRoomPage />
+            }
+        ]
+    }
 ];
 
 export default chatRouter;

@@ -1,6 +1,7 @@
 import { Suspense, lazy } from "react";
 import feedRouter from "../../usr/feed/router/feedRouter";
 import boardRouter from "../../usr/board/router/boardRouter";
+import BasicLayout from "../layout/BasicLayout";
 import chatRouter from "../../usr/chat/router/chatRouter";
 
 const { createBrowserRouter } = require("react-router-dom");
@@ -22,9 +23,12 @@ const rootRouter = createBrowserRouter(
     {
       path: "",
       element: (
-        <Suspense fallback={Loading}>
-          <MainPage />
-        </Suspense>
+        // BasicLayout이 Suspense의 영향을 받아 무시되므로 Mainpage만 BasicLayout으로 적용
+        <BasicLayout>
+          <Suspense fallback={Loading}>
+            <MainPage />
+          </Suspense>
+        </BasicLayout>
       ),
     },
     {
@@ -63,9 +67,11 @@ const rootRouter = createBrowserRouter(
     {
       path: "datecourses",
       element: (
+
         <Suspense fallback={Loading}>
           <CoursePage />
         </Suspense>
+
       ),
     },
     {
@@ -77,15 +83,6 @@ const rootRouter = createBrowserRouter(
           ),
           children: boardRouter(),
         },
-      {
-          path: "chat",
-          element: (
-              <Suspense fallback={Loading}>
-                  <ChatListPage />
-              </Suspense>
-          ),
-          children: chatRouter(),
-      },
     // {
     //   path: "addDate",
     //   element: (
@@ -94,6 +91,14 @@ const rootRouter = createBrowserRouter(
     //     </Suspense>
     //   ),
     // },
+      {
+          path: "chat/*",  // /* 추가하여 중첩 라우팅 허용
+          element: (
+              <Suspense fallback={Loading}>
+                  <ChatListPage />
+              </Suspense>
+          )
+      },
   ],
   {
     future: {

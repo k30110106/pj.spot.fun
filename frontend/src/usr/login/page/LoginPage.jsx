@@ -1,16 +1,19 @@
-import BasicLayout from "../../../common/layout/BasicLayout";
+// import BasicLayout from "../../../common/layout/BasicLayout";
+import Footer from "../../../common/component/Footer";
+import Header from "../../../common/component/Header";
 import LoginComponent from "../component/LoginComponent";
-import { useBasic } from "../../../common/context/BasicContext";
-import usePostTokenCheck from "../../../common/hook/usePostTokenCheck";
+// import { useBasic } from "../../../common/context/BasicContext";
+// import usePostTokenCheck from "../../../common/hook/usePostTokenCheck";
 
 const LoginPage = () => {
   return (
-    <BasicLayout>
-      <div id="login-page">
-        로그인 페이지
-        <LoginComponent />
-      </div>
-    </BasicLayout>
+    <div id="login-page">
+      <Header />
+      <div className="text-center font-bold text-3xl">로그인</div>
+      <LoginComponent />
+      <Footer />
+    </div>
+
   );
 };
 

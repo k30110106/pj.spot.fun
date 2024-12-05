@@ -62,7 +62,11 @@ public class AuthTokenServiceImpl implements AuthTokenService {
     }
 
     public Long getCurrentUserIdx() {
-        String token = request.getHeader("Authorization").replace("Bearer ", "");
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new IllegalStateException("인증 토큰이 없거나 유효하지 않습니다.");
+        }
+        String token = authHeader.replace("Bearer ", "");
         return jwtTokenProvider.getUserIdx(token);
     }
 }

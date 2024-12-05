@@ -90,7 +90,7 @@ const LoginComponent = () => {
     <div>
       <form id="login-form">
         <div>
-          <label>아이디</label>
+          <label className="font-bold text-xl">아이디</label>
           <input
             type="text"
             name="userId"

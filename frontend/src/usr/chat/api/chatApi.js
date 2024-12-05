@@ -32,11 +32,21 @@ export const chatApi = {
     },
 
     getChatRoomList: async () => {
-        return await axios.get(`${API_BASE_URL}/api/chat/`);
+        const accessToken = localStorage.getItem("access_token");
+        return await axios.get(`${API_BASE_URL}/api/chat/`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
     },
 
     getChatRoom: async (otherIdx) => {
-        return await axios.get(`${API_BASE_URL}/api/chat/${otherIdx}`);
+        const accessToken = localStorage.getItem("access_token");
+        return await axios.get(`${API_BASE_URL}/api/chat/${otherIdx}`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
     },
 
     // 메시지 전송

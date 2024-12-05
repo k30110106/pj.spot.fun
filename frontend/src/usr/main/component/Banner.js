@@ -22,7 +22,7 @@ const Banner = () => {
   }, []);
 
   return (
-    <div className="relative w-full overflow-hidden  rounded-lg">
+    <div className="relative w-4/5 overflow-hidden  rounded-lg ml-28">
       <div className="relative h-64 flex transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
         {images.map((image, index) => (
           <div key={index} className="w-full flex-shrink-0 relative">

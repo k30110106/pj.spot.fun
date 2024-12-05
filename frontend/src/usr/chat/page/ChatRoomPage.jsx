@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { chatApi } from '../api/chatApi';
 import { useBasic } from '../../../common/context/BasicContext';
+import ChatListPage from "./ChatListPage";
 
 const ChatRoomPage = () => {
     const { userInfo } = useBasic();
@@ -98,3 +99,4 @@ const ChatRoomPage = () => {
         </div>
     );
 };
+export default ChatRoomPage;

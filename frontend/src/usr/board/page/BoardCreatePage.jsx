@@ -1,24 +1,26 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 function BoardCreatePage() {
     const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
-    const navigate = useNavigate();
+    const [body, setBody] = useState("");
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        // 서버로 게시글 데이터 전송
-        fetch("/api/boards", {
-            method: "POST",
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const post = { title, body };
+
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ title, content }),
+            body: JSON.stringify(post),
         })
-            .then((response) => response.json())
-            .then(() => navigate("/boardlist"))
-            .catch((error) => console.error("Error creating board:", error));
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                // 성공 시 리디렉션 등 추가 작업
+            });
     };
 
     return (
@@ -27,20 +29,13 @@ function BoardCreatePage() {
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>제목:</label>
-                    <input
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                    />
+                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
                 </div>
                 <div>
                     <label>내용:</label>
-                    <textarea
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                    />
+                    <textarea value={body} onChange={(e) => setBody(e.target.value)} />
                 </div>
-                <button type="submit">작성</button>
+                <button type="submit">작성하기</button>
             </form>
         </div>
     );

@@ -2,7 +2,6 @@ import React from "react";
 
 const ContentComponent = ({ feed, handleSelectedFeed, feedIdx }) => {
   const { content, feedHashtags } = feed;
-  //console.log(feed);
   return (
     <>
       {/* 컨텐츠 내용 */}

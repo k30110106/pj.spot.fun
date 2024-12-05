@@ -87,4 +87,6 @@ public class ChatFacadeService {
 
     return chatMessageService.saveMessageForBothRooms(roomId, otherRoomId, messageRequest, userIdx, otherIdx);
   }
+
+
 }

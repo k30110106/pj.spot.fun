@@ -1,26 +1,41 @@
 // pages/ChatListPage.jsx
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Outlet } from 'react-router-dom';
 import { chatApi } from '../api/chatApi';
 import { useAuth } from '../../../common/hook/useAuth';
 
 const ChatListPage = () => {
     const { isAuthenticated, user } = useAuth();
     const [chatRooms, setChatRooms] = useState([]);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchChatRooms = async () => {
             try {
+                if (!isAuthenticated) {
+                    navigate('/login');
+                    return;
+                }
+
                 const response = await chatApi.getChatRoomList();
-                setChatRooms(response.chatRoomList);
+                setChatRooms(response.data.chatRoomList);
             } catch (error) {
-                console.error('채팅방 목록 조회 실패:', error);
+                if (error.response?.status === 401) {
+                    navigate('/login');
+                } else {
+                    setError('채팅방 목록을 불러오는데 실패했습니다.');
+                    console.error('채팅방 목록 조회 실패:', error);
+                }
             }
         };
 
         fetchChatRooms();
-    }, []);
+    }, [isAuthenticated, navigate]);
+
+    if (error) {
+        return <div className="p-4 text-red-500">{error}</div>;
+    }
 
     const handleRoomClick = (otherIdx) => {
         navigate(`/chat/${otherIdx}`);
@@ -50,6 +65,9 @@ const ChatListPage = () => {
                     </div>
                 ))}
             </div>
+            <Outlet />
         </div>
     );
 };
+
+export default ChatListPage;
