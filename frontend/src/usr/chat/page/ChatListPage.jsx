@@ -2,8 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { chatApi } from '../api/chatApi';
+import { useAuth } from '../../../common/hook/useAuth';
 
 const ChatListPage = () => {
+    const { isAuthenticated, user } = useAuth();
     const [chatRooms, setChatRooms] = useState([]);
     const navigate = useNavigate();
 

@@ -2,14 +2,17 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { chatApi } from '../api/chatApi';
+import { useBasic } from '../../../common/context/BasicContext';
 
 const ChatRoomPage = () => {
+    const { userInfo } = useBasic();
     const { otherIdx } = useParams();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [roomInfo, setRoomInfo] = useState(null);
 
     useEffect(() => {
+        if (!userInfo) return; // 인증 체크
         const initializeChat = async () => {
             try {
                 // 채팅방 정보 조회
@@ -33,12 +36,11 @@ const ChatRoomPage = () => {
                 console.error('채팅방 초기화 실패:', error);
             }
         };
-
         initializeChat();
 
         // 컴포넌트 언마운트 시 WebSocket 연결 종료
         return () => chatApi.disconnect();
-    }, [otherIdx]);
+    }, [otherIdx, userInfo]);
 
     const handleSendMessage = () => {
         if (newMessage.trim() && roomInfo) {

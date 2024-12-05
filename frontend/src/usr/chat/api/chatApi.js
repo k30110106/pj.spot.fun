@@ -1,23 +1,29 @@
 // api/chatApi.js
+// api/chatApi.js 수정
+import axios from 'axios';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 
+const API_BASE_URL = process.env.REACT_APP_API_ROOT;
 let stompClient = null;
 
 export const chatApi = {
-    // WebSocket 연결 설정
     connectWebSocket: (userRoomId, otherRoomId, onMessageReceived) => {
-        const socket = new SockJS('http://localhost:8080/ws');
+        const socket = new SockJS(`${API_BASE_URL}/ws`);
         stompClient = Stomp.over(socket);
 
-        stompClient.connect({}, () => {
-            // 자신의 채팅방 구독
+        // 토큰 추가
+        const accessToken = localStorage.getItem("access_token");
+        const headers = {
+            Authorization: `Bearer ${accessToken}`
+        };
+
+        stompClient.connect(headers, () => {
             stompClient.subscribe(`/sub/user/${userRoomId}`, (message) => {
                 const receivedMessage = JSON.parse(message.body);
                 onMessageReceived(receivedMessage);
             });
 
-            // 상대방의 채팅방 구독
             stompClient.subscribe(`/sub/other/${otherRoomId}`, (message) => {
                 const receivedMessage = JSON.parse(message.body);
                 onMessageReceived(receivedMessage);
@@ -25,16 +31,12 @@ export const chatApi = {
         });
     },
 
-    // 채팅방 목록 조회
     getChatRoomList: async () => {
-        const response = await fetch('/api/chat/');
-        return response.json();
+        return await axios.get(`${API_BASE_URL}/api/chat/`);
     },
 
-    // 특정 사용자와의 채팅 내역 조회
     getChatRoom: async (otherIdx) => {
-        const response = await fetch(`/api/chat/${otherIdx}`);
-        return response.json();
+        return await axios.get(`${API_BASE_URL}/api/chat/${otherIdx}`);
     },
 
     // 메시지 전송
