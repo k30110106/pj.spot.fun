@@ -51,12 +51,11 @@ export const feedLikeApi = async (param) => {
 
 // 댓글 작성
 export const postCommentApi = async (param) => {
-  const { idx, content } = param;
   const config = {
-    params: { content },
+    params: { ...param },
   };
 
-  const res = await axios.post(`/api/usr/feed/comment/${idx}`, null, config);
+  const res = await axios.post(`/api/usr/feed/comment`, null, config);
   return res.data;
 };
 
@@ -66,10 +65,31 @@ export const getHashtagApi = async () => {
   return res.data;
 };
 
-export const postCommentReplyApi = async (param) => {
+// 답글 작성
+export const postReplyApi = async (param) => {
   const config = {
     params: { ...param },
   };
   const res = await axios.post(`/api/usr/feed/comment/reply`, null, config);
+  return res.data;
+};
+
+// 댓글+답글 수정
+export const putCommentApi = async (param) => {
+  const config = {
+    params: { ...param },
+  };
+  const res = await axios.put(`/api/usr/feed/comment`, null, config);
+  return res.data;
+};
+
+// 댓글+답글 삭제
+export const deleteCommentApi = async (param) => {
+  const config = {
+    params: { ...param },
+    // data: { ...param },
+  };
+  console.log(config);
+  const res = await axios.delete(`/api/usr/feed/comment`, config);
   return res.data;
 };

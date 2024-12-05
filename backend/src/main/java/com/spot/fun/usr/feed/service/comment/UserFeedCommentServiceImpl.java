@@ -30,7 +30,7 @@ public class UserFeedCommentServiceImpl implements UserFeedCommentService {
 
   @Override
   public List<FeedCommentDTO> getCommentList(Long idx, Long userIdx) {
-    return userFeedCommentRepository.findFeedCommentWithReplyList(idx).stream()
+    return userFeedCommentRepository.findByFeedIdxAndDelYnFalseAndParentIdxIsNull(idx).stream()
             .map((comment) -> {
               boolean likedYn = !Objects.isNull(userIdx) && userFeedUtil.isFeedCommentLikedYn(comment.getIdx(), userIdx);
               return FeedCommentDTO.builder()
@@ -45,20 +45,20 @@ public class UserFeedCommentServiceImpl implements UserFeedCommentService {
                               .build()
                       )
                       .replyList(
-                              comment.getReplyList().stream()
-                                      .map((reply) -> {
-                                        return FeedCommentDTO.builder()
-                                                .idx(reply.getIdx())
-                                                .content(reply.getContent())
-                                                .regDateStr(userFeedUtil.getDateFormat(reply.getRegDate()))
-                                                .user(UserDTO.builder()
-                                                        .idx(reply.getUser().getIdx())
-                                                        .userId(reply.getUser().getUserId())
-                                                        .nickname(reply.getUser().getNickname())
-                                                        .build()
-                                                )
-                                                .build();
-                                      }).toList()
+                              userFeedCommentRepository.findByParentIdxAndDelYnFalse(comment.getIdx()).stream()
+                                      .map((reply) ->
+                                              FeedCommentDTO.builder()
+                                                      .idx(reply.getIdx())
+                                                      .content(reply.getContent())
+                                                      .regDateStr(userFeedUtil.getDateFormat(reply.getRegDate()))
+                                                      .user(UserDTO.builder()
+                                                              .idx(reply.getUser().getIdx())
+                                                              .userId(reply.getUser().getUserId())
+                                                              .nickname(reply.getUser().getNickname())
+                                                              .build()
+                                                      )
+                                                      .build()
+                                      ).toList()
                       )
                       .build();
             }).toList();
@@ -68,10 +68,9 @@ public class UserFeedCommentServiceImpl implements UserFeedCommentService {
   @Override
   public FeedCommentDTO insert(FeedCommentDTO feedCommentDTO) {
     try {
-      Long userIdx = feedCommentDTO.getUser().getIdx();
-      Feed feed = userFeedRepository.findByIdxAndDelYnFalse(feedCommentDTO.getIdx())
+      Feed feed = userFeedRepository.findByIdxAndDelYnFalse(feedCommentDTO.getFeedIdx())
               .orElseThrow(IllegalArgumentException::new);
-      User user = userRepository.findByIdx(userIdx)
+      User user = userRepository.findByIdx(feedCommentDTO.getUser().getIdx())
               .orElseThrow(IllegalArgumentException::new);
 
       FeedComment comment = userFeedCommentRepository.save(
@@ -99,6 +98,7 @@ public class UserFeedCommentServiceImpl implements UserFeedCommentService {
     }
   }
 
+  @Transactional
   @Override
   public FeedCommentDTO insertReply(FeedCommentDTO feedCommentDTO) {
     try {
@@ -128,10 +128,58 @@ public class UserFeedCommentServiceImpl implements UserFeedCommentService {
                       //.name(comment.getUser().getName())
                       .nickname(reply.getUser().getNickname())
                       .build())
-              .parentIdx(feedComment.getIdx())
+              .parentIdx(reply.getParent().getIdx())
               .build();
     } catch (Exception e) {
       log.info("comment insertReply error .. {}", e.getMessage());
+      return new FeedCommentDTO();
+    }
+  }
+
+  @Transactional
+  @Override
+  public FeedCommentDTO update(FeedCommentDTO feedCommentDTO) {
+    try {
+      FeedComment feedComment = userFeedCommentRepository.findByIdxAndDelYnFalse(feedCommentDTO.getIdx())
+              .orElseThrow(IllegalArgumentException::new);
+      feedComment.changeContent(feedCommentDTO.getContent());
+
+      FeedComment update = userFeedCommentRepository.save(feedComment);
+
+      return FeedCommentDTO.builder()
+              .idx(update.getIdx())
+              .content(update.getContent())
+              .regDateStr(userFeedUtil.getDateFormat(update.getRegDate()))
+              .likedYn(false)
+              .user(UserDTO.builder()
+                      .idx(update.getUser().getIdx())
+                      .userId(update.getUser().getUserId())
+                      //.name(comment.getUser().getName())
+                      .nickname(update.getUser().getNickname())
+                      .build())
+              //.parentIdx(ObjectUtils.isEmpty(feedCommentDTO.getParentIdx()) ? null : feedCommentDTO.getParentIdx())
+              .build();
+    } catch (Exception e) {
+      log.info("comment update error .. {}", e.getMessage());
+      return new FeedCommentDTO();
+    }
+  }
+
+  @Transactional
+  @Override
+  public FeedCommentDTO delete(FeedCommentDTO feedCommentDTO) {
+    try {
+      FeedComment feedComment = userFeedCommentRepository.findByIdxAndDelYnFalse(feedCommentDTO.getIdx())
+              .orElseThrow(IllegalArgumentException::new);
+      feedComment.changeDelYn(true); // 삭제
+
+      FeedComment delete = userFeedCommentRepository.save(feedComment);
+
+      return FeedCommentDTO.builder()
+              .idx(delete.getIdx())
+              .build();
+    } catch (Exception e) {
+      log.info("comment delete error .. {}", e.getMessage());
       return new FeedCommentDTO();
     }
   }

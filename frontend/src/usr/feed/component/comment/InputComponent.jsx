@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const InputComponent = ({ handleCommentEvent }) => {
+const InputComponent = ({ handleCommentEvent, content }) => {
   const [commentText, setCommentText] = useState("");
   const submitComment = () => {
     if (commentText.trim().length < 1) {
@@ -16,6 +16,12 @@ const InputComponent = ({ handleCommentEvent }) => {
       submitComment();
     }
   };
+
+  useEffect(() => {
+    if (content) {
+      setCommentText(content);
+    }
+  }, [content]);
 
   return (
     <div className="mt-2 flex space-x-3 w-full">

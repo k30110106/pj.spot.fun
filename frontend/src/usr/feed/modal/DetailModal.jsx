@@ -1,14 +1,16 @@
 import { useEffect, useState, useCallback } from "react";
 import {
+  deleteCommentApi,
   getFeedCommentListApi,
   postCommentApi,
-  postCommentReplyApi,
+  postReplyApi,
+  putCommentApi,
 } from "../api/FeedApi";
 import ImageComponent from "../component/item/ImageComponent";
 import ProfileComponent from "../component/item/ProfileComponent";
 import ContentComponent from "../component/item/ContentComponent";
 import ButtonComponent from "../component/item/ButtonComponent";
-import ListComponent from "../component/comment/ListComponent";
+import CommentListComponent from "../component/comment/CommentListComponent";
 import InputComponent from "../component/comment/InputComponent";
 import { useBasic } from "../../../common/context/BasicContext";
 
@@ -39,7 +41,7 @@ const DetailModal = ({
   const handleCommentEvent = useCallback(
     (content) => {
       const param = {
-        idx: feed.idx,
+        feedIdx: feed.idx,
         content,
       };
 
@@ -57,14 +59,61 @@ const DetailModal = ({
     [feed.idx]
   );
 
+  // 댓글 수정
+  const handleCommentModifyEvent = (param) => {
+    putCommentApi(param)
+      .then((data) => {
+        if (data) {
+          setCommentList((prevList) => {
+            return prevList.map((item) => {
+              if (item.idx === data.idx) {
+                return { ...item, content: data.content };
+              }
+              return { ...item };
+            });
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // 댓글 삭제
+  const handleCommentDeleteEvent = (idx) => {
+    deleteCommentApi({ idx: idx })
+      .then((data) => {
+        if (data) {
+          setCommentList((prevList) => {
+            return prevList.filter((item) => item.idx !== data.idx);
+          });
+          handleCommentCountEvent(feed.idx, "delete");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   // 답글 등록
   const handleReplyEvent = useCallback(
     (obj) => {
       const param = { ...obj, feedIdx: feed.idx };
-      console.log(param);
-      postCommentReplyApi(param)
+      //console.log(param);
+      postReplyApi(param)
         .then((data) => {
-          console.log(data);
+          setCommentList((prevList) => {
+            return prevList.map((item) => {
+              if (item.idx === data.parentIdx) {
+                return {
+                  ...item,
+                  replyList:
+                    item.replyList != null ? [...item.replyList, data] : [data],
+                };
+              }
+              return item;
+            });
+          });
         })
         .catch((err) => {
           console.log(err);
@@ -72,6 +121,62 @@ const DetailModal = ({
     },
     [feed.idx]
   );
+
+  // 답글 수정
+  const handleReplyModifyEvent = (obj) => {
+    const param = { ...obj, feedIdx: feed.idx };
+    putCommentApi(param)
+      .then((data) => {
+        //console.log(data);
+        if (data) {
+          setCommentList((prevList) => {
+            return prevList.map((comment) => {
+              if (comment.idx === param.parentIdx) {
+                return {
+                  ...comment,
+                  replyList: comment.replyList.map((reply) => {
+                    if (reply.idx === data.idx) {
+                      return { ...reply, content: data.content };
+                    }
+                    return { ...reply };
+                  }),
+                };
+              }
+              return { ...comment };
+            });
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // 답글 삭제
+  const handleReplyDeleteEvent = (idx, parentIdx) => {
+    deleteCommentApi({ idx: idx })
+      .then((data) => {
+        //console.log(data);
+        if (data) {
+          setCommentList((prevList) => {
+            return prevList.map((comment) => {
+              if (comment.idx === parentIdx) {
+                return {
+                  ...comment,
+                  replyList: comment.replyList.filter(
+                    (reply) => reply.idx !== idx
+                  ),
+                };
+              }
+              return { ...comment };
+            });
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
@@ -120,9 +225,13 @@ const DetailModal = ({
 
           <div className="border border-gray-200 overflow-y-auto p-4 space-y-4 h-full">
             {/* 댓글 목록 + 등록인풋 */}
-            <ListComponent
+            <CommentListComponent
               commentList={commentList}
               handleReplyEvent={handleReplyEvent}
+              handleCommentModifyEvent={handleCommentModifyEvent}
+              handleCommentDeleteEvent={handleCommentDeleteEvent}
+              handleReplyModifyEvent={handleReplyModifyEvent}
+              handleReplyDeleteEvent={handleReplyDeleteEvent}
             />
           </div>
 

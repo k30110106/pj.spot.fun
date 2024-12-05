@@ -33,18 +33,15 @@ public class UserFeedCommentController {
     return userFeedCommentService.getCommentList(idx, loginUserIdx);
   }
 
-  @PostMapping("/{idx}")
-  public ResponseEntity<?> insertComment(HttpServletRequest request, HttpServletResponse response,
-                                  @PathVariable("idx") Long idx, FeedCommentDTO feedCommentDTO) {
+  @PostMapping("")
+  public ResponseEntity<?> insertComment(HttpServletRequest request, HttpServletResponse response, FeedCommentDTO feedCommentDTO) {
     UserDTO loginUserDTO = authTokenUtil.validateTokenAndGetUserDTO(request, response);
     Long loginUserIdx = loginUserDTO.getIdx();
     if(Objects.isNull(loginUserIdx)) { // 로그인상태가 아님!!
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
     }
-    //loginUserDTO.setIdx(1L);
     feedCommentDTO.setUser(loginUserDTO);
 
-    feedCommentDTO.setFeedIdx(idx);
     FeedCommentDTO result = userFeedCommentService.insert(feedCommentDTO);
     if(ObjectUtils.isEmpty(result)) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
@@ -60,8 +57,42 @@ public class UserFeedCommentController {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
     feedCommentDTO.setUser(loginUserDTO);
+
     FeedCommentDTO result = userFeedCommentService.insertReply(feedCommentDTO);
 
+    return ResponseEntity.status(HttpStatus.CREATED).body(result);
+  }
+
+  @PutMapping("")
+  public ResponseEntity<?> updateComment(HttpServletRequest request, HttpServletResponse response, FeedCommentDTO feedCommentDTO) {
+    UserDTO loginUserDTO = authTokenUtil.validateTokenAndGetUserDTO(request, response);
+    Long loginUserIdx = loginUserDTO.getIdx();
+    if(Objects.isNull(loginUserIdx)) { // 로그인상태가 아님!!
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+    }
+    feedCommentDTO.setUser(loginUserDTO);
+
+    FeedCommentDTO result = userFeedCommentService.update(feedCommentDTO);
+    if(ObjectUtils.isEmpty(result)) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }
+    return ResponseEntity.status(HttpStatus.CREATED).body(result);
+  }
+
+  @DeleteMapping("")
+  public ResponseEntity<?> deleteComment(HttpServletRequest request, HttpServletResponse response,
+                                         FeedCommentDTO feedCommentDTO) {
+    UserDTO loginUserDTO = authTokenUtil.validateTokenAndGetUserDTO(request, response);
+    Long loginUserIdx = loginUserDTO.getIdx();
+    if(Objects.isNull(loginUserIdx)) { // 로그인상태가 아님!!
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+    }
+    feedCommentDTO.setUser(loginUserDTO);
+
+    FeedCommentDTO result = userFeedCommentService.delete(feedCommentDTO);
+    if(ObjectUtils.isEmpty(result)) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }
     return ResponseEntity.status(HttpStatus.CREATED).body(result);
   }
 }

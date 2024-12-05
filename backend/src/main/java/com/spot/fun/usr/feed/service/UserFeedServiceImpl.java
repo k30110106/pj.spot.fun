@@ -90,7 +90,7 @@ public class UserFeedServiceImpl implements UserFeedService {
                       )
                       .likedYn(likedYn)
                       .likeCount(userFeedLikeRepository.countByFeedIdx(feedIdx))
-                      .commentCount(userFeedCommentRepository.countByFeedIdxAndDelYnFalse(feedIdx))
+                      .commentCount(userFeedCommentRepository.countByFeedIdxAndDelYnFalseAndParentIdxIsNull(feedIdx))
                       .feedHashtags(
                               userFeedHashtagRepository.findByFeedIdx(feedIdx).stream()
                                       .map((tag) ->
@@ -155,7 +155,7 @@ public class UserFeedServiceImpl implements UserFeedService {
             )
             .likedYn(likedYn)
             .likeCount(userFeedLikeRepository.countByFeedIdx(idx))
-            .commentCount(userFeedCommentRepository.countByFeedIdxAndDelYnFalse(idx))
+            .commentCount(userFeedCommentRepository.countByFeedIdxAndDelYnFalseAndParentIdxIsNull(idx))
             .feedHashtags(
                     userFeedHashtagRepository.findByFeedIdx(idx).stream()
                             .map((tag) ->

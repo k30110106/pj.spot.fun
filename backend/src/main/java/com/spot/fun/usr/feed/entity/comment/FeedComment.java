@@ -41,7 +41,8 @@ public class FeedComment {
   @JoinColumn(name = "user_idx")
   private User user;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+//  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "feed_idx")
   private Feed feed;
 
@@ -72,5 +73,17 @@ public class FeedComment {
     if (modDate == null) {
       modDate = LocalDateTime.now();
     }
+  }
+
+  public void changeContent(String content) {
+    this.content = content;
+  }
+
+  public void changeDelYn(boolean delYn) {
+    this.delYn = delYn;
+  }
+
+  public void changeParent(FeedComment parent) {
+    this.parent = parent;
   }
 }
