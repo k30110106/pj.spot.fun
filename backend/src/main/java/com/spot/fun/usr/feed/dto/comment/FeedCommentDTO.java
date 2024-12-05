@@ -1,11 +1,11 @@
 package com.spot.fun.usr.feed.dto.comment;
 
 import com.spot.fun.usr.feed.dto.FeedDTO;
-import com.spot.fun.usr.feed.entity.comment.FeedComment;
 import com.spot.fun.usr.user.dto.UserDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 //@Data
 @Getter
@@ -25,5 +25,6 @@ public class FeedCommentDTO {
   private Long userIdx;
   private Boolean likedYn;
   private Long feedIdx;
-
+  private Long parentIdx;
+  private List<FeedCommentDTO> replyList;
 }

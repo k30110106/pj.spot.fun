@@ -30,31 +30,45 @@ public class UserFeedCommentServiceImpl implements UserFeedCommentService {
 
   @Override
   public List<FeedCommentDTO> getCommentList(Long idx, Long userIdx) {
-    return userFeedCommentRepository.findByFeedIdxAndDelYnFalse(idx).stream()
+    return userFeedCommentRepository.findFeedCommentWithReplyList(idx).stream()
             .map((comment) -> {
-                      boolean likedYn = !Objects.isNull(userIdx) && userFeedUtil.isFeedCommentLikedYn(comment.getIdx(), userIdx);
-                      return FeedCommentDTO.builder()
-                              .idx(comment.getIdx())
-                              .content(comment.getContent())
-                              .regDateStr(userFeedUtil.getDateFormat(comment.getRegDate()))
-                              .likedYn(likedYn)
-                              .user(UserDTO.builder()
-                                      .idx(comment.getUser().getIdx())
-                                      .userId(comment.getUser().getUserId())
-                                      //.name(comment.getUser().getName())
-                                      .nickname(comment.getUser().getNickname())
-                                      .build())
-                              .build();
-                    }
-            ).toList();
+              boolean likedYn = !Objects.isNull(userIdx) && userFeedUtil.isFeedCommentLikedYn(comment.getIdx(), userIdx);
+              return FeedCommentDTO.builder()
+                      .idx((comment.getIdx()))
+                      .content(comment.getContent())
+                      .regDateStr(userFeedUtil.getDateFormat(comment.getRegDate()))
+                      .likedYn(likedYn)
+                      .user(UserDTO.builder()
+                              .idx(comment.getUser().getIdx())
+                              .userId(comment.getUser().getUserId())
+                              .nickname(comment.getUser().getNickname())
+                              .build()
+                      )
+                      .replyList(
+                              comment.getReplyList().stream()
+                                      .map((reply) -> {
+                                        return FeedCommentDTO.builder()
+                                                .idx(reply.getIdx())
+                                                .content(reply.getContent())
+                                                .regDateStr(userFeedUtil.getDateFormat(reply.getRegDate()))
+                                                .user(UserDTO.builder()
+                                                        .idx(reply.getUser().getIdx())
+                                                        .userId(reply.getUser().getUserId())
+                                                        .nickname(reply.getUser().getNickname())
+                                                        .build()
+                                                )
+                                                .build();
+                                      }).toList()
+                      )
+                      .build();
+            }).toList();
   }
 
   @Transactional
   @Override
   public FeedCommentDTO insert(FeedCommentDTO feedCommentDTO) {
-    Long userIdx = feedCommentDTO.getUser().getIdx();
-
     try {
+      Long userIdx = feedCommentDTO.getUser().getIdx();
       Feed feed = userFeedRepository.findByIdxAndDelYnFalse(feedCommentDTO.getIdx())
               .orElseThrow(IllegalArgumentException::new);
       User user = userRepository.findByIdx(userIdx)
@@ -81,6 +95,43 @@ public class UserFeedCommentServiceImpl implements UserFeedCommentService {
               .build();
     } catch (Exception e) {
       log.info("comment insert error .. {}", e.getMessage());
+      return new FeedCommentDTO();
+    }
+  }
+
+  @Override
+  public FeedCommentDTO insertReply(FeedCommentDTO feedCommentDTO) {
+    try {
+      Feed feed = userFeedRepository.findByIdxAndDelYnFalse(feedCommentDTO.getFeedIdx())
+              .orElseThrow(IllegalArgumentException::new);
+      User user = userRepository.findByIdx(feedCommentDTO.getUser().getIdx())
+              .orElseThrow(IllegalArgumentException::new);
+      FeedComment feedComment = userFeedCommentRepository.findByIdxAndDelYnFalse(feedCommentDTO.getParentIdx())
+              .orElseThrow(IllegalArgumentException::new);
+
+      FeedComment reply = userFeedCommentRepository.save(
+              FeedComment.builder()
+                      .content(feedCommentDTO.getContent())
+                      .feed(feed)
+                      .user(user)
+                      .parent(feedComment)
+                      .build());
+
+      return FeedCommentDTO.builder()
+              .idx(reply.getIdx())
+              .content(reply.getContent())
+              .regDateStr(userFeedUtil.getDateFormat(reply.getRegDate()))
+              .likedYn(false)
+              .user(UserDTO.builder()
+                      .idx(reply.getUser().getIdx())
+                      .userId(reply.getUser().getUserId())
+                      //.name(comment.getUser().getName())
+                      .nickname(reply.getUser().getNickname())
+                      .build())
+              .parentIdx(feedComment.getIdx())
+              .build();
+    } catch (Exception e) {
+      log.info("comment insertReply error .. {}", e.getMessage());
       return new FeedCommentDTO();
     }
   }

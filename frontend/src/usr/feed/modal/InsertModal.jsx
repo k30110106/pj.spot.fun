@@ -8,7 +8,7 @@ import ContentComponent from "../component/insert/ContentComponent";
 import HashtagComponent from "../component/insert/HashtagComponent";
 
 const InsertModal = ({ closeInsertModal }) => {
-  // 전역 값
+  // 전역 값 1111
   const { userInfo } = useBasic();
   const userIdx = userInfo ?? null;
 

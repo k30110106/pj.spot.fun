@@ -65,3 +65,11 @@ export const getHashtagApi = async () => {
   const res = await axios.get(`/api/usr/feed/hashtag`);
   return res.data;
 };
+
+export const postCommentReplyApi = async (param) => {
+  const config = {
+    params: { ...param },
+  };
+  const res = await axios.post(`/api/usr/feed/comment/reply`, null, config);
+  return res.data;
+};

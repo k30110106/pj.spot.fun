@@ -1,5 +1,9 @@
 import { useEffect, useState, useCallback } from "react";
-import { getFeedCommentListApi, postCommentApi } from "../api/FeedApi";
+import {
+  getFeedCommentListApi,
+  postCommentApi,
+  postCommentReplyApi,
+} from "../api/FeedApi";
 import ImageComponent from "../component/item/ImageComponent";
 import ProfileComponent from "../component/item/ProfileComponent";
 import ContentComponent from "../component/item/ContentComponent";
@@ -33,10 +37,10 @@ const DetailModal = ({
 
   // 댓글 등록
   const handleCommentEvent = useCallback(
-    (targetContent) => {
+    (content) => {
       const param = {
         idx: feed.idx,
-        content: targetContent,
+        content,
       };
 
       postCommentApi(param)
@@ -45,6 +49,22 @@ const DetailModal = ({
             setCommentList((prevCommentList) => [...prevCommentList, data]);
             handleCommentCountEvent(feed.idx, "new");
           }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    [feed.idx]
+  );
+
+  // 답글 등록
+  const handleReplyEvent = useCallback(
+    (obj) => {
+      const param = { ...obj, feedIdx: feed.idx };
+      console.log(param);
+      postCommentReplyApi(param)
+        .then((data) => {
+          console.log(data);
         })
         .catch((err) => {
           console.log(err);
@@ -100,10 +120,13 @@ const DetailModal = ({
 
           <div className="border border-gray-200 overflow-y-auto p-4 space-y-4 h-full">
             {/* 댓글 목록 + 등록인풋 */}
-            <ListComponent commentList={commentList} />
+            <ListComponent
+              commentList={commentList}
+              handleReplyEvent={handleReplyEvent}
+            />
           </div>
 
-          <div className="flex space-x-3 border border-gray-200 justify-end w-full">
+          <div className="flex justify-center w-full">
             {/*댓글 입력 + 등록*/}
             {userInfo != null && (
               <InputComponent handleCommentEvent={handleCommentEvent} />

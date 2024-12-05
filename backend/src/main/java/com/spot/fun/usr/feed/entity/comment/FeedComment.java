@@ -8,9 +8,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "tbl_feed_comment")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -40,18 +41,23 @@ public class FeedComment {
   @JoinColumn(name = "user_idx")
   private User user;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "feed_idx")
   private Feed feed;
 
-  @Column(name = "parent_idx")
-  private Long parentIdx;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "parent_idx")
+  private FeedComment parent;
+
+  @OneToMany(mappedBy = "parent")
+  private List<FeedComment> replyList = new ArrayList<>(); // 대댓글 목록;
 
   @Builder
-  public FeedComment(String content, Feed feed, User user) {
+  public FeedComment(String content, Feed feed, User user, FeedComment parent) {
     this.content = content;
     this.feed = feed;
     this.user = user;
+    this.parent = parent;
   }
 
   @PrePersist

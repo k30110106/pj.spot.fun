@@ -7,4 +7,5 @@ import java.util.List;
 public interface UserFeedCommentService {
     List<FeedCommentDTO> getCommentList(Long idx, Long userIdx);
     FeedCommentDTO insert(FeedCommentDTO feedCommentDTO);
+    FeedCommentDTO insertReply(FeedCommentDTO feedCommentDTO);
 }
