@@ -4,41 +4,28 @@ import com.spot.fun.usr.course.model.DateCourse;
 import com.spot.fun.usr.course.repository.DateCourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 @Service
 public class DateCourseService {
+
     @Autowired
-    private DateCourseRepository repository;
+    private DateCourseRepository dateCourseRepository;
 
-    private final Path root = Paths.get("uploads");
-
-    public List<DateCourse> getDateCourses(String location, int ageGroup) {
-        return repository.findByLocationOrAgeGroup(location, ageGroup);
+    // 코스를 추가하는 메소드
+    public void addCourse(DateCourse dateCourse) {
+        // 유효성 검사나 추가적인 로직이 필요하면 여기에 추가
+        dateCourseRepository.save(dateCourse);  // 코스 저장
     }
 
-    public List<DateCourse> getFixedDateCourses() {
-        return repository.findByFixed(true);
+    // 모든 코스 조회
+    public List<DateCourse> getAllCourses() {
+        return dateCourseRepository.findAll();
     }
 
-    public DateCourse saveDateCourse(DateCourse dateCourse, MultipartFile image) throws IOException {
-        if (!Files.exists(root)) {
-            Files.createDirectories(root);
-        }
-
-        if (image != null && !image.isEmpty()) {
-            String fileName = image.getOriginalFilename();
-            Path filePath = root.resolve(fileName);
-            Files.copy(image.getInputStream(), filePath);
-            dateCourse.setImageUrl(filePath.toString());
-        }
-
-        return repository.save(dateCourse);
+    // 특정 코스 조회
+    public DateCourse getCourseById(Long id) {
+        return dateCourseRepository.findById(id).orElse(null);
     }
 }

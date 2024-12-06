@@ -8,12 +8,13 @@ import { ReactComponent as MakeCourse } from '../icons/make-course.svg'
 import { ReactComponent as Feed } from '../icons/feed.svg';
 import { Link } from 'react-router-dom';
 
+// Fun Menu
 const categories = [
   { name: '맛집', img: <FoodFork />, path: '/restaurant' },
   { name: '관광', img: <HomeState />, path: '/travle' },
   { name: '숙소', img: <Pack />, path: '/accommodation' },
-  { name: '펀추천코스', img: <LikeSpot />, path: '/recommended-courses' },
-  { name: '코스만들기', img: <MakeCourse />, path: '/create-course' },
+  { name: '펀추천코스', img: <LikeSpot />, path: '/datecourses' },
+  { name: '코스만들기', img: <MakeCourse />, path: '/add-course' },
   { name: '피드', img: <Feed />, path: '/feed' },
   { name: '게시판', img: <FoodFork />, path: '/board' },
   //   { name: '축제', icon: '🎉' },

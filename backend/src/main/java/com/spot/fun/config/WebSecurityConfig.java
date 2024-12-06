@@ -20,6 +20,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -27,6 +31,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.io.IOException;
@@ -53,58 +58,62 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         return http
-                .authorizeHttpRequests((auth) -> auth
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))  // CORS 설정
+                .csrf(csrf -> csrf.disable())  // CSRF 비활성화
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션방식 -> JWT 사용
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/usr/mypage/**").hasAuthority("USER")
+                        .requestMatchers("/api/usr/datecourse/public", "api/usr/datecourse/user").permitAll()
                         .requestMatchers(PERMITTED_PATHS).permitAll()
-                        .anyRequest().authenticated()
-                )
-                .cors((auth) -> auth
-                        .configurationSource(corsConfigurationSource())
-                )
-                .csrf((auth) -> auth
-                        .disable()
-                )
-                .sessionManagement((auth) -> auth // 세션방식 -> jwt 사용
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2Login((oauth2) -> oauth2
-                        .userInfoEndpoint(userInfo ->
-                                userInfo.userService(customOAuth2UserService) // 최신 방식 적용
-                        )
-                        .successHandler(oAuth2AuthenticationSuccessHandler()) // OAuth2 성공 핸들러 추가
-                        .failureHandler(oAuth2AuthenticationFailureHandler())
-                )
-                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                        .anyRequest().authenticated())  // 나머지 경로는 인증 필요
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))  // OAuth2 로그인 설정
+                        .successHandler(oAuth2AuthenticationSuccessHandler())  // 로그인 성공 시 동작
+                        .failureHandler(oAuth2AuthenticationFailureHandler()))  // 로그인 실패 시 동작
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)  // JWT 필터 추가
                 .build();
     }
 
+    // CORS 설정
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.addAllowedOrigin("http://localhost:3000"); // 허용 origin 지정
-        configuration.addAllowedOrigin("http://localhost:3001"); // 추가 origin
+        // 허용하는 Origin 설정
+        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("http://localhost:3001");
 
-        configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE")); // 클러라이언트 요청허용 범위설정
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type")); // HTTP헤더 설정(인증,인가,컨텐츠타입 등 클라이언트에서 서버로 요청할 때 사용가능 범위설정)
-        configuration.setAllowCredentials(true); // 쿠키,인증정보 등 요청허용 설정
+        // 요청 방식 설정
+        configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE"));
 
+        // 허용할 HTTP 헤더 설정
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+
+        // 인증 정보 허용
+        configuration.setAllowCredentials(true);
+
+        // 모든 경로에 대해 CORS 정책 적용
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // 모든경로에 대하여 위 설정을 적용
 
         return source;
     }
 
+    // BCryptPasswordEncoder Bean 설정
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // AuthenticationManager Bean 설정
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    // OAuth2 로그인 실패 핸들러
     @Bean
     public AuthenticationFailureHandler oAuth2AuthenticationFailureHandler() {
         return (request, response, exception) -> {
@@ -112,6 +121,7 @@ public class WebSecurityConfig {
         };
     }
 
+    // OAuth2 로그인 성공 핸들러
     @Bean
     public SimpleUrlAuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
         return new SimpleUrlAuthenticationSuccessHandler() {
