@@ -48,6 +48,7 @@ const LoginComponent = () => {
     const formData = new FormData();
     formData.append("userId", userId);
     formData.append("password", password);
+    formData.append("provider", "LOCAL"); // 자체 로그인 기본값
 
     try {
       const result = await postLoginApi(formData);

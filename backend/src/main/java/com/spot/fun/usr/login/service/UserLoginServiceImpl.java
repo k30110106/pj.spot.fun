@@ -37,6 +37,21 @@ public class UserLoginServiceImpl implements UserLoginService {
         User user = (User) authentication.getPrincipal();
         Long userIdx = user.getIdx();
 
+//        // 자체 로그인 시 email 필드가 null일 수 있으므로 기본값 설정
+//        if (user.getProvider() == null || "LOCAL".equalsIgnoreCase(user.getProvider())) {
+//            log.info("LOCAL login detected for userId={}", user.getUserId());
+//            if (user.getEmail() == null) {
+//                user = User.builder()
+//                        .idx(user.getIdx())
+//                        .userId(user.getUserId())
+//                        .nickname(user.getNickname())
+//                        .email("default@local.com") // 기본 email 값 설정
+//                        .provider("LOCAL") // LOCAL 로그인
+//                        .userRole(user.getUserRole())
+//                        .build();
+//            }
+//        }
+
         String accessToken = jwtTokenProvider.generateAccessToken(user);
         String refreshToken = jwtTokenProvider.generateRefreshToken(user);
 

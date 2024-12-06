@@ -5,6 +5,7 @@ axios.defaults.baseURL = API_BASE_URL;
 axios.defaults.withCredentials = true; // 쿠키사용여부 설정
 
 export const postLoginApi = async (param) => {
+  console.log("Login request payload:", param); // 요청 데이터 확인
   try {
     const res = await axios.post(`/api/usr/login/login`, param, {
       headers: {

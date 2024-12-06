@@ -17,7 +17,7 @@ const LoginSuccessPage = lazy(() =>
 const MyPage = lazy(() => import("../../usr/mypage/page/MyPage"));
 const SignupPage = lazy(() => import("../../usr/signup/page/SignupPage"));
 const FeedIndexPage = lazy(() => import("../../usr/feed/page/IndexPage"));
-const CoursePage = lazy(() => import("../../usr/course/page/CourseListpage"));
+// const CoursePage = lazy(() => import("../../usr/course/page/CourseListpage"));
 const BoardIndexPage = lazy(() =>
   import("../../usr/board/page/BoardIndexPage")
 );

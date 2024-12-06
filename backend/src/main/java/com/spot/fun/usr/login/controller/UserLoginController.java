@@ -28,7 +28,17 @@ public class UserLoginController {
   @PostMapping("/login")
   public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletResponse response) {
     try {
+      // 자체 로그인 요청 처리
+      if ("LOCAL".equalsIgnoreCase(userDTO.getProvider())) {
+        log.info("LOCAL login request received: userId={}, provider={}", userDTO.getUserId(), userDTO.getProvider());
+      }
+
       AuthTokenDTO authTokenDTO = userLoginService.doLogin(userDTO);
+
+      log.info("Generated AuthTokenDTO: accessToken={}, refreshToken={}, nickname={}",
+              authTokenDTO.getAccessToken(),
+              authTokenDTO.getRefreshToken(),
+              authTokenDTO.getNickname());
 
       // 쿠키 생성
       authTokenUtil.makeAccessToken(response, authTokenDTO.getAccessToken());

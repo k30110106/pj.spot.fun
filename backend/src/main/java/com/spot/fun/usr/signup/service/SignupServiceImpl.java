@@ -82,8 +82,14 @@ public class SignupServiceImpl implements SignupService {
             .zonecode(userDTO.getZonecode())
             .address(userDTO.getAddress())
             .detaileAdd(userDTO.getDetaileAdd())
+            .provider("LOCAL")
             .userRole(UserRole.ROLE_USER) // 권한 고정
             .build();
+
+    if (user.getUserId() == null || user.getEmail() == null) {
+      log.error("회원가입 실패: 필수 값(userId 또는 email)이 누락되었습니다.");
+      throw new IllegalStateException("User 객체에 누락된 필드가 있습니다.");
+    }
 
     userRepository.save(user);
   }

@@ -67,12 +67,21 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/usr/mypage/**").hasAuthority("USER")
                         .requestMatchers("/api/usr/datecourse/public", "api/usr/datecourse/user").permitAll()
                         .requestMatchers(PERMITTED_PATHS).permitAll()
-                        .anyRequest().authenticated())  // 나머지 경로는 인증 필요
+                        .anyRequest().authenticated()
+                )
+                .cors((auth) -> auth
+                        .configurationSource(corsConfigurationSource())
+                )
+                .csrf((auth) -> auth
+                        .disable()
+                )
+                .sessionManagement((auth) -> auth // 세션방식 -> jwt 사용
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))  // OAuth2 로그인 설정
                         .successHandler(oAuth2AuthenticationSuccessHandler())  // 로그인 성공 시 동작
                         .failureHandler(oAuth2AuthenticationFailureHandler()))  // 로그인 실패 시 동작
-                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)  // JWT 필터 추가
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

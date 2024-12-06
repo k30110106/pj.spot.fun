@@ -98,13 +98,23 @@ public class AuthTokenUtil {
     private User getUser(HttpServletRequest request) {
         try {
             String refreshToken = getRefreshToken(request);
+            if (StringUtils.isBlank(refreshToken)) { // 추가 검증: 리프레시 토큰이 없을 경우
+                log.error("Refresh token is missing or empty.");
+                return null;
+            }
+
             AuthToken authToken = authTokenRepository.findByRefreshToken(refreshToken)
-                    .orElseThrow(() -> new IllegalArgumentException("데이터베이스에서 조회할 수 없는 토큰"));
-            User user = userRepository.findByIdx(authToken.getUserIdx())
-                    .orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 사용자"));
-            return user;
+                    .orElseThrow(() -> new IllegalArgumentException("Cannot find token in the database."));
+
+            if (authToken.getUserIdx() == null) { // 추가 검증: userIdx가 null일 경우
+                log.error("AuthToken has null userIdx. Refresh token: {}", refreshToken);
+                throw new IllegalStateException("AuthToken has invalid userIdx.");
+            }
+
+            return userRepository.findByIdx(authToken.getUserIdx())
+                    .orElseThrow(() -> new IllegalArgumentException("Cannot find user with userIdx: " + authToken.getUserIdx()));
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error getting user: {}", e.getMessage());
             return null;
         }
     }
@@ -140,23 +150,32 @@ public class AuthTokenUtil {
     public UserDTO validateTokenAndGetUserDTO(HttpServletRequest request, HttpServletResponse response) {
         if (validateAccessToken(request)) { // 엑세스 토큰 유효검사
             User user = getUser(request);
+            if (user == null || user.getIdx() == null) { // 추가 검증 로직
+                log.error("Invalid user data: User or User ID is null.");
+                return new UserDTO(); // 빈 객체 반환
+            }
             return UserDTO.fromEntity(user);
         }
 
         if (validateRefreshToken(request)) { // 리프레시 토큰 유효검사
             try {
                 User user = getUser(request);
+                if (user == null || user.getIdx() == null) { // 추가 검증 로직
+                    log.error("Invalid user data: User or User ID is null during refresh token validation.");
+                    return new UserDTO(); // 빈 객체 반환
+                }
                 String newAccessToken = jwtTokenProvider.generateAccessToken(user);
                 makeAccessToken(response, newAccessToken); // 엑세스 토큰 재발급 + 쿠키 추가
                 return UserDTO.fromEntity(user);
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error("Error during refresh token validation: {}", e.getMessage());
                 return new UserDTO();
             }
         }
 
         return new UserDTO();
     }
+
 
     /***
      * 엑세스 토큰 삭제 + 리프레시 토큰 삭제 + 데이터베이스에 저장 된 리프레시토큰 정보 삭제

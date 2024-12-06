@@ -123,6 +123,7 @@ public class User implements UserDetails {
                 .userId(this.userId)
                 .password(this.password)
                 .userRole(this.userRole)
+                .provider(this.provider != null ? this.provider : "LOCAL") // 기본값 설정
                 .build();
     }
 

@@ -44,10 +44,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     String name = extractNameFromProvider(registrationId, attributes);
     String nickname = extractNicknameFromProvider(registrationId, attributes);
 
-    if (email == null) {
-      log.error("OAuth2 provider did not return an email address for registrationId: {}", registrationId);
-      throw new OAuth2AuthenticationException("OAuth2 provider did not return an email address.");
-    }
+//    if (email == null) {
+//      log.error("OAuth2 provider did not return an email address for registrationId: {}", registrationId);
+//      throw new OAuth2AuthenticationException("OAuth2 provider did not return an email address.");
+//    }
 
     Optional<User> userOptional = userRepository.findByEmail(email);
     if (userOptional.isPresent()) {
