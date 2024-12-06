@@ -22,6 +22,7 @@ public class UserDTO {
     private String zonecode;       // 우편번호
     private String address;        // 주소
     private String detaileAdd;     // 상세 주소
+    private String provider;
     private UserRole userRole;
 
     public static UserDTO fromEntity(User user) {

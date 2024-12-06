@@ -46,6 +46,11 @@ public class JwtTokenProvider {
     }
 
     private String makeToken(User user, Date expiry) {
+        if (user == null || user.getUserId() == null || user.getEmail() == null) {
+            log.error("Cannot create token: User or required fields are null.");
+            throw new IllegalArgumentException("Invalid user data for token generation.");
+        }
+
         Date now = new Date();
         return Jwts.builder()
                     .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
@@ -61,10 +66,15 @@ public class JwtTokenProvider {
     }
 
     public boolean validToken(String token) {
+        if (token == null || token.isEmpty()) {
+            log.info("\n======== validToken method fail ========");
+            log.error("Token validation failed: JWT String argument cannot be null or empty.");
+            return false;
+        }
         try {
             Jwts.parser()
-                .setSigningKey(jwtProperties.getSecretKey())
-                .parseClaimsJws(token);
+                    .setSigningKey(jwtProperties.getSecretKey())
+                    .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             log.info("\n======== validToken method fail ========");

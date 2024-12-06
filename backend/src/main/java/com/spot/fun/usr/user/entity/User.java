@@ -58,7 +58,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole userRole = UserRole.ROLE_USER;
 
-    @Column(nullable = false)
+    @Column
     private String provider;
 
     @CreationTimestamp
@@ -89,19 +89,19 @@ public class User implements UserDetails {
     }
 
     // OAuth 전용 최소 생성자 추가
-    public User(String email, UserRole userRole, String provider) {
-        this.email = email;
-        this.userRole = userRole;
-        this.provider = provider;
-        this.userId = email;
-        this.nickname = email.split("@")[0]; // 이메일의 첫 부분을 기본 닉네임으로 설정
-        this.name = "OAuth User"; // 기본값 설정
-        this.birthDate = "0000-00-00"; // 기본값 설정
-        this.phone = "000-0000-0000"; // 기본값 설정
-        this.zonecode = "00000"; // 기본값 설정
-        this.address = "Unknown"; // 기본값 설정
-        this.detaileAdd = "Unknown"; // 기본값 설정
-    }
+//    public User(String email, UserRole userRole, String provider) {
+//        this.email = email;
+//        this.userRole = userRole;
+//        this.provider = provider;
+//        this.userId = email;
+//        this.nickname = email.split("@")[0]; // 이메일의 첫 부분을 기본 닉네임으로 설정
+//        this.name = "OAuth User"; // 기본값 설정
+//        this.birthDate = "0000-00-00"; // 기본값 설정
+//        this.phone = "000-0000-0000"; // 기본값 설정
+//        this.zonecode = "00000"; // 기본값 설정
+//        this.address = "Unknown"; // 기본값 설정
+//        this.detaileAdd = "Unknown"; // 기본값 설정
+//    }
 
     public void updatePassword(String encodedPassword) {
         this.password = encodedPassword;

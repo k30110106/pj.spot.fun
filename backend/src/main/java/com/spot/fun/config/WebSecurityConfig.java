@@ -9,6 +9,7 @@ import com.spot.fun.usr.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,10 +20,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -30,13 +27,15 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
+@Log4j2
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -119,7 +118,16 @@ public class WebSecurityConfig {
             @Override
             protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
                 DefaultOAuth2User oAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
-                String email = (String) oAuth2User.getAttributes().get("email");
+                Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes()); // 수정 가능 Map으로 변환
+                String email = (String) attributes.get("email");
+
+                if (email == null) {
+                    log.error("OAuth2 Success Handler - Email is null, redirecting to error page.");
+                    response.sendRedirect("http://localhost:3000/login-error");
+                    return;
+                }
+
+                log.info("OAuth2 Success Handler - Email: {}", email);
 
                 Optional<User> userOptional = userRepository.findByEmail(email);
                 if (userOptional.isPresent()) {
@@ -131,10 +139,12 @@ public class WebSecurityConfig {
                     authTokenUtil.makeAccessToken(response, accessToken);
                     authTokenUtil.makeRefreshToken(response, refreshToken);
 
+                    log.info("프론트엔드의 login-success 페이지로 리다이렉트...");
                     response.sendRedirect("http://localhost:3000/login-success");
                 } else {
                     // 비회원: 회원가입 페이지로 리다이렉트
-                    response.sendRedirect("http://localhost:3000/signup");
+                    log.info("Redirecting to social-signup for new user: {}", email);
+                    response.sendRedirect("http://localhost:3000/social-signup");
                 }
             }
         };

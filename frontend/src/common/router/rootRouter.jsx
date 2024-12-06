@@ -20,6 +20,9 @@ const CoursePage = lazy(() => import("../../usr/course/page/CourseListPage"));
 const BoardIndexPage = lazy(() =>
   import("../../usr/board/page/BoardIndexPage")
 );
+const SocialSignupPage = lazy(() =>
+  import("../../usr/signup/page/SocialSignupPage")
+);
 // const AddDatePage = lazy(() => import("../../usr/course/page/AddDatePage")); // 수정된 부분
 const ChatListPage = lazy(() => import("../../usr/chat/page/ChatListPage"));
 
@@ -49,6 +52,14 @@ const rootRouter = createBrowserRouter(
       element: (
         <Suspense fallback={Loading}>
           <LoginSuccessPage />
+        </Suspense>
+      ),
+    },
+    {
+      path: "social-signup",
+      element: (
+        <Suspense fallback={Loading}>
+          <SocialSignupPage />
         </Suspense>
       ),
     },
