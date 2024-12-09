@@ -1,6 +1,7 @@
 package com.spot.fun.usr.chat.controller;
 
 import com.spot.fun.usr.chat.dto.ChatMessageRequestDTO;
+import com.spot.fun.usr.chat.dto.ChatRoomListResponseDTO;
 import com.spot.fun.usr.chat.dto.RoomIdPairDTO;
 import com.spot.fun.usr.chat.entity.ChatMessage;
 import com.spot.fun.usr.chat.service.ChatFacadeService;
@@ -12,6 +13,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Log4j2
@@ -22,8 +24,8 @@ public class ChatController {
     private final ChatFacadeService chatFacadeService;
 
     @GetMapping("/")    //채팅방 리스트
-    public Map<String, Object> getChatRoomList() {
-        return Map.of("chatRoomList", chatFacadeService.getChatRoomList());
+    public List<ChatRoomListResponseDTO> getChatRoomList() {
+        return chatFacadeService.getChatRoomList();
     }
 
     @GetMapping("/{otherIdx}")
