@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ChatRoomListResponseDTO {
-//    private Long roomId;
+    private Long roomId;
     private String otherNickname;
     private String recentMessage;
     private java.sql.Timestamp recentMessageTimestamp;
@@ -19,8 +19,8 @@ public class ChatRoomListResponseDTO {
     private String otherProfileImg;
     private String otherPeedUrl;
 
-    public ChatRoomListResponseDTO(String otherNickname, String recentMessage, java.sql.Timestamp recentMessageTimestamp, boolean isRecentMessageRead, String otherProfileImg, String otherFeedUrl) {
-//        this.roomId = roomId;
+    public ChatRoomListResponseDTO(Long roomId, String otherNickname, String recentMessage, java.sql.Timestamp recentMessageTimestamp, boolean isRecentMessageRead, String otherProfileImg, String otherFeedUrl) {
+        this.roomId = roomId;
         this.otherNickname = otherNickname;
         this.recentMessage = recentMessage;
         this.recentMessageTimestamp = recentMessageTimestamp;
