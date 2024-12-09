@@ -1,6 +1,7 @@
 // 슬라이드 기능 추가
 // slide-slick
 import React, { useState } from 'react';
+import {Link} from "react-router-dom";
 
 const SliderComponent = ({ items }) => {
   const itemsPerSlide = 5; // 한 슬라이드에 표시할 이미지 수
@@ -37,12 +38,11 @@ const SliderComponent = ({ items }) => {
                 />
 
                 {/* 호버 시 나타나는 바로가기 버튼 */}
-                <a
-                  href="#"
-                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white p-2 rounded-full opacity-0 hover:opacity-100 transition-opacity duration-300"
+                <Link to={"/{item.title}"}
+                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-black p-2 rounded-full opacity-0 hover:opacity-100 transition-opacity duration-300"
                 >
                   바로가기 &gt;
-                </a>
+                </Link>
               </div>
               <h3 className="text-center mt-2">{item.title}</h3>
             </div>
