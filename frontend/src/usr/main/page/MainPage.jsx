@@ -11,15 +11,17 @@ import Footer from "../../../common/component/Footer";
 const MainPage = () => {
   return (
     // <BasicLayout>
-    <div className="min-w-full">
-      {/* <Header /> */}
-      {/* <HelloComponent /> */}
-      <Banner />
-      <NavigationMenu />
-      <RecommendedCourses />
-      <PopularCourses />
-      <NewUserCourses />
-      {/* <Footer /> */}
+    <div className="custom-cursor">
+      <div className="min-w-full">
+        {/* <Header /> */}
+        {/* <HelloComponent /> */}
+        <Banner />
+        <NavigationMenu />
+        <RecommendedCourses />
+        <PopularCourses />
+        <NewUserCourses />
+        {/* <Footer /> */}
+      </div>
     </div>
     // </BasicLayout>
   );

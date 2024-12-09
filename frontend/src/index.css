@@ -1,3 +1,21 @@
+/* src/index.css 또는 스타일 파일 */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.custom-cursor {
+  @apply cursor-custom;
+}
+
+.custom-cursor:active{
+  @apply cursor-custom-click;
+}
+@layer utilities {
+  .cursor-custom {
+    cursor: url('/public/bono.cur'), auto;
+  }
+
+  .cursor-custom-click {
+    cursor: url('/public/funspot2.cur'), auto;
+  }
+}

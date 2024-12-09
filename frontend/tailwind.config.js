@@ -2,6 +2,7 @@
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
+    darkMode: 'media',
     // screens: {
     //   'tablet': '640px',
     //   // => @media (min-width: 640px) { ... }

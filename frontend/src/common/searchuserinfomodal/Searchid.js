@@ -119,46 +119,54 @@ const Searchid = ({ onClose, focusIdField }) => {
   };
 
   return (
-    <div>
-      <h2>아이디 찾기</h2>
+    <div >
+      <h2 className="flex flex-col justify-center items-center text-2xl font-bold m-5">아이디 찾기</h2>
       {!searchResult ? (
         <>
           <div>
-            <label>이름: </label>
+            <p className="font-bold">이름</p>
             <input
               type="text"
               name="name"
               placeholder="이름"
               onChange={handleInputChange}
+              className="mt-1 p-2 w-52 mb-2 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
             />
             {errors.name && <p style={{ color: "red" }}>{errors.name}</p>}
           </div>
           <div>
-            <label>생년월일: </label>
-            <input type="date" name="birthDate" onChange={handleInputChange} />
+            <p className="font-bold">생년월일</p>
+            <input type="date" name="birthDate" onChange={handleInputChange}
+              className="mt-1 p-2 w-52 mb-2 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"/>
             {errors.birthDate && (
               <p style={{ color: "red" }}>{errors.birthDate}</p>
             )}
           </div>
           <div>
-            <label>이메일: </label>
+            <p className="font-bold">이메일</p>
             <input
               type="email"
               name="email"
+              placeholder="example@naver.com"
               onChange={handleInputChange}
               disabled={isEmailVerified}
+              className="mt-1 p-2 w-52 mb-2 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
             />
             <button
               type="button"
               onClick={handleSendEmailVerification}
               disabled={isEmailVerified}
+              className="bg-custom-cyan rounded-3xl mt-1 ml-2 p-2 w-32 hover:bg-emerald-400"
             >
-              인증 메일 보내기
+              메일 전송
             </button>
             {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}
           </div>
           <div>
-            <label>인증 코드: </label>
+            <p className="font-bold">인증 코드</p>
             <input
               type="text"
               placeholder="인증코드 입력"
@@ -166,16 +174,21 @@ const Searchid = ({ onClose, focusIdField }) => {
               value={verificationCode}
               onChange={(e) => setVerificationCode(e.target.value)}
               disabled={isEmailVerified}
+              className="mt-1 p-2 mb-2 w-52 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
             />
             <button
               type="button"
               onClick={handleVerifyCode}
               disabled={isEmailVerified}
+              className="bg-custom-cyan rounded-3xl mt-1 mb-1 ml-2 p-2 w-32 justify-center  hover:bg-emerald-400"
             >
               인증 확인
             </button>
           </div>
-          <button onClick={handleSubmit} disabled={isSearching}>
+          <button onClick={handleSubmit} disabled={isSearching}
+            className="bg-custom-cyan rounded-3xl mt-1 mb-1 ml-2 p-2 w-32 justify-center  hover:bg-emerald-400 flex"
+          >
             {isSearching ? "검색 중..." : "아이디 찾기"}
           </button>
         </>

@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useBasic } from "../context/BasicContext";
 import { postLogoutApi } from "../../usr/login/api/LogoutApi";
-import Logo from "../img/FunSpot.png"
+import Logo from "../img/FunSpotLogo.jpg"
 
 const Header = () => {
   const { userInfo, setUserInfo } = useBasic();
@@ -20,7 +20,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white text-black p-4 mb-4 shadow-lg">
+    <header className="bg-white text-black p-4 mb-4 shadow-md rounded-md">
       <div className="container mx-auto flex justify-between items-center">
         <a href="/">
           {/* <h1 className="text-3xl font-bold">FunSpot</h1> */}
