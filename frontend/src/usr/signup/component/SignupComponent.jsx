@@ -283,176 +283,212 @@ const SignupComponent = () => {
   };
 
   return (
-    <div>
+    <div className="flex flex-col justify-center items-center">
       <form onSubmit={handleSubmit}>
-        <h2>회원가입</h2>
+        {/* <h2>회원가입</h2> */}
 
-        <div>
-          <label>아이디: </label>
+        <div className="mt-2 mb-2 ">
+          <p className="font-bold">아이디</p>
           <input
             type="text"
             name="userId"
             placeholder="영문, 숫자 포함 4~12자"
             value={formData.userId}
             onChange={handleChange}
+            className="mt-2 p-2 w-80 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
           />
-          <button type="button" onClick={() => handleDuplicateCheck("userId")}>
+          <button type="button" onClick={() => handleDuplicateCheck("userId")}
+            className="border bg-custom-cyan rounded-3xl mt-2 ml-2 p-2 w-32 hover:bg-emerald-400"
+          >
             중복 확인
           </button>
           {errors.userId && <p style={{ color: "red" }}>{errors.userId}</p>}
         </div>
 
-        <div>
-          <label>비밀번호: </label>
+        <div className="mt-2 mb-2">
+          <p className="font-bold">비밀번호</p>
           <input
             type="password"
             name="password"
             placeholder="영문, 숫자, 특수문자 포함 8~16자"
             value={formData.password}
             onChange={handleChange}
+            className="mt-2 p-2 w-80 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
           />
           {errors.password && <p style={{ color: "red" }}>{errors.password}</p>}
         </div>
 
-        <div>
-          <label>비밀번호 확인: </label>
+        <div className="mt-2 mb-2">
+          <p className="font-bold ">비밀번호 확인</p>
           <input
             type="password"
             name="confirmPassword"
+            placeholder="비밀번호 재입력"
             value={formData.confirmPassword}
             onChange={handleChange}
+            className="mt-2 p-2 w-80 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
           />
           {errors.confirmPassword && (
             <p style={{ color: "red" }}>{errors.confirmPassword}</p>
           )}
         </div>
 
-        <div>
-          <label>이름: </label>
+        <div className="mt-2 mb-2 ">
+          <p className="font-bold">이름</p>
           <input
             type="text"
             name="name"
             placeholder="한글 또는 영문"
             value={formData.name}
             onChange={handleChange}
+            className="mt-2 p-2 w-80 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
           />
           {errors.name && <p style={{ color: "red" }}>{errors.name}</p>}
         </div>
 
-        <div>
-          <label>생년월일: </label>
+        <div className="mt-2 mb-2 ">
+          <p className="font-bold">생년월일</p>
           <input
             type="date"
             name="birthDate"
             value={formData.birthDate}
             onChange={handleChange}
+            className="mt-2 p-2 w-80 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
           />
           {errors.birthDate && (
             <p style={{ color: "red" }}>{errors.birthDate}</p>
           )}
         </div>
 
-        <div>
-          <label>닉네임: </label>
+        <div className="mt-2 mb-2 ">
+          <p className="font-bold">닉네임</p>
           <input
             type="text"
             name="nickname"
             placeholder="한글, 영문, 숫자 포함 4~12자"
             value={formData.nickname}
             onChange={handleChange}
+            className="mt-2 p-2 w-80 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
           />
           <button
             type="button"
             onClick={() => handleDuplicateCheck("nickname")}
+            className="border bg-custom-cyan rounded-3xl mt-2 ml-2 p-2 w-32 hover:bg-emerald-400"
           >
             중복 확인
           </button>
           {errors.nickname && <p style={{ color: "red" }}>{errors.nickname}</p>}
         </div>
 
-        <div>
-          <label>핸드폰: </label>
+        <div className="mt-2 mb-2 ">
+          <p className="font-bold">핸드폰</p>
           <input
             type="text"
             name="phone"
+            placeholder="숫자만 입력"
             value={formData.phone}
             onChange={handleChange}
             maxLength="13"
+            className="mt-2 p-2 w-80 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
           />
           {errors.phone && <p style={{ color: "red" }}>{errors.phone}</p>}
         </div>
 
-        <div>
-          <label>이메일: </label>
+        <div className="mt-2 mb-2 ">
+          <p className="font-bold">이메일</p>
           <input
             type="email"
             name="email"
+            placeholder="example@naver.com"
             value={formData.email}
             onChange={handleChange}
             disabled={isEmailVerified} // 이메일 인증 완료 시 비활성화
+            className="mt-2 p-2 w-80 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
           />
           <button
             type="button"
             onClick={handleSendEmailVerification}
-            disabled={isEmailVerified} // 이메일 인증 완료 시 버튼 비활성화
+            disabled={isEmailVerified} // 이메일 인증 완료 시 버튼 비활성화.
+            className="border bg-custom-cyan rounded-3xl mt-2 ml-2 p-2 w-32 hover:bg-emerald-400"
           >
-            인증 메일 보내기
+            메일 전송
           </button>
           {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}
         </div>
 
-        <div>
-          <label>인증 코드: </label>
+        <div className="mt-2 mb-2 ">
+          <p className="font-bold">인증 코드</p>
           <input
             type="text"
             placeholder="인증코드 입력"
             value={verificationCode}
             onChange={(e) => setVerificationCode(e.target.value)}
             disabled={isEmailVerified} // 이메일 인증 완료 시 비활성화
+            className="mt-2 p-2 w-80 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
           />
           <button
             type="button"
             onClick={handleVerifyCode}
             disabled={isEmailVerified} // 이메일 인증 완료 시 버튼 비활성화
+            className="border bg-custom-cyan rounded-3xl mt-2 ml-2 p-2 w-32 hover:bg-emerald-400"
           >
-            인증 코드 확인
+            인증 확인
           </button>
         </div>
 
-        <div>
-          <label>우편번호: </label>
+        <div className="mt-2 mb-2 ">
+          <p className="font-bold">우편번호</p>
           <div>
             <input
               type="text"
               name="zonecode"
               value={formData.zonecode}
               readOnly
+              className="mt-2 p-2 w-80 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
             />
-            <button type="button" onClick={() => setAddressModalOpen(true)}>
+            <button type="button" onClick={() => setAddressModalOpen(true)}
+              className="border bg-custom-cyan rounded-3xl mt-2 ml-2 p-2 w-32 hover:bg-emerald-400">
               주소 찾기
             </button>
           </div>
           {errors.zonecode && <p style={{ color: "red" }}>{errors.zonecode}</p>}
         </div>
 
-        <div>
-          <label>주소: </label>
-          <input type="text" name="address" value={formData.address} readOnly />
+        <div className="mt-2 mb-2 ">
+          <p className="font-bold">주소</p>
+          <input type="text" name="address" value={formData.address} readOnly
+            className="mt-2 p-2 w-80 rounded-3xl border 
+          focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"/>
           {errors.address && <p style={{ color: "red" }}>{errors.address}</p>}
         </div>
 
-        <div>
-          <label>상세주소: </label>
+        <div className="mt-2 mb-2 ">
+          <p className="font-bold">상세주소</p>
           <input
             type="text"
             name="detaileAdd"
+            placeholder="동/호수"
             value={formData.detaileAdd}
             onChange={handleChange}
+            className="mt-2 p-2 w-80 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
           />
         </div>
 
-        <button type="submit">가입하기</button>
-        <button type="button" onClick={handleCancel}>
+        <button type="submit"
+          className="bg-custom-cyan rounded-3xl mt-2 mb-4 ml-2 p-2 w-32  hover:bg-emerald-400">가입하기</button>
+        <button type="button" onClick={handleCancel}
+          className="ml-48 mb-4 p-2 w-32 bg-gray-500 text-white rounded-3xl hover:bg-gray-600 cursor-pointer">
           취소
         </button>
       </form>
