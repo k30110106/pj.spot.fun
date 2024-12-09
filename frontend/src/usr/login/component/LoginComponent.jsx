@@ -5,9 +5,11 @@ import Searchid from "../../../common/searchuserinfomodal/Searchid";
 import Searchpw from "../../../common/searchuserinfomodal/Searchpw";
 import SearchModal from "../../../common/searchuserinfomodal/SearchModal";
 import { useBasic } from "../../../common/context/BasicContext";
-import { ReactComponent as Google } from "../../../common/img/Google.svg"
-import { ReactComponent as Naver } from "../../../common/img/naver.svg"
-import { ReactComponent as Kakao } from "../../../common/img/kakao.svg"
+import { ReactComponent as Google } from "../../../common/img/Google.svg";
+import { ReactComponent as Naver } from "../../../common/img/naver.svg";
+import { ReactComponent as Kakao } from "../../../common/img/kakao.svg";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const LoginComponent = () => {
   const [userId, setUserId] = useState("");
@@ -16,6 +18,7 @@ const LoginComponent = () => {
   const [isIdModalOpen, setIsIdModalOpen] = useState(false);
   const [isPwModalOpen, setIsPwModalOpen] = useState(false);
   const [isTouched, setIsTouched] = useState({});
+  const [showPassword, setShowPassword] = useState(false); // 비밀번호 표시 상태
   const { setUserInfo } = useBasic();
 
   const idInputRef = useRef(null);
@@ -100,22 +103,38 @@ const LoginComponent = () => {
             <p className="text-red-500">{errors.userId}</p>
           )}
         </div>
-        <div className="mb-6">
+        <div className="mb-6 relative w-80">
           {/* <label className="font-bold text-xl">비밀번호</label> */}
-          <input
-            type="password"
-            name="password"
-            ref={passwordInputRef}
-            value={password}
-            placeholder="비밀번호를 입력해주세요"
-            onChange={(e) => {
-              setPassword(e.target.value);
-              setIsTouched((prev) => ({ ...prev, password: true }));
-            }}
-            onBlur={() => setIsTouched((prev) => ({ ...prev, password: true }))}
-            className="mt-2 p-2 w-80 rounded-3xl border 
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              ref={passwordInputRef}
+              value={password}
+              placeholder="비밀번호를 입력해주세요"
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setIsTouched((prev) => ({ ...prev, password: true }));
+              }}
+              onBlur={() =>
+                setIsTouched((prev) => ({ ...prev, password: true }))
+              }
+              className="mt-2 p-2 w-80 rounded-3xl border 
             focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
-          />
+            />
+
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)} // 비밀번호 토글 상태 변경
+              className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            >
+              {showPassword ? (
+                <Visibility fontSize="small" /> // 눈 아이콘
+              ) : (
+                <VisibilityOff fontSize="small" /> // 눈 가림 아이콘
+              )}
+            </button>
+          </div>
           {isTouched.password && errors.password && (
             <p className="text-red-500">{errors.password}</p>
           )}

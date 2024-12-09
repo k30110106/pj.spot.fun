@@ -30,6 +30,10 @@ const SocialSignupComponent = () => {
     zonecode: "",
   });
 
+  // 오늘 날짜를 "YYYY-MM-DD" 형식으로 계산
+  const today = new Date();
+  const formattedToday = today.toISOString().split("T")[0];
+
   // 세션 데이터 가져오기
   useEffect(() => {
     const fetchSessionData = async () => {
@@ -138,8 +142,9 @@ const SocialSignupComponent = () => {
       if (!value) {
         setAlertModalConfig({
           isOpen: true,
-          message: `${field === "userId" ? "아이디" : "닉네임"
-            }를(을) 입력해주세요.`,
+          message: `${
+            field === "userId" ? "아이디" : "닉네임"
+          }를(을) 입력해주세요.`,
         });
         return;
       }
@@ -148,16 +153,18 @@ const SocialSignupComponent = () => {
       if (response.data.isDuplicate) {
         setAlertModalConfig({
           isOpen: true,
-          message: `${value}은(는) 중복된 ${field === "userId" ? "아이디" : "닉네임"
-            }입니다.`,
+          message: `${value}은(는) 중복된 ${
+            field === "userId" ? "아이디" : "닉네임"
+          }입니다.`,
         });
         if (field === "userId") setIsUserIdChecked(false);
         if (field === "nickname") setIsNicknameChecked(false);
       } else {
         setAlertModalConfig({
           isOpen: true,
-          message: `${value}은(는) 사용 가능한 ${field === "userId" ? "아이디" : "닉네임"
-            }입니다.`,
+          message: `${value}은(는) 사용 가능한 ${
+            field === "userId" ? "아이디" : "닉네임"
+          }입니다.`,
         });
         if (field === "userId") setIsUserIdChecked(true);
         if (field === "nickname") setIsNicknameChecked(true);
@@ -215,42 +222,53 @@ const SocialSignupComponent = () => {
   };
 
   return (
-    <div>
+    <div className="flex flex-col justify-center items-center">
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>아이디: </label>
+        <div className="mb-2 mt-2">
+          <p className="font-bold">아이디</p>
           <input
             type="text"
             name="userId"
             placeholder="영문, 숫자 포함 4~12자"
             value={formData.userId}
             onChange={handleChange}
+            className="mt-2 p-2 w-80 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
           />
-          <button type="button" onClick={() => handleDuplicateCheck("userId")}>
+          <button
+            type="button"
+            onClick={() => handleDuplicateCheck("userId")}
+            className="bg-custom-cyan rounded-3xl mt-2 mb-4 ml-2 p-2 w-32  hover:bg-emerald-400"
+          >
             중복 확인
           </button>
           {errors.userId && <p style={{ color: "red" }}>{errors.userId}</p>}
         </div>
 
         <div>
-          <label>이름: </label>
+          <p className="font-bold">이름</p>
           <input
             type="text"
             name="name"
             placeholder="한글 또는 영문"
             value={formData.name}
             onChange={handleChange}
+            className="mt-2 p-2 mb-2 w-80 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
           />
           {errors.name && <p style={{ color: "red" }}>{errors.name}</p>}
         </div>
 
         <div>
-          <label>생년월일: </label>
+          <p className="font-bold">생년월일</p>
           <input
             type="date"
             name="birthDate"
             value={formData.birthDate}
             onChange={handleChange}
+            max={formattedToday}
+            className="mt-2 p-2 mb-2 w-80 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
           />
           {errors.birthDate && (
             <p style={{ color: "red" }}>{errors.birthDate}</p>
@@ -258,17 +276,20 @@ const SocialSignupComponent = () => {
         </div>
 
         <div>
-          <label>닉네임: </label>
+          <p className="font-bold">닉네임</p>
           <input
             type="text"
             name="nickname"
             placeholder="한글, 영문, 숫자 포함 4~12자"
             value={formData.nickname}
             onChange={handleChange}
+            className="mt-2 p-2 mb-2 w-80 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
           />
           <button
             type="button"
             onClick={() => handleDuplicateCheck("nickname")}
+            className="border bg-custom-cyan rounded-3xl mt-2 ml-2 p-2 w-32 hover:bg-emerald-400"
           >
             중복 확인
           </button>
@@ -276,37 +297,48 @@ const SocialSignupComponent = () => {
         </div>
 
         <div>
-          <label>핸드폰: </label>
+          <p className="font-bold">핸드폰</p>
           <input
             type="text"
             name="phone"
+            placeholder="숫자만 입력"
             value={formData.phone}
             onChange={handleChange}
             maxLength="13"
+            className="mt-2 p-2 mb-2 w-80 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
           />
           {errors.phone && <p style={{ color: "red" }}>{errors.phone}</p>}
         </div>
 
         <div>
-          <label>이메일: </label>
+          <p className="font-bold">이메일</p>
           <input
             type="email"
             name="email"
-            placeholder="이메일"
+            placeholder="example@naver.com"
             value={formData.email}
             readOnly
+            className="mt-2 mb-2 p-2 w-80 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
           />
         </div>
         <div>
-          <label>우편번호: </label>
+          <p className="font-bold">우편번호</p>
           <div>
             <input
               type="text"
               name="zonecode"
               value={formData.zonecode}
               readOnly
+              className="mt-2 p-2 w-80 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
             />
-            <button type="button" onClick={() => setAddressModalOpen(true)}>
+            <button
+              type="button"
+              onClick={() => setAddressModalOpen(true)}
+              className="border bg-custom-cyan rounded-3xl mt-2 ml-2 p-2 w-32 hover:bg-emerald-400"
+            >
               주소 찾기
             </button>
           </div>
@@ -314,23 +346,42 @@ const SocialSignupComponent = () => {
         </div>
 
         <div>
-          <label>주소: </label>
-          <input type="text" name="address" value={formData.address} readOnly />
+          <p className="font-bold">주소</p>
+          <input
+            type="text"
+            name="address"
+            value={formData.address}
+            readOnly
+            className="mt-2 p-2 mb-2 w-80 rounded-3xl border 
+          focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
+          />
           {errors.address && <p style={{ color: "red" }}>{errors.address}</p>}
         </div>
 
         <div>
-          <label>상세주소: </label>
+          <p className="font-bold">상세주소</p>
           <input
             type="text"
             name="detaileAdd"
+            placeholder="동/호수 입력"
             value={formData.detaileAdd}
             onChange={handleChange}
+            className="mt-2 p-2 mb-2 w-80 rounded-3xl border 
+            focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
           />
         </div>
 
-        <button type="submit">가입하기</button>
-        <button type="button" onClick={handleCancel}>
+        <button
+          type="submit"
+          className="bg-custom-cyan rounded-3xl mt-2 mb-4 ml-2 p-2 w-32  hover:bg-emerald-400"
+        >
+          가입하기
+        </button>
+        <button
+          type="button"
+          className="ml-48 mt-2 mb-4 p-2 w-32 bg-gray-500 text-white rounded-3xl hover:bg-gray-600 cursor-pointer"
+          onClick={handleCancel}
+        >
           취소
         </button>
       </form>
