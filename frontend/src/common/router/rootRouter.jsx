@@ -4,6 +4,7 @@ import boardRouter from "../../usr/board/router/boardRouter";
 import BasicLayout from "../layout/BasicLayout";
 import chatRouter from "../../usr/chat/router/chatRouter";
 import dateRouter from "../../usr/course/router/DateRouter"; // DateRouter 추가
+import mypageRouter from "../../usr/mypage/router/mypageRouter";
 
 const { createBrowserRouter } = require("react-router-dom");
 
@@ -14,7 +15,7 @@ const LoginPage = lazy(() => import("../../usr/login/page/LoginPage"));
 const LoginSuccessPage = lazy(() =>
   import("../../usr/login/page/LoginSuccess")
 );
-const MyPage = lazy(() => import("../../usr/mypage/page/MyPage"));
+const MyPageIndexPage = lazy(() => import("../../usr/mypage/page/IndexPage"));
 const SignupPage = lazy(() => import("../../usr/signup/page/SignupPage"));
 const FeedIndexPage = lazy(() => import("../../usr/feed/page/IndexPage"));
 // const CoursePage = lazy(() => import("../../usr/course/page/CourseListpage"));
@@ -24,7 +25,9 @@ const BoardIndexPage = lazy(() =>
 const SocialSignupPage = lazy(() =>
   import("../../usr/signup/page/SocialSignupPage")
 );
-const DateCourseListPage = lazy(() => import("../../usr/course/page/DateCourseListpage"));
+const DateCourseListPage = lazy(() =>
+  import("../../usr/course/page/DateCourseListpage")
+);
 // const AddDatePage = lazy(() => import("../../usr/course/page/AddDatePage")); // 수정된 부분
 const ChatListPage = lazy(() => import("../../usr/chat/page/ChatListPage"));
 
@@ -69,9 +72,10 @@ const rootRouter = createBrowserRouter(
       path: "mypage",
       element: (
         <Suspense fallback={Loading}>
-          <MyPage />
+          <MyPageIndexPage />
         </Suspense>
       ),
+      children: mypageRouter(),
     },
     {
       path: "signup",
