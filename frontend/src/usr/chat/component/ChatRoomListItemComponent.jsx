@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {chatroomApi} from "../api/chatroomApi";
+import {chatroomListApi} from "../api/chatroomApi";
 import ChatOtherProfileComponent from "./ChatOtherProfileComponent";
 
 // 초기화
@@ -13,7 +13,7 @@ const ChatRoomListItemComponent = () => {
 
     // 컴포넌트가 마운트될 때 한 번만 실행됨 > []라서
     useEffect(() => {
-        chatroomApi()
+        chatroomListApi()
             .then((data) => {
                 console.log(data);
                 setChatRoomListResponseDTOs(data);
