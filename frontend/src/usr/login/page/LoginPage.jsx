@@ -7,11 +7,13 @@ import LoginComponent from "../component/LoginComponent";
 
 const LoginPage = () => {
   return (
-    <div id="login-page">
-      <Header />
-      {/* <div className="text-center font-bold text-3xl">로그인</div> */}
-      <LoginComponent />
-      <Footer />
+    <div className="custom-cursor">
+      <div id="login-page">
+        <Header />
+        {/* <div className="text-center font-bold text-3xl">로그인</div> */}
+        <LoginComponent />
+        <Footer />
+      </div>
     </div>
   );
 };
