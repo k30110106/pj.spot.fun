@@ -238,10 +238,13 @@ public class UserFeedServiceImpl implements UserFeedService {
   }
 
   @Override
-  public FeedResponseDTO getListByMypage(FeedRequestDTO feedRequestDTO) {
+  public FeedResponseDTO getFeedListByMypage(FeedRequestDTO feedRequestDTO) {
     Long feedCount = userFeedRepository.countByUserIdxAndDelYnFalse(feedRequestDTO.getUserIdx());
 
-    List<FeedDTO> list = userFeedRepository.findByUserIdxAndDelYnFalse(feedRequestDTO.getUserIdx()).stream()
+
+    // 목록 조회
+    Pageable pageable = PageRequest.of(0, feedRequestDTO.getPageSize(), Sort.by("idx").descending());
+    List<FeedDTO> list = userFeedRepository.findFeedsByUserIdxOrderByIdxDesc(feedRequestDTO, pageable).stream()
             .map((feed) -> {
               Long feedIdx = feed.getIdx();
               Long loginUserIdx = feedRequestDTO.getLoginUserDTO().getIdx();
@@ -288,12 +291,12 @@ public class UserFeedServiceImpl implements UserFeedService {
             })
             .toList();
 
-
+    boolean hasNext = ((list.size() == feedRequestDTO.getPageSize()) && !ObjectUtils.isEmpty(list));
 
     return FeedResponseDTO.builder()
             .feedDTOS(list)
             .feedCount(feedCount)
+            .hasNext(hasNext)
             .build();
   }
-
 }

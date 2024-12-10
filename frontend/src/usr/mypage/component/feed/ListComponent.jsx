@@ -1,6 +1,6 @@
 import { useOutletContext, useParams } from "react-router-dom";
 import { useBasic } from "../../../../common/context/BasicContext";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { API_BASE_URL, getFeedListApi } from "../../api/MypageApi";
 import DetailModal from "../../../feed/modal/DetailModal";
 import {
@@ -22,21 +22,39 @@ const ListComponent = () => {
 
   // 피드목록
   const [feedList, setFeedList] = useState([]);
-  const getFeedList = useCallback(() => {
-    getFeedListApi({ userIdx })
+  const [hasNext, setHasNext] = useState(true);
+  const [lastId, setLastId] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const getFeedList = () => {
+    if (!hasNext || loading) {
+      return;
+    }
+    setLoading(true);
+
+    getFeedListApi({ userIdx, lastId: lastId, pageSize: 12 })
       .then((data) => {
-        const { feedDTOS, feedCount } = data;
-        setFeedList(feedDTOS);
-        setFeedCount(feedCount);
+        const { feedDTOS, feedCount, hasNext } = data;
+        setFeedList((prevList) => [...prevList, ...feedDTOS]);
+
+        feedCountRef.current = feedCount;
         handleFeedCountEvent(feedCount);
+
+        setHasNext(hasNext);
+        if (feedDTOS.length > 0) {
+          setLastId(parseInt(feedDTOS[feedDTOS.length - 1].idx));
+        }
       })
       .catch((err) => {
+        console.log("[피드목록] 조회를 실패했습니다");
         console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
       });
-  }, [userIdx]);
+  };
 
   // 피드개수
-  const [feedCount, setFeedCount] = useState(0);
+  const feedCountRef = useRef(0);
 
   // 피드정보
   const [selectedFeed, setSelectedFeed] = useState({});
@@ -48,7 +66,6 @@ const ListComponent = () => {
   // 피드상세
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const openDetailModal = (idx) => {
-    console.log(idx);
     handleSelectedFeed(idx);
     setIsDetailModalOpen(true);
   };
@@ -77,11 +94,9 @@ const ListComponent = () => {
           setFeedList((prevlist) =>
             prevlist.filter((feed) => feed.idx !== data.idx)
           );
-          setFeedCount((prev) => {
-            const result = prev - 1;
-            handleFeedCountEvent(result);
-            return result;
-          });
+
+          feedCountRef.current = feedCountRef.current - 1;
+          handleFeedCountEvent(feedCountRef.current);
         }
       })
       .catch((err) => {
@@ -101,14 +116,13 @@ const ListComponent = () => {
         });
       })
       .catch((err) => {
-        console.log("[피드조회] 조회를 실패했습니다");
+        console.log("[피드목록] 조회를 실패했습니다");
         console.log(err);
       });
   };
 
   // 좋아요
   const handleLikesEvent = (targetIdx, likedYn, likeCount) => {
-    console.log(targetIdx, likedYn, likeCount);
     feedLikeApi({ idx: targetIdx, likedYn })
       .then((data) => {
         const newLikeCount = likeCount > 99 ? "99+" : likeCount;
@@ -150,9 +164,35 @@ const ListComponent = () => {
     );
   };
 
+  // 스크롤 위치
+  const [isBottom, setIsBottom] = useState(false);
+  const handleScrollEvent = () => {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const innerHeight = window.innerHeight;
+    const scrollHeight = document.documentElement.scrollHeight;
+
+    if (scrollTop + innerHeight >= scrollHeight - 1) {
+      setIsBottom(true);
+    } else {
+      setIsBottom(false);
+    }
+  };
+
   useEffect(() => {
     getFeedList();
+    window.addEventListener("scroll", handleScrollEvent);
+    // window.addEventListener("resize", handleScrollEvent);
+    return () => {
+      window.removeEventListener("scroll", handleScrollEvent);
+      // window.removeEventListener("resize", handleScrollEvent);
+    };
   }, []);
+
+  useEffect(() => {
+    if (isBottom && hasNext) {
+      getFeedList();
+    }
+  }, [isBottom]);
 
   return (
     <>

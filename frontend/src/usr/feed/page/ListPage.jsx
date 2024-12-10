@@ -140,16 +140,16 @@ const ListPage = () => {
   }, []);
 
   // 모달상태에서 스크롤 비활성화
-  useEffect(() => {
-    if (isInsertModalOpen || isDetailModalOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [isInsertModalOpen, isDetailModalOpen]);
+  // useEffect(() => {
+  //   if (isInsertModalOpen || isDetailModalOpen) {
+  //     document.body.style.overflow = "hidden";
+  //   } else {
+  //     document.body.style.overflow = "auto";
+  //   }
+  //   return () => {
+  //     document.body.style.overflow = "auto";
+  //   };
+  // }, [isInsertModalOpen, isDetailModalOpen]);
 
   // 목록 조회
   useEffect(() => {

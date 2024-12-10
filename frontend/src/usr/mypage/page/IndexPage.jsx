@@ -1,8 +1,8 @@
 import BasicLayout from "../../../common/layout/BasicLayout";
-import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import ProfileComponent from "../component/ProfileComponent";
 import ButtonComponent from "../component/ButtonComponent";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MenuTabComponent from "../component/MenuTabComponent";
 import { useBasic } from "../../../common/context/BasicContext";
 
@@ -26,13 +26,14 @@ const IndexPage = () => {
   const { userIdx } = useParams();
   const { userInfo } = useBasic();
   const loginUserIdx = userInfo?.userIdx || "";
+  const { pathname } = useLocation();
 
   // 탭 메뉴
   const navigate = useNavigate();
-  const [activeMenu, setActiveMent] = useState(initMenu);
+  const [activeMenu, setActiveMenu] = useState(initMenu);
   const handleMenuTabClickEvent = (menuId) => {
     navigate(`/mypage/${menuId}/${userIdx}`);
-    setActiveMent(menuId);
+    setActiveMenu(menuId);
   };
 
   // 피드 개수
@@ -40,6 +41,18 @@ const IndexPage = () => {
   const handleFeedCountEvent = (count) => {
     setFeedCount(count);
   };
+
+  useEffect(() => {
+    const setNowMenuTab = () => {
+      menuList.map(
+        (menu) => pathname.includes(menu.id) && setActiveMenu(menu.id)
+      );
+    };
+
+    if (parseInt(userIdx) === parseInt(loginUserIdx)) {
+      setNowMenuTab();
+    }
+  }, [userIdx, loginUserIdx, pathname]);
 
   return (
     <BasicLayout>
@@ -52,7 +65,10 @@ const IndexPage = () => {
 
         {/* 메뉴바 */}
         {parseInt(loginUserIdx) === parseInt(userIdx) ? (
-          <div className="sticky top-0 bg-white border border-gray-200 rounded-lg p-4 mt-4 z-10 shadow-lg">
+          <div
+            className="sticky top-0 bg-white border border-gray-200 rounded-lg 
+          p-4 mt-4 z-10 shadow-lg z-50"
+          >
             <div className="flex space-x-6">
               {menuList.map((menu) => (
                 <MenuTabComponent

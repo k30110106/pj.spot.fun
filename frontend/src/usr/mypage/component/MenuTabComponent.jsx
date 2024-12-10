@@ -3,7 +3,8 @@ const MenuBarComponent = ({ menu, activeMenu, handleMenuTabClickEvent }) => {
 
   return (
     <div
-      className={`tab text-lg font-semibold text-gray-800 hover:text-blue-500 cursor-pointer px-4 py-2 rounded-lg transition duration-300 ease-in-out transform 
+      className={`tab text-lg font-semibold text-gray-800 hover:text-blue-500 cursor-pointer 
+        px-4 py-2 rounded-lg transition duration-300 ease-in-out transform 
         ${
           activeMenu === id
             ? "bg-blue-100 scale-105"

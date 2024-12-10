@@ -4,6 +4,7 @@ import com.spot.fun.token.util.AuthTokenUtil;
 import com.spot.fun.usr.feed.dto.FeedRequestDTO;
 import com.spot.fun.usr.feed.dto.FeedResponseDTO;
 import com.spot.fun.usr.feed.service.UserFeedService;
+import com.spot.fun.usr.feed.service.like.UserFeedLikeService;
 import com.spot.fun.usr.mypage.service.UserMypageService;
 import com.spot.fun.usr.user.dto.UserDTO;
 import com.spot.fun.usr.user.service.UserService;
@@ -26,6 +27,7 @@ import java.util.Objects;
 public class UserMypageController {
     private final UserMypageService userMypageService;
     private final UserFeedService userFeedService;
+    private final UserFeedLikeService userFeedLikeService;
     private final UserService userService;
 
     private final AuthTokenUtil authTokenUtil;
@@ -51,7 +53,21 @@ public class UserMypageController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
 
-        FeedResponseDTO list = userFeedService.getListByMypage(feedRequestDTO);
+        FeedResponseDTO list = userFeedService.getFeedListByMypage(feedRequestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+
+    @GetMapping("/like")
+    public ResponseEntity<?> likeList(HttpServletRequest request, HttpServletResponse response,
+                                      FeedRequestDTO feedRequestDTO) {
+        UserDTO loginUserDTO = authTokenUtil.validateTokenAndGetUserDTO(request, response);
+        if (!Objects.isNull(loginUserDTO.getIdx())) {
+            feedRequestDTO.setLoginUserDTO(loginUserDTO);
+        } else { // 비로그인 상태는 접근불가
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+
+        FeedResponseDTO list = userFeedLikeService.getLikeListByMypage(feedRequestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 }

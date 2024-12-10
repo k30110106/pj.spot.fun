@@ -1,4 +1,9 @@
+import { useBasic } from "../../../common/context/BasicContext";
+
 const ProfileComponent = ({ feedCount }) => {
+  const { userInfo } = useBasic();
+  const { nickname } = userInfo;
+
   return (
     <div className="flex items-center space-x-8 py-4 px-6">
       {/* 프로필 이미지 */}
@@ -12,8 +17,8 @@ const ProfileComponent = ({ feedCount }) => {
 
       {/* 사용자 정보 */}
       <div className="flex flex-col justify-center">
-        <div className="text-xl font-semibold">username</div>
-        <div className="text-sm text-gray-500">이름</div>
+        <div className="text-xl font-semibold">{nickname}</div>
+        {/* <div className="text-sm text-gray-500">이름</div> */}
         <div className="mt-2 flex space-x-6">
           <div className="text-center">
             <div className="font-semibold">{feedCount}</div>

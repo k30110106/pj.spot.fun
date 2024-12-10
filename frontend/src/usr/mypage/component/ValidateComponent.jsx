@@ -1,4 +1,4 @@
-import { lazy, useEffect } from "react";
+import { lazy, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useBasic } from "../../../common/context/BasicContext";
 import { getExistUserApi } from "../api/MypageApi";
@@ -13,6 +13,7 @@ const ValidateComponent = () => {
   const { userInfo } = useBasic();
   const { pathname } = useLocation();
   const loginUserIdx = userInfo?.userIdx || "";
+  const [isDone, setIsDone] = useState(false);
 
   const existsUser = async () => {
     try {
@@ -25,6 +26,10 @@ const ValidateComponent = () => {
   };
 
   const renderComponent = () => {
+    if (!isDone) {
+      return;
+    }
+
     // 본인이 아닌경우 feed페이지만 접근가능 처리
     if (pathname.includes("like")) {
       return <LikeListCompoent />;
@@ -37,9 +42,16 @@ const ValidateComponent = () => {
 
   useEffect(() => {
     const doVailidate = async () => {
-      // 파라미터(userIdx) 숫자여부 확인
-      if (loginUserIdx === "" || isNaN(userIdx) || !(await existsUser())) {
+      // 메인으로 이동
+      if (loginUserIdx === "") {
         navigate("/", { replace: true });
+        return;
+      }
+
+      // 마이페이지로 이동
+      if (isNaN(userIdx) || !(await existsUser())) {
+        navigate(`/mypage/feed/${loginUserIdx}`, { replace: true });
+        return;
       }
 
       // feed 외 다른페이지는 본인만 접근가능
@@ -48,7 +60,10 @@ const ValidateComponent = () => {
         parseInt(loginUserIdx) !== parseInt(userIdx)
       ) {
         navigate(`/mypage/feed/${userIdx}`, { replace: true });
+        return;
       }
+
+      setIsDone(true);
     };
 
     doVailidate();
