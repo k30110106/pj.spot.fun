@@ -2,10 +2,15 @@ package com.spot.fun.config;
 
 import com.spot.fun.config.jwt.JwtTokenFilter;
 import com.spot.fun.config.jwt.JwtTokenProvider;
+import com.spot.fun.token.entity.AuthToken;
+import com.spot.fun.token.repository.AuthTokenRepository;
 import com.spot.fun.token.util.AuthTokenUtil;
-//import com.spot.fun.usr.oauthlogin.service.CustomOAuth2UserService;
+import com.spot.fun.usr.oauthlogin.converter.CustomOAuth2AccessTokenResponseClient;
+import com.spot.fun.usr.oauthlogin.converter.KakaoRequestEntityConverter;
+import com.spot.fun.usr.oauthlogin.service.CustomOAuth2UserService;
 import com.spot.fun.usr.user.entity.User;
 import com.spot.fun.usr.user.repository.UserRepository;
+import com.spot.fun.usr.user.service.CustomUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,24 +19,21 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-//import org.springframework.security.oauth2.client.registration.ClientRegistration;
-//import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-//import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
-//import org.springframework.security.oauth2.core.AuthorizationGrantType;
-//import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-//import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.io.IOException;
@@ -46,13 +48,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
     private final JwtTokenFilter jwtTokenFilter;
-//    private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomOAuth2UserService customOAuth2UserService;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthTokenUtil authTokenUtil;
+    private final AuthTokenRepository authTokenRepository;
 
     @Value("${security.check.path.none}")
     private String[] PERMITTED_PATHS;
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -66,10 +70,6 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/usr/mypage/**").hasAuthority("USER")
                         .requestMatchers("/api/usr/datecourse/public", "api/usr/datecourse/user").permitAll()
-                        // WebSocket 엔드포인트 허용
-                        .requestMatchers("/ws/**").permitAll()
-//                        .requestMatchers("/api/chat/**").permitAll()
-                        .requestMatchers("/api/chat/**").authenticated()  // 명시적으로 인증 필요함을 표시
                         .requestMatchers(PERMITTED_PATHS).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -81,10 +81,13 @@ public class WebSecurityConfig {
                 )
                 .sessionManagement((auth) -> auth // 세션방식 -> jwt 사용
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .oauth2Login(oauth2 -> oauth2
-//                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))  // OAuth2 로그인 설정
-//                        .successHandler(oAuth2AuthenticationSuccessHandler())  // 로그인 성공 시 동작
-//                        .failureHandler(oAuth2AuthenticationFailureHandler()))  // 로그인 실패 시 동작
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))  // OAuth2 로그인 설정
+                        .tokenEndpoint(tokenEndpoint -> tokenEndpoint
+                                .accessTokenResponseClient(customOAuth2AccessTokenResponseClient()) // Kakao 토큰 요청 처리
+                        )
+                        .successHandler(oAuth2AuthenticationSuccessHandler())  // 로그인 성공 시 동작
+                        .failureHandler(oAuth2AuthenticationFailureHandler()))  // 로그인 실패 시 동작
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
@@ -126,50 +129,84 @@ public class WebSecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-//    // OAuth2 로그인 실패 핸들러
+    // KaKao 전용 토큰 요청 방식
 //    @Bean
-//    public AuthenticationFailureHandler oAuth2AuthenticationFailureHandler() {
-//        return (request, response, exception) -> {
-//            response.sendRedirect("http://localhost:3000/login?error=true");
-//        };
+//    public DefaultAuthorizationCodeTokenResponseClient kakaoTokenResponseClient() {
+//        DefaultAuthorizationCodeTokenResponseClient tokenResponseClient = new DefaultAuthorizationCodeTokenResponseClient();
+//        tokenResponseClient.setRequestEntityConverter(new KakaoRequestEntityConverter());
+//        return tokenResponseClient;
 //    }
-//
-//    // OAuth2 로그인 성공 핸들러
-//    @Bean
-//    public SimpleUrlAuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
-//        return new SimpleUrlAuthenticationSuccessHandler() {
-//            @Override
-//            protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-//                DefaultOAuth2User oAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
-//                Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes()); // 수정 가능 Map으로 변환
-//                String email = (String) attributes.get("email");
-//
-//                if (email == null) {
-//                    log.error("OAuth2 Success Handler - Email is null, redirecting to error page.");
-//                    response.sendRedirect("http://localhost:3000/login-error");
-//                    return;
-//                }
-//
-//                log.info("OAuth2 Success Handler - Email: {}", email);
-//
-//                Optional<User> userOptional = userRepository.findByEmail(email);
-//                if (userOptional.isPresent()) {
-//                    // 기존 사용자: JWT 생성 후 로그인 성공 페이지로 리다이렉트
-//                    User user = userOptional.get();
-//                    String accessToken = jwtTokenProvider.generateAccessToken(user);
-//                    String refreshToken = jwtTokenProvider.generateRefreshToken(user);
-//
-//                    authTokenUtil.makeAccessToken(response, accessToken);
-//                    authTokenUtil.makeRefreshToken(response, refreshToken);
-//
-//                    log.info("프론트엔드의 login-success 페이지로 리다이렉트...");
-//                    response.sendRedirect("http://localhost:3000/login-success");
-//                } else {
-//                    // 비회원: 회원가입 페이지로 리다이렉트
-//                    log.info("Redirecting to social-signup for new user: {}", email);
-//                    response.sendRedirect("http://localhost:3000/social-signup");
-//                }
-//            }
-//        };
-//    }
+
+    @Bean
+    public CustomOAuth2AccessTokenResponseClient customOAuth2AccessTokenResponseClient() {
+        return new CustomOAuth2AccessTokenResponseClient();
+    }
+
+    // OAuth2 로그인 실패 핸들러
+    @Bean
+    public AuthenticationFailureHandler oAuth2AuthenticationFailureHandler() {
+        return (request, response, exception) -> {
+            log.error("OAuth2 Authentication failed: {}", exception.getMessage());
+            response.sendRedirect("http://localhost:3000/login?error=true");
+        };
+    }
+
+    // OAuth2 로그인 성공 핸들러
+    @Bean
+    public SimpleUrlAuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
+        return new SimpleUrlAuthenticationSuccessHandler() {
+            @Override
+            protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+                DefaultOAuth2User oAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
+                Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes()); // 수정 가능 Map으로 변환
+
+                // 이메일 정보 추출
+                String email = (String) attributes.get("email");
+                if (email == null || email.isEmpty()) {
+                    log.error("OAuth2 Success Handler - Email is null or empty, redirecting to error page. Attributes: {}", attributes);
+                    response.sendRedirect("http://localhost:3000/login-error");
+                    return;
+                }
+
+                log.info("OAuth2 Success Handler - Email: {}", email);
+
+                // 데이터베이스에서 사용자 조회
+                Optional<User> userOptional = userRepository.findByEmail(email);
+                if (userOptional.isPresent()) {
+                    // 기존 사용자 처리
+                    User user = userOptional.get();
+                    log.info("User found in database: {}", user);
+
+                    String accessToken = jwtTokenProvider.generateAccessToken(user);
+                    String refreshToken;
+
+                    // Refresh Token 처리
+                    Optional<AuthToken> existingToken = authTokenRepository.findByUserIdx(user.getIdx());
+                    if (existingToken.isPresent()) {
+                        refreshToken = existingToken.get().getRefreshToken(); // 기존 토큰 사용
+                        log.info("Using existing refresh token for user: {}", email);
+                    } else {
+                        refreshToken = jwtTokenProvider.generateRefreshToken(user); // 새 토큰 생성
+                        AuthToken authToken = AuthToken.builder()
+                                .userIdx(user.getIdx())
+                                .refreshToken(refreshToken)
+                                .build();
+                        authTokenRepository.save(authToken); // 데이터베이스에 저장
+                        log.info("Created new refresh token for user: {}", email);
+                    }
+
+                    // 쿠키 생성
+                    authTokenUtil.makeAccessToken(response, accessToken);
+                    authTokenUtil.makeRefreshToken(response, refreshToken);
+
+                    log.info("Redirecting to login-success page for existing user...");
+                    response.sendRedirect("http://localhost:3000/login-success");
+                } else {
+                    // 비회원 처리: 회원가입 페이지로 리다이렉트
+                    log.info("No user found in database. Redirecting to social-signup for email: {}", email);
+                    response.sendRedirect("http://localhost:3000/social-signup");
+                }
+            }
+        };
+    }
 }

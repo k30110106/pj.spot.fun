@@ -12,9 +12,11 @@ export const postLoginApi = async (param) => {
         "Content-Type": "application/json", // JSON 요청 명시
       },
     });
+    console.log("Login API Response:", res.data);
     return { status: res.status, data: res.data }; // 성공 시 반환
   } catch (err) {
     console.log(err);
+    console.error("Login API Error:", err);
     return { status: err.response?.status || 500, data: null }; // 실패 시 반환
   }
 };

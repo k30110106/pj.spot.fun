@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useBasic } from "../context/BasicContext";
 import { postLogoutApi } from "../../usr/login/api/LogoutApi";
-import Logo from "../img/FunSpotLogo.jpg"
+import Logo from "../img/FunSpotLogo.jpg";
 
 const Header = () => {
   const { userInfo, setUserInfo } = useBasic();
@@ -24,7 +24,7 @@ const Header = () => {
       <div className="container mx-auto flex justify-between items-center">
         <a href="/">
           {/* <h1 className="text-3xl font-bold">FunSpot</h1> */}
-          <img src={Logo} alt="펀스팟로고" height='px' width='150px' />
+          <img src={Logo} alt="펀스팟로고" height="px" width="150px" />
         </a>
         <div>
           {userInfo ? (
@@ -48,7 +48,7 @@ const Header = () => {
               </li>
               {/* <span className="p-1 cursor-default">|</span> */}
               <li>
-                <Link to={"/signup"}>회원가입</Link>
+                <Link to={"/signupCheck"}>회원가입</Link>
               </li>
             </ul>
           )}
