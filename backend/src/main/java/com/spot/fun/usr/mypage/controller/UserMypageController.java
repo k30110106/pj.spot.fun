@@ -1,11 +1,12 @@
 package com.spot.fun.usr.mypage.controller;
 
 import com.spot.fun.token.util.AuthTokenUtil;
-import com.spot.fun.usr.feed.dto.FeedDTO;
 import com.spot.fun.usr.feed.dto.FeedRequestDTO;
+import com.spot.fun.usr.feed.dto.FeedResponseDTO;
 import com.spot.fun.usr.feed.service.UserFeedService;
 import com.spot.fun.usr.mypage.service.UserMypageService;
 import com.spot.fun.usr.user.dto.UserDTO;
+import com.spot.fun.usr.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,11 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 @Log4j2
@@ -28,11 +26,19 @@ import java.util.Objects;
 public class UserMypageController {
     private final UserMypageService userMypageService;
     private final UserFeedService userFeedService;
+    private final UserService userService;
+
     private final AuthTokenUtil authTokenUtil;
 
     @GetMapping("/info")
     public UserDTO info() {
         return userMypageService.findByIdx();
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<?> existsUser(UserDTO userDTO) {
+        UserDTO info = userService.findByIdx(userDTO.getIdx());
+        return ResponseEntity.status(HttpStatus.OK).body(!Objects.isNull(info));
     }
 
     @GetMapping("/feed")
@@ -45,7 +51,7 @@ public class UserMypageController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
 
-        userFeedService.getListByMypage(feedRequestDTO);
-        return null;
+        FeedResponseDTO list = userFeedService.getListByMypage(feedRequestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 }

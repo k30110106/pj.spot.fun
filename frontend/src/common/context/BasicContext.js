@@ -13,9 +13,12 @@ export const useBasic = () => {
 // UserProvider 컴포넌트 - 하위 컴포넌트들에 Context 값 제공
 export const UserProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState(null); // 상태 관리
+  const [tokenLoading, setTokenLoading] = useState(true); // 상태 조회 로딩
 
   return (
-    <BasicContext.Provider value={{ userInfo, setUserInfo }}>
+    <BasicContext.Provider
+      value={{ userInfo, setUserInfo, tokenLoading, setTokenLoading }}
+    >
       {children}
     </BasicContext.Provider>
   );

@@ -239,18 +239,60 @@ public class UserFeedServiceImpl implements UserFeedService {
 
   @Override
   public FeedResponseDTO getListByMypage(FeedRequestDTO feedRequestDTO) {
+    Long feedCount = userFeedRepository.countByUserIdxAndDelYnFalse(feedRequestDTO.getUserIdx());
+
     List<FeedDTO> list = userFeedRepository.findByUserIdxAndDelYnFalse(feedRequestDTO.getUserIdx()).stream()
             .map((feed) -> {
               Long feedIdx = feed.getIdx();
               Long loginUserIdx = feedRequestDTO.getLoginUserDTO().getIdx();
               boolean likedYn = !Objects.isNull(loginUserIdx) && userFeedUtil.isFeedLikedYn(feedIdx, loginUserIdx);
 
-              return FeedDTO.builder().build();
+              return FeedDTO.builder()
+                      .idx(feedIdx)
+                      .content(feed.getContent())
+                      .regDateStr(userFeedUtil.getDateFormat(feed.getRegDate()))
+                      .user(
+                              UserDTO.builder()
+                                      .idx(feed.getUser().getIdx())
+                                      .userId(feed.getUser().getUserId())
+                                      //.name(feed.getUser().getName())
+                                      .nickname(feed.getUser().getNickname())
+                                      .build()
+                      )
+                      .feedImages(
+                              feed.getFeedImages().stream()
+                                      .filter((img) -> !img.isDelYn())
+                                      .map((img) ->
+                                              FeedImageDTO.builder()
+                                                      .idx(img.getIdx())
+                                                      //.filePath(img.getFilePath())
+                                                      .originName(img.getOriginName())
+                                                      .uploadName(img.getUploadName())
+                                                      //.delYn(img.isDelYn())
+                                                      .build()
+                                      ).toList()
+                      )
+                      .likedYn(likedYn)
+                      .likeCount(userFeedLikeRepository.countByFeedIdx(feedIdx))
+                      .commentCount(userFeedCommentRepository.countByFeedIdxAndDelYnFalseAndParentIdxIsNull(feedIdx))
+                      .feedHashtags(
+                              userFeedHashtagRepository.findByFeedIdx(feedIdx).stream()
+                                      .map((tag) ->
+                                              FeedHashtagDTO.builder()
+                                                      .idx(tag.getIdx())
+                                                      .hashtagIdx(tag.getHashtag().getIdx())
+                                                      .tagName(tag.getHashtag().getTagName())
+                                                      .build()
+                                      ).toList()
+                      ).build();
             })
             .toList();
 
+
+
     return FeedResponseDTO.builder()
             .feedDTOS(list)
+            .feedCount(feedCount)
             .build();
   }
 

@@ -8,16 +8,16 @@ axios.defaults.withCredentials = true; // 쿠키사용여부 설정
 
 // 커스텀 훅: usePostTokenCheck
 const usePostTokenCheck = () => {
-  // const context = useBasic();
-  console.log("useBasic() context:"); // 디버깅: useBasic의 반환값 확인
-  const { setUserInfo } = useBasic(); // Context에서 setUserIdx를 가져옴
+  const { setUserInfo, setTokenLoading } = useBasic(); // Context에서 setUserIdx를 가져옴
 
   useEffect(() => {
     // postTokenCheck 함수 호출
     const postTokenCheck = async () => {
+      setTokenLoading(true);
+
       try {
         const res = await axios.post("/api/usr/login/token/check");
-        console.log("postTokenCheck userIdx >> " + res.data);
+        console.log("postTokenCheck userIdx >> " + res.data?.userIdx);
         // setUserInfo(res.data); // 상태 업데이트
         // setNickname(res.data.nickname); // 닉네임 업데이트
         if (res.status === 200 && res.data) {
@@ -33,6 +33,8 @@ const usePostTokenCheck = () => {
           console.error("Error during token check:", err);
           setUserInfo(null); // 다른 에러 발생 시도 초기화
         }
+      } finally {
+        setTokenLoading(false);
       }
     };
 

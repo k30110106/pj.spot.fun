@@ -1,10 +1,8 @@
 import { lazy, Suspense } from "react";
 import { Navigate } from "react-router-dom";
+import ValidateComponent from "../component/ValidateComponent";
 
 const Loading = <div>MyPage Page Loading....</div>;
-const FeedListCompoent = lazy(() => import("../component/feed/ListComponent"));
-const LikeListCompoent = lazy(() => import("../component/like/ListComponent"));
-const WishListCompoent = lazy(() => import("../component/wish/ListComponent"));
 
 const mypageRouter = () => {
   return [
@@ -12,7 +10,7 @@ const mypageRouter = () => {
       path: "feed/:userIdx",
       element: (
         <Suspense fallback={Loading}>
-          <FeedListCompoent />
+          <ValidateComponent />
         </Suspense>
       ),
     },
@@ -20,7 +18,7 @@ const mypageRouter = () => {
       path: "like/:userIdx",
       element: (
         <Suspense fallback={Loading}>
-          <LikeListCompoent />
+          <ValidateComponent />
         </Suspense>
       ),
     },
@@ -28,7 +26,7 @@ const mypageRouter = () => {
       path: "wish/:userIdx",
       element: (
         <Suspense fallback={Loading}>
-          <WishListCompoent />
+          <ValidateComponent />
         </Suspense>
       ),
     },

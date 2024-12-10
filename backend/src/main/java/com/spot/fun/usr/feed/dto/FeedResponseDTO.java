@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class FeedResponseDTO {
-    private List<FeedDTO> feedDTOS;
-    private boolean hasNext;
+  private List<FeedDTO> feedDTOS;
+  private boolean hasNext;
+  private Long feedCount;
 }

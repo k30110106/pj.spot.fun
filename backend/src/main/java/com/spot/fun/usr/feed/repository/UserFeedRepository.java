@@ -21,4 +21,6 @@ public interface UserFeedRepository extends JpaRepository<Feed, Long> {
   Optional<Feed> findByIdxAndDelYnFalse(Long idx);
 
   List<Feed> findByUserIdxAndDelYnFalse(Long userIdx);
+
+  Long countByUserIdxAndDelYnFalse(Long userIdx);
 }

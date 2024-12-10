@@ -30,35 +30,46 @@ const IndexPage = () => {
   // 탭 메뉴
   const navigate = useNavigate();
   const [activeMenu, setActiveMent] = useState(initMenu);
-  const handleMenuTabClickEvent = (id) => {
-    navigate(`/mypage/${id}/${userIdx}`);
-    setActiveMent(id);
+  const handleMenuTabClickEvent = (menuId) => {
+    navigate(`/mypage/${menuId}/${userIdx}`);
+    setActiveMent(menuId);
+  };
+
+  // 피드 개수
+  const [feedCount, setFeedCount] = useState(0);
+  const handleFeedCountEvent = (count) => {
+    setFeedCount(count);
   };
 
   return (
     <BasicLayout>
       <div className="border border-gray-200 w-full">
         {/* 프로필 정보 */}
-        <ProfileComponent />
+        <ProfileComponent feedCount={feedCount} />
 
         {/* 버튼 */}
         <ButtonComponent />
 
-        <div className="sticky top-0 bg-white border border-gray-200 rounded-lg p-4 mt-4 z-10 shadow-lg">
-          <div className="flex space-x-6">
-            {menuList.map((menu) => (
-              <MenuTabComponent
-                key={menu.id}
-                menu={menu}
-                activeMenu={activeMenu}
-                handleMenuTabClickEvent={handleMenuTabClickEvent}
-              />
-            ))}
+        {/* 메뉴바 */}
+        {parseInt(loginUserIdx) === parseInt(userIdx) ? (
+          <div className="sticky top-0 bg-white border border-gray-200 rounded-lg p-4 mt-4 z-10 shadow-lg">
+            <div className="flex space-x-6">
+              {menuList.map((menu) => (
+                <MenuTabComponent
+                  key={menu.id}
+                  menu={menu}
+                  activeMenu={activeMenu}
+                  handleMenuTabClickEvent={handleMenuTabClickEvent}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        ) : (
+          <></>
+        )}
 
         {/* 목록 */}
-        <Outlet />
+        <Outlet context={{ handleFeedCountEvent }} />
       </div>
     </BasicLayout>
   );
