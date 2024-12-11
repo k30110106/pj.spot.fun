@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { postLoginApi } from "../api/LoginApi";
 import { useNavigate } from "react-router-dom";
 import Searchid from "../../../common/searchuserinfomodal/Searchid";
@@ -7,9 +7,14 @@ import SearchModal from "../../../common/searchuserinfomodal/SearchModal";
 import { useBasic } from "../../../common/context/BasicContext";
 import { ReactComponent as Google } from "../../../common/img/Google.svg";
 import { ReactComponent as Naver } from "../../../common/img/naver.svg";
-import { ReactComponent as Kakao } from "../../../common/img/kakao.svg";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import kakaoSvg from "../path/kakao.svg";
+
+const CLIENT_ID = process.env.REACT_APP_REST_API_KEY;
+const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URL;
+
+export const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
 const LoginComponent = () => {
   const [userId, setUserId] = useState("");
@@ -69,10 +74,6 @@ const LoginComponent = () => {
     } catch (error) {
       alert("로그인 중 오류가 발생했습니다. 다시 시도해주세요.");
     }
-  };
-
-  const handleCancel = () => {
-    navigate("/");
   };
 
   const handleSocialLogin = (provider) => {
@@ -146,13 +147,6 @@ const LoginComponent = () => {
         >
           로그인
         </button>
-        {/*<button*/}
-        {/*  type="button"*/}
-        {/*  onClick={handleCancel}*/}
-        {/*  className="p-2 w-80 bg-gray-500 text-white rounded-3xl cursor-pointer hover:bg-gray-600"*/}
-        {/*>*/}
-        {/*  취소*/}
-        {/*</button>*/}
       </form>
       <div id="search-user-info" className="mt-6 text-center">
         <div>
@@ -203,12 +197,12 @@ const LoginComponent = () => {
             <div className="mt-2 text-xs">구글</div>
           </div>
           <div className="text-center">
-            <button
-              onClick={() => handleSocialLogin("kakao")}
-              className="bg-custom-cyan text-white rounded-full w-12 h-12 flex items-center justify-center cursor-pointer"
+            <a
+              href={KAKAO_AUTH_URL}
+              className="kakaobtn bg-custom-cyan text-white rounded-full w-12 h-12 flex items-center justify-center cursor-pointer"
             >
-              <Kakao />
-            </button>
+              <img src={kakaoSvg} alt="카카오 로그인" className="w-6 h-6" />
+            </a>
             <div className="mt-2 text-xs">카카오</div>
           </div>
           <div className="text-center">

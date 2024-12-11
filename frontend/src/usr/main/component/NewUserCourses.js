@@ -4,7 +4,7 @@ import SliderComponent from './SliderComponent';
 import { Link } from 'react-router-dom';
 
 const newUserCourses = [
-  { title: '유저 코스 1', image: 'https://via.placeholder.com/150' },
+  { title: '아라밍뿌님 코스', image: 'https://via.placeholder.com/150', price: '28,500원', time: '3시간 40분', km: '4.4km' },
   { title: '유저 코스 2', image: 'https://via.placeholder.com/150' },
   { title: '유저 코스 3', image: 'https://via.placeholder.com/150' },
   { title: '유저 코스 4', image: 'https://via.placeholder.com/150' },

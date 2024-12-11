@@ -1,5 +1,3 @@
-// 슬라이드 기능 추가
-// slide-slick
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 
@@ -18,7 +16,7 @@ const SliderComponent = ({ items }) => {
   };
 
   return (
-    <div className="relative group"> {/* 슬라이드 전체에 group 클래스를 적용 */}
+    <div className="relative group">
       {/* 슬라이드 이미지 컨테이너 */}
       <div className="flex overflow-hidden">
         <div
@@ -28,7 +26,7 @@ const SliderComponent = ({ items }) => {
           }}
         >
           {items.map((item, index) => (
-            <div key={index} className="w-full sm:w-1/5 flex-shrink-0 p-2 group relative"> {/* 각 이미지에 group 클래스를 적용 */}
+            <div key={index} className="w-full sm:w-1/5 flex-shrink-0 p-2 group relative">
               {/* 이미지 영역 */}
               <div className="relative">
                 <img
@@ -36,15 +34,20 @@ const SliderComponent = ({ items }) => {
                   alt={item.title}
                   className="w-full h-auto rounded-lg"
                 />
-
                 {/* 호버 시 나타나는 바로가기 버튼 */}
-                <Link to={"/{item.title}"}
+                <Link to={`/course/${item.title}`}
                   className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-black p-2 rounded-full opacity-0 hover:opacity-100 transition-opacity duration-300"
                 >
                   바로가기 &gt;
                 </Link>
               </div>
               <h3 className="text-center mt-2">{item.title}</h3>
+              <div className='flex justify-center '>
+                <span className='text-start text-xs  text-gray-500'>{item.address}</span>
+                {/* 위 수정 해야함 */}
+                {/* <span className="text-end text-sm ">{item.price}{item.time}{item.km}</span> */}
+                <span className=" text-start text-xs text-gray-400">{item.price || item.time}&nbsp;{item.time}{item.km}</span>
+              </div>
             </div>
           ))}
         </div>

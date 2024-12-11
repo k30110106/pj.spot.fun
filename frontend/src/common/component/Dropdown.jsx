@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const Dropdown = ({ handleLogout }) => {
   return (
-    <div className="absolute mt-28 w-28 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+    <div className="absolute top-6 w-28 bg-white border border-gray-200 rounded-md shadow-lg z-50">
       <ul className="py-2">
         <li>
           <Link
@@ -11,6 +11,14 @@ const Dropdown = ({ handleLogout }) => {
             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
           >
             마이페이지
+          </Link>
+        </li>
+        <li>
+          <Link
+            to="#"
+            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          >
+            정보수정
           </Link>
         </li>
         <li>

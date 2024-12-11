@@ -39,11 +39,13 @@ const Header = () => {
             >
               <span className="mr-2 text-gray-800 font-medium">{userInfo.nickname}님</span>
               <span
-                className={`text-lg font-semibold transition-transform duration-300 ${view ? "rotate-180 text-green-600" : "text-gray-600"
+                className={`text-lg font-semibold transition-transform duration-500 ease-in-out transform ${view ? "rotate-180 translate-y-1 text-green-600" : "translate-y-0 text-gray-600"
                   }`}
               >
                 {view ? "▲" : "▼"}
               </span>
+
+
               {view && <Dropdown handleLogout={handleLogout} />}
             </ul>
           ) : (
