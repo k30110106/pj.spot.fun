@@ -1,7 +1,7 @@
 import { lazy, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useBasic } from "../../../common/context/BasicContext";
-import { getExistUserApi } from "../api/MypageApi";
+import { getExistsUserApi } from "../api/MypageApi";
 
 const FeedListCompoent = lazy(() => import("../component/feed/ListComponent"));
 const LikeListCompoent = lazy(() => import("../component/like/ListComponent"));
@@ -17,7 +17,7 @@ const ValidateComponent = () => {
 
   const existsUser = async () => {
     try {
-      const data = await getExistUserApi({ idx: userIdx });
+      const data = await getExistsUserApi({ idx: userIdx });
       return data;
     } catch (err) {
       console.log(err);

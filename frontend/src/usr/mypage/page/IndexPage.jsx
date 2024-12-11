@@ -9,6 +9,7 @@ import {
   followStatusApi,
   getFollowCountAllApi,
   getFollowStatusApi,
+  getMypageUserApi,
 } from "../api/MypageApi";
 
 const menuList = [
@@ -61,7 +62,6 @@ const IndexPage = () => {
       const param = { followerIdx: loginUserIdx, followingIdx: userIdx };
       const data = await followStatusApi(param, status);
 
-      console.log(data);
       setFollowStatus(data.followStatus);
       setFollowCount((prev) => {
         return {
@@ -77,6 +77,9 @@ const IndexPage = () => {
     }
   };
 
+  // 사용자정보
+  const [nickname, setNickname] = useState(null);
+
   useEffect(() => {
     const setNowMenuTab = () => {
       menuList.map(
@@ -89,7 +92,7 @@ const IndexPage = () => {
         const { followerCount, followingCount } = data;
         setFollowCount({ followerCount, followingCount });
       } catch (err) {
-        console.log("[팔로우] 조회를 실패했습니다");
+        console.log("[팔로우수] 조회를 실패했습니다");
         console.log(err);
       }
     };
@@ -105,6 +108,15 @@ const IndexPage = () => {
         console.log(err);
       }
     };
+    const getMypageUser = async () => {
+      try {
+        const data = await getMypageUserApi({ idx: userIdx });
+        setNickname(data.nickname);
+      } catch (err) {
+        console.log("[사용자정보] 조회를 실패했습니다");
+        console.log(err);
+      }
+    };
 
     if (!isNaN(userIdx)) {
       if (parseInt(userIdx) === parseInt(loginUserIdx)) {
@@ -114,6 +126,7 @@ const IndexPage = () => {
         getFollowStatus();
       }
       getFollowCount();
+      getMypageUser();
     }
   }, [userIdx, loginUserIdx, pathname]);
 
@@ -121,7 +134,11 @@ const IndexPage = () => {
     <BasicLayout>
       <div className="border border-gray-200 w-full">
         {/* 프로필 정보 */}
-        <ProfileComponent feedCount={feedCount} followCount={followCount} />
+        <ProfileComponent
+          feedCount={feedCount}
+          followCount={followCount}
+          nickname={nickname}
+        />
 
         {/* 버튼 */}
         <ButtonComponent

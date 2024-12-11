@@ -4,8 +4,17 @@ export const API_BASE_URL = process.env.REACT_APP_API_ROOT;
 axios.defaults.baseURL = API_BASE_URL;
 axios.defaults.withCredentials = true; // 쿠키사용여부 설정
 
-// 유저조회
-export const getExistUserApi = async (param) => {
+// 유저조회(존재유무)
+export const getExistsUserApi = async (param) => {
+  const config = {
+    params: param,
+  };
+  const res = await axios.get(`/api/usr/mypage/exists`, config);
+  return res.data;
+};
+
+// 마이페이지 사용자정보
+export const getMypageUserApi = async (param) => {
   const config = {
     params: param,
   };

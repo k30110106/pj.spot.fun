@@ -11,20 +11,32 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserMypageServiceImpl implements UserMypageService {
-    private final UserRepository userRepository;
-    private final JwtTokenProvider jwtTokenProvider;
+  private final UserRepository userRepository;
+  private final JwtTokenProvider jwtTokenProvider;
 
-    @Override
-    public UserDTO findByIdx() {
-        String accessToken = JwtTokenUtil.getJwtToken();
-        Long userIdx = jwtTokenProvider.getUserIdx(accessToken);
-        User user = userRepository.findByIdx(userIdx)
-                .orElseThrow(IllegalArgumentException::new);
+  @Override
+  public UserDTO findByIdx() {
+    String accessToken = JwtTokenUtil.getJwtToken();
+    Long userIdx = jwtTokenProvider.getUserIdx(accessToken);
+    User user = userRepository.findByIdx(userIdx)
+            .orElseThrow(IllegalArgumentException::new);
 
-        return UserDTO.builder()
-                .userId(user.getUserId())
-                .password(user.getPassword())
-                .userRole(user.getUserRole())
-                .build();
-    }
+    return UserDTO.builder()
+            .userId(user.getUserId())
+            .password(user.getPassword())
+            .userRole(user.getUserRole())
+            .build();
+  }
+
+  @Override
+  public UserDTO getUser(UserDTO userDTO) {
+    Long userIdx = userDTO.getIdx();
+    User user = userRepository.findByIdx(userIdx)
+            .orElseThrow(IllegalArgumentException::new);
+
+    return UserDTO.builder()
+            //.userId(user.getUserId())
+            .nickname(user.getNickname())
+            .build();
+  }
 }
