@@ -17,7 +17,7 @@ const categories = [
   { name: '코스만들기', img: <MakeCourse />, path: '/add-course' },
   { name: '피드', img: <Feed />, path: '/feed' },
   { name: '게시판', img: <FoodFork />, path: '/board' },
-  //   { name: '축제', icon: '🎉' },
+//  { name: '마이페이지', img: <FoodFork />, path: '/mypage' },
 ];
 
 const NavigationMenu = () => {

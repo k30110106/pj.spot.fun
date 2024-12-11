@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useBasic } from "../context/BasicContext";
 import { postLogoutApi } from "../../usr/login/api/LogoutApi";
 import Logo from "../img/FunSpotLogo.jpg";
+import Dropdown from "./Dropdown";
 
 const Header = () => {
   const { userInfo, setUserInfo } = useBasic();
@@ -19,6 +20,8 @@ const Header = () => {
     }
   };
 
+  const [view, setView] = useState(false);
+
   return (
     <header className="bg-white text-black p-4 mb-4 shadow-md rounded-md">
       <div className="container mx-auto flex justify-between items-center">
@@ -28,16 +31,20 @@ const Header = () => {
         </a>
         <div>
           {userInfo ? (
-            <ul className="flex items-center">
-              <li className="list-none">
-                <span className="mr-3">{userInfo.nickname}님</span>
-              </li>
-              {/* <span className="p-1 cursor-default">|</span> */}
-              <li>
-                <button type="button" onClick={handleLogout}>
-                  로그아웃
-                </button>
-              </li>
+            <ul
+              onClick={() => {
+                setView(!view);
+              }}
+              className="flex items-center cursor-pointer relative"
+            >
+              <span className="mr-2 text-gray-800 font-medium">{userInfo.nickname}님</span>
+              <span
+                className={`text-lg font-semibold transition-transform duration-300 ${view ? "rotate-180 text-green-600" : "text-gray-600"
+                  }`}
+              >
+                {view ? "▲" : "▼"}
+              </span>
+              {view && <Dropdown handleLogout={handleLogout} />}
             </ul>
           ) : (
             <ul className="flex items-center">
@@ -46,7 +53,7 @@ const Header = () => {
                   로그인
                 </Link>
               </li>
-              {/* <span className="p-1 cursor-default">|</span> */}
+
               <li>
                 <Link to={"/signupCheck"}>회원가입</Link>
               </li>
