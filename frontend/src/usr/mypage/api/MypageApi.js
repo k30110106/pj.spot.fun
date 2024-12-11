@@ -71,3 +71,12 @@ export const followStatusApi = async (param, status) => {
     return res.data;
   }
 };
+
+// 프로필 정보
+export const getProfileApi = async (param) => {
+  const config = {
+    params: param,
+  };
+  const res = await axios.get(`/api/usr/profile`, config);
+  return res.data;
+};

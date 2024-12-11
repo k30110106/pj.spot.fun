@@ -9,7 +9,7 @@ const ButtonComponent = ({ handleFollowClickEvent, followStatus }) => {
   return (
     <>
       <div className="mt-4">
-        <div className="mt-2 flex space-x-4">
+        <div className="mt-2 flex space-x-10 w-full items-center justify-center">
           {parseInt(userIdx) === parseInt(loginUserIdx) ? (
             <>
               <button

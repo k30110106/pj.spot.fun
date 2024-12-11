@@ -10,6 +10,7 @@ import {
   getFollowCountAllApi,
   getFollowStatusApi,
   getMypageUserApi,
+  getProfileApi,
 } from "../api/MypageApi";
 
 const menuList = [
@@ -78,7 +79,7 @@ const IndexPage = () => {
   };
 
   // 사용자정보
-  const [nickname, setNickname] = useState(null);
+  const [mypageInfo, setMypageInfo] = useState({});
 
   useEffect(() => {
     const setNowMenuTab = () => {
@@ -110,8 +111,10 @@ const IndexPage = () => {
     };
     const getMypageUser = async () => {
       try {
-        const data = await getMypageUserApi({ idx: userIdx });
-        setNickname(data.nickname);
+        //const data = await getMypageUserApi({ idx: userIdx });
+        const data = await getProfileApi({ userIdx });
+        setMypageInfo(data);
+        console.log(data);
       } catch (err) {
         console.log("[사용자정보] 조회를 실패했습니다");
         console.log(err);
@@ -137,7 +140,7 @@ const IndexPage = () => {
         <ProfileComponent
           feedCount={feedCount}
           followCount={followCount}
-          nickname={nickname}
+          mypageInfo={mypageInfo}
         />
 
         {/* 버튼 */}
