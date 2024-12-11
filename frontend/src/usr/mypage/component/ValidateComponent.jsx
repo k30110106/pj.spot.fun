@@ -26,7 +26,7 @@ const ValidateComponent = () => {
   };
 
   const renderComponent = () => {
-    if (!isDone) {
+    if (isNaN(userIdx) || !isDone) {
       return;
     }
 

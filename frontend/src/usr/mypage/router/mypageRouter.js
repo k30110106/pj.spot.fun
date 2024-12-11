@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import { Navigate } from "react-router-dom";
 import ValidateComponent from "../component/ValidateComponent";
 

@@ -1,6 +1,6 @@
 import { useBasic } from "../../../common/context/BasicContext";
 
-const ProfileComponent = ({ feedCount }) => {
+const ProfileComponent = ({ feedCount, followCount }) => {
   const { userInfo } = useBasic();
   const nickname = userInfo?.nickname || "";
 
@@ -25,11 +25,11 @@ const ProfileComponent = ({ feedCount }) => {
             <div className="text-sm text-gray-500">피드</div>
           </div>
           <div className="text-center">
-            <div className="font-semibold">500</div>
+            <div className="font-semibold">{followCount.followerCount}</div>
             <div className="text-sm text-gray-500">팔로워</div>
           </div>
           <div className="text-center">
-            <div className="font-semibold">180</div>
+            <div className="font-semibold">{followCount.followingCount}</div>
             <div className="text-sm text-gray-500">팔로잉</div>
           </div>
         </div>

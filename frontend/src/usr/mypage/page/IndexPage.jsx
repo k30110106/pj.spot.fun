@@ -5,6 +5,11 @@ import ButtonComponent from "../component/ButtonComponent";
 import { useEffect, useState } from "react";
 import MenuTabComponent from "../component/MenuTabComponent";
 import { useBasic } from "../../../common/context/BasicContext";
+import {
+  followStatusApi,
+  getFollowCountAllApi,
+  getFollowStatusApi,
+} from "../api/MypageApi";
 
 const menuList = [
   {
@@ -21,6 +26,11 @@ const menuList = [
   },
 ];
 const initMenu = menuList[0].id;
+
+const initCount = {
+  followCount: 0,
+  followingCount: 0,
+};
 
 const IndexPage = () => {
   const { userIdx } = useParams();
@@ -42,15 +52,68 @@ const IndexPage = () => {
     setFeedCount(count);
   };
 
+  // 팔로우
+  const [followStatus, setFollowStatus] = useState(false);
+  const [followCount, setFollowCount] = useState(initCount);
+  const handleFollowClickEvent = async () => {
+    try {
+      const status = !followStatus;
+      const param = { followerIdx: loginUserIdx, followingIdx: userIdx };
+      const data = await followStatusApi(param, status);
+
+      console.log(data);
+      setFollowStatus(data.followStatus);
+      setFollowCount((prev) => {
+        return {
+          ...prev,
+          followingCount: data.followStatus
+            ? prev.followingCount + 1
+            : prev.followingCount - 1,
+        };
+      });
+    } catch (err) {
+      console.log("[팔로우상태] 변경을 실패했습니다");
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     const setNowMenuTab = () => {
       menuList.map(
         (menu) => pathname.includes(menu.id) && setActiveMenu(menu.id)
       );
     };
+    const getFollowCount = async () => {
+      try {
+        const data = await getFollowCountAllApi({ userIdx });
+        const { followerCount, followingCount } = data;
+        setFollowCount({ followerCount, followingCount });
+      } catch (err) {
+        console.log("[팔로우] 조회를 실패했습니다");
+        console.log(err);
+      }
+    };
+    const getFollowStatus = async () => {
+      try {
+        const data = await getFollowStatusApi({
+          followerIdx: loginUserIdx,
+          followingIdx: userIdx,
+        });
+        setFollowStatus(data.followStatus);
+      } catch (err) {
+        console.log("[팔로우상태] 조회를 실패했습니다");
+        console.log(err);
+      }
+    };
 
-    if (parseInt(userIdx) === parseInt(loginUserIdx)) {
-      setNowMenuTab();
+    if (!isNaN(userIdx)) {
+      if (parseInt(userIdx) === parseInt(loginUserIdx)) {
+        setNowMenuTab();
+      }
+      if (parseInt(userIdx) !== parseInt(loginUserIdx)) {
+        getFollowStatus();
+      }
+      getFollowCount();
     }
   }, [userIdx, loginUserIdx, pathname]);
 
@@ -58,10 +121,13 @@ const IndexPage = () => {
     <BasicLayout>
       <div className="border border-gray-200 w-full">
         {/* 프로필 정보 */}
-        <ProfileComponent feedCount={feedCount} />
+        <ProfileComponent feedCount={feedCount} followCount={followCount} />
 
         {/* 버튼 */}
-        <ButtonComponent />
+        <ButtonComponent
+          handleFollowClickEvent={handleFollowClickEvent}
+          followStatus={followStatus}
+        />
 
         {/* 메뉴바 */}
         {parseInt(loginUserIdx) === parseInt(userIdx) ? (
