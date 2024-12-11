@@ -4,14 +4,18 @@ import com.spot.fun.config.jwt.JwtTokenProvider;
 import com.spot.fun.token.dto.AuthTokenDTO;
 import com.spot.fun.token.entity.AuthToken;
 import com.spot.fun.token.repository.AuthTokenRepository;
+import com.spot.fun.token.util.AuthTokenUtil;
 import com.spot.fun.usr.user.entity.User;
 import com.spot.fun.usr.user.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
 
 @Log4j2
 @Service
@@ -21,6 +25,8 @@ public class AuthTokenServiceImpl implements AuthTokenService {
     private final AuthTokenRepository authTokenRepository;
     private final UserRepository userRepository;
     private final HttpServletRequest request;
+    private final HttpServletResponse response;
+    private final AuthTokenUtil authTokenUtil;
 
     @Override
     public AuthTokenDTO doRefreshToken(HttpServletRequest request) {
@@ -61,12 +67,31 @@ public class AuthTokenServiceImpl implements AuthTokenService {
                 .build();
     }
 
+//    public Long getCurrentUserIdx() {
+////        String authHeader = request.getHeader("Authorization");
+////        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+////            throw new IllegalStateException("인증 토큰이 없거나 유효하지 않습니다.");
+////        }
+////        String token = authHeader.replace("Bearer ", "");
+////        return jwtTokenProvider.getUserIdx(token);
+//
+//        Cookie[] cookies = request.getCookies();
+//        String accessToken = null;
+//        if (cookies != null) {
+//            for (Cookie cookie : cookies) {
+//                if ("access_token".equals(cookie.getName())) {
+//                    accessToken = cookie.getValue();
+//                    break;
+//                }
+//            }
+//        }
+//        return jwtTokenProvider.getUserIdx(accessToken);
+//
+//    }
+
     public Long getCurrentUserIdx() {
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new IllegalStateException("인증 토큰이 없거나 유효하지 않습니다.");
-        }
-        String token = authHeader.replace("Bearer ", "");
-        return jwtTokenProvider.getUserIdx(token);
+        System.out.println("getCurrentUserIdx" + Arrays.toString(request.getCookies()));
+        log.info("getCurrentUserIdx : " + authTokenUtil.validateTokenAndGetUserDTO(request, response).getIdx());
+        return authTokenUtil.validateTokenAndGetUserDTO(request, response).getIdx();
     }
 }
