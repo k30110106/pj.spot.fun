@@ -1,5 +1,5 @@
-// 펀추천코스
 import React from 'react';
+import { Link } from 'react-router-dom'; // Link 컴포넌트 임포트
 import SliderComponent from './SliderComponent';
 
 const recommendedCourses = [
@@ -19,8 +19,12 @@ const RecommendedCourses = () => {
   return (
     <div className="container mx-auto p-4 font-bold">
       <span className="text-xl font-bold mb-4 text-custom-cyan">Fun </span>
-      추천코스
-      <SliderComponent items={recommendedCourses} />
+      {/* Link 컴포넌트로 /datecourses 페이지로 이동 */}
+      <span className='text-base pr-1'>추천코스</span>
+      <Link to="/datecourses" className="text-xl text-gray-400">
+        <span className='bg-gray-200 rounded-3xl pl-2 pr-2 pb-1'>&gt;</span>
+      </Link>
+      <SliderComponent items={recommendedCourses}></SliderComponent>
     </div>
   );
 };

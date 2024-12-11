@@ -44,7 +44,7 @@ public class DateCourseController {
     }
 
     // 특정 코스 조회 (ID로 조회 예시)
-    @GetMapping("/{id}")
+    @GetMapping("/{idx}")
     public ResponseEntity<DateCourse> getCourseById(@PathVariable Long id) {
         DateCourse course = dateCourseService.getCourseById(id);
         if (course != null) {

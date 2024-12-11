@@ -7,7 +7,7 @@ const AddCoursePage = lazy(() => import("../page/AddCoursePage"));
 const DateRouter = () => {
   return [
     {
-      path: "add-course", // '/date/add-course' 경로
+      path: "addcourse", // 상대 경로로 설정되도록
       element: (
         <Suspense fallback={Loading}>
           <AddCoursePage />
@@ -15,10 +15,11 @@ const DateRouter = () => {
       ),
     },
     {
-      path: "", // 기본 경로에서 리다이렉트
-      element: <Navigate replace to="/date/addcourse" />,
+      path: "", // /datecourses 기본 경로에서 리다이렉트
+      element: <Navigate replace to="addcourse" />, // /datecourses -> /datecourses/addcourse 로 리다이렉트
     },
   ];
 };
+
 
 export default DateRouter;

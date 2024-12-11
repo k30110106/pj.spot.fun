@@ -184,9 +184,8 @@ const SignupComponent = () => {
       if (!value) {
         setAlertModalConfig({
           isOpen: true,
-          message: `${
-            field === "userId" ? "아이디" : "닉네임"
-          }를(을) 입력해주세요.`,
+          message: `${field === "userId" ? "아이디" : "닉네임"
+            }를(을) 입력해주세요.`,
         });
         return;
       }
@@ -195,18 +194,16 @@ const SignupComponent = () => {
       if (response.data.isDuplicate) {
         setAlertModalConfig({
           isOpen: true,
-          message: `${value}은(는) 중복된 ${
-            field === "userId" ? "아이디" : "닉네임"
-          }입니다.`,
+          message: `${value}은(는) 중복된 ${field === "userId" ? "아이디" : "닉네임"
+            }입니다.`,
         });
         if (field === "userId") setIsUserIdChecked(false);
         if (field === "nickname") setIsNicknameChecked(false);
       } else {
         setAlertModalConfig({
           isOpen: true,
-          message: `${value}은(는) 사용 가능한 ${
-            field === "userId" ? "아이디" : "닉네임"
-          }입니다.`,
+          message: `${value}은(는) 사용 가능한 ${field === "userId" ? "아이디" : "닉네임"
+            }입니다.`,
         });
         if (field === "userId") setIsUserIdChecked(true);
         if (field === "nickname") setIsNicknameChecked(true);
@@ -223,7 +220,7 @@ const SignupComponent = () => {
     return phone
       .replace(/[^0-9]/g, "")
       .replace(/^(\d{3})(\d{3,4})(\d{4})$/, "$1-$2-$3")
-      .replace(/(\-{1,2})$/g, "");
+      .replace(/(-{1,2})$/g, "");
   };
 
   const handleSubmit = async (e) => {
@@ -289,12 +286,12 @@ const SignupComponent = () => {
     }
   };
 
-  const handleCancel = () => {
-    navigate("/");
-  };
+  // const handleCancel = () => {
+  //   navigate("/");
+  // };
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center min-h-screen pb-20">
       <form onSubmit={handleSubmit}>
         {/* <h2>회원가입</h2> */}
 
@@ -544,20 +541,20 @@ const SignupComponent = () => {
             focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
           />
         </div>
-        <div>
+        <div className="flex items-center justify-center">
           <button
             type="submit"
-            className="bg-custom-cyan rounded-3xl mt-2 mb-4 ml-2 p-2 w-32  hover:bg-emerald-400"
+            className="bg-custom-cyan rounded-3xl mt-2 mb-4 ml-2 p-2 w-96  hover:bg-emerald-400"
           >
             가입하기
           </button>
-          <button
+          {/* <button
             type="button"
             onClick={handleCancel}
             className="ml-48 mt-2 mb-4 p-2 w-32 bg-gray-500 text-white rounded-3xl hover:bg-gray-600 cursor-pointer"
           >
             취소
-          </button>
+          </button> */}
         </div>
       </form>
 

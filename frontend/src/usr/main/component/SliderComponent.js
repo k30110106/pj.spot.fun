@@ -1,7 +1,7 @@
 // 슬라이드 기능 추가
 // slide-slick
 import React, { useState } from 'react';
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const SliderComponent = ({ items }) => {
   const itemsPerSlide = 5; // 한 슬라이드에 표시할 이미지 수

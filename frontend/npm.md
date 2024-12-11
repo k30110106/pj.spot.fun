@@ -9,3 +9,5 @@
 - npm install @emotion/react @emotion/styled
 - npm install @mui/material @mui/icons-material @mui/system
   - 비밀번호 토글 아이콘 패키지
+- npm i styled-components 
+  - 회원약관 스타일 컴포넌트

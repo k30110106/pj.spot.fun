@@ -12,7 +12,7 @@ const MainPage = () => {
   return (
     // <BasicLayout>
     <div className="custom-cursor">
-      <div className="min-w-full">
+      <div className="min-w-full pb-32">
         {/* <Header /> */}
         {/* <HelloComponent /> */}
         <Banner />
