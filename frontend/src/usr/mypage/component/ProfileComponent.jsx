@@ -2,7 +2,7 @@ import { useBasic } from "../../../common/context/BasicContext";
 
 const ProfileComponent = ({ feedCount }) => {
   const { userInfo } = useBasic();
-  const { nickname } = userInfo;
+  const nickname = userInfo?.nickname || "";
 
   return (
     <div className="flex items-center space-x-8 py-4 px-6">

@@ -17,10 +17,11 @@ public interface UserFeedLikeRepository extends JpaRepository<FeedLike, Long> {
   void deleteByFeedIdxAndUserIdx(Long feedIdx, Long userIdx);
 
   @Query("SELECT f FROM FeedLike f " +
-          "INNER JOIN f.feed feed " +
+//          "INNER JOIN f.feed feed " +
           "WHERE f.user.idx = :#{#feed.userIdx} " +
           "AND (:#{#feed.lastId}=0 or f.idx < :#{#feed.lastId})")
   List<FeedLike> findFeedsByUserIdxOrderByIdxDesc(@Param("feed") FeedRequestDTO feedRequestDTO, Pageable pageable);
 
-
+  @Query("SELECT MIN(tfl.idx) FROM FeedLike tfl WHERE tfl.user.idx = :userIdx")
+  Long findMinIdxByUserIdx(@Param("userIdx") Long userIdx);
 }

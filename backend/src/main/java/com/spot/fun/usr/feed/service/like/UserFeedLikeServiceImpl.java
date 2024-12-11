@@ -24,7 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
 
 @Log4j2
 @Service
@@ -71,18 +71,51 @@ public class UserFeedLikeServiceImpl implements UserFeedLikeService{
     }
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public FeedResponseDTO getLikeListByMypage(FeedRequestDTO feedRequestDTO) {
-    Pageable pageable = PageRequest.of(0, feedRequestDTO.getPageSize(), Sort.by("idx").descending());
-    List<FeedDTO> list = userFeedLikeRepository.findFeedsByUserIdxOrderByIdxDesc(feedRequestDTO, pageable).stream()
+    int pageSize = feedRequestDTO.getPageSize();
+    Long loginUserIdx = feedRequestDTO.getLoginUserDTO().getIdx();
+
+    Long lastIdx = userFeedLikeRepository.findMinIdxByUserIdx(loginUserIdx);
+
+    Pageable pageable = PageRequest.of(0, pageSize, Sort.by("idx").descending());
+    Map<String, Object> listMap = getListAndListIdx(userFeedLikeRepository.findFeedsByUserIdxOrderByIdxDesc(feedRequestDTO, pageable));
+
+    Long list_lastIdx = (Long) listMap.get("lastIdx");
+    List<FeedLike> list = new ArrayList<>((List<FeedLike>) listMap.get("list"));
+
+    if(!Objects.isNull(lastIdx)
+            && !Objects.isNull(list_lastIdx)
+            && !Objects.equals(list_lastIdx, lastIdx)) {
+      while (true) {
+        int re_size = pageSize - list.size();
+        if(re_size==0) {
+          break;
+        }
+        feedRequestDTO.setLastId(list_lastIdx);
+        pageable = PageRequest.of(0, re_size, Sort.by("idx").descending());
+        listMap = getListAndListIdx(userFeedLikeRepository.findFeedsByUserIdxOrderByIdxDesc(feedRequestDTO, pageable));
+        list_lastIdx = (Long) listMap.get("lastIdx");
+
+        list.addAll((List<FeedLike>) listMap.get("list"));
+
+        if(Objects.isNull(listMap.get("lastIdx"))
+                || Objects.equals(listMap.get("lastIdx"), lastIdx)) {
+          break;
+        }
+      }
+    }
+
+    List<FeedDTO> feedDTOS = list.stream()
             .map((like) -> {
               Feed feed = like.getFeed();
-              Long feedIdx = feed.getIdx();
-              Long loginUserIdx = feedRequestDTO.getLoginUserDTO().getIdx();
+              Long likeIdx = like.getIdx();
+              Long feedIdx = like.getFeed().getIdx();
               boolean likedYn = true;
 
               return FeedDTO.builder()
-                      .idx(feedIdx)
+                      .idx(likeIdx)
                       .content(feed.getContent())
                       .regDateStr(userFeedUtil.getDateFormat(feed.getRegDate()))
                       .user(
@@ -118,14 +151,31 @@ public class UserFeedLikeServiceImpl implements UserFeedLikeService{
                                                       .tagName(tag.getHashtag().getTagName())
                                                       .build()
                                       ).toList()
-                      ).build();
+                      )
+                      .feedIdx(feedIdx)
+                      .likeIdx(likeIdx)
+                      .build();
             })
             .toList();
-    boolean hasNext = ((list.size() == feedRequestDTO.getPageSize()) && !ObjectUtils.isEmpty(list));
+    boolean hasNext = ((feedDTOS.size() == feedRequestDTO.getPageSize()) && !ObjectUtils.isEmpty(feedDTOS));
 
     return FeedResponseDTO.builder()
-            .feedDTOS(list)
+            .feedDTOS(feedDTOS)
             .hasNext(hasNext)
             .build();
+  }
+
+  private Map<String, Object> getListAndListIdx(List<FeedLike> feedLikeList) {
+    Map<String, Object> map = new HashMap<>();
+
+    Long lastIdx = feedLikeList.get((feedLikeList.size())-1).getIdx();
+    feedLikeList = feedLikeList.stream()
+            .filter(filter -> !filter.getFeed().isDelYn())
+            .toList();
+
+    map.put("lastIdx", lastIdx);
+    map.put("list", feedLikeList);
+
+    return map;
   }
 }

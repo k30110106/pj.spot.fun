@@ -47,7 +47,7 @@ const ListComponent = () => {
   const [selectedFeed, setSelectedFeed] = useState({});
   const handleSelectedFeed = (idx) => {
     const feed = likeList.find((item) => item.idx === parseInt(idx));
-    setSelectedFeed(feed);
+    setSelectedFeed({ ...feed, idx: feed.feedIdx });
   };
 
   // 피드상세
@@ -63,10 +63,12 @@ const ListComponent = () => {
 
   // 좋아요 상태체크
   const handleLikeListEvent = () => {
-    const { idx, likedYn } = selectedFeed;
+    const { feedIdx, likedYn } = selectedFeed;
 
     if (!likedYn) {
-      setLikeList((prevList) => prevList.filter((item) => item.idx !== idx));
+      setLikeList((prevList) =>
+        prevList.filter((item) => item.feedIdx !== feedIdx)
+      );
     }
 
     setSelectedFeed({});
@@ -79,7 +81,7 @@ const ListComponent = () => {
         const newLikeCount = likeCount > 99 ? "99+" : likeCount;
         setLikeList((prevFeedList) =>
           prevFeedList.map((feed) =>
-            feed.idx === targetIdx
+            feed.feedIdx === targetIdx
               ? { ...feed, likedYn: likedYn, likeCount: newLikeCount }
               : feed
           )
@@ -100,7 +102,7 @@ const ListComponent = () => {
   const handleCommentCountEvent = (targetIdx, type) => {
     setLikeList((prevFeedList) =>
       prevFeedList.map((feed) => {
-        if (feed.idx === targetIdx) {
+        if (feed.feedIdx === targetIdx) {
           const commentCount =
             type === "new" ? feed.commentCount + 1 : feed.commentCount - 1;
           const newCommentCount = commentCount > 99 ? "99+" : commentCount;

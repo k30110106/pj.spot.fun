@@ -36,6 +36,9 @@ public class FeedDTO {
 
   private List<Long> hashtagIdx;
 
+  private Long feedIdx;
+  private Long likeIdx;
+
   public Feed toEntity() {
     return Feed.builder()
             .content(this.content)

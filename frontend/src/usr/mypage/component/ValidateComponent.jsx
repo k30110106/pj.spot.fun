@@ -41,6 +41,7 @@ const ValidateComponent = () => {
   };
 
   useEffect(() => {
+    //console.log("doVailidate");
     const doVailidate = async () => {
       // 메인으로 이동
       if (loginUserIdx === "") {
