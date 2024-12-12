@@ -70,10 +70,6 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/usr/mypage/**").hasAuthority("USER")
                         .requestMatchers("/api/usr/datecourse/public", "api/usr/datecourse/user").permitAll()
-                        // WebSocket 엔드포인트 허용
-                        .requestMatchers("/ws/**").permitAll()
-//                      .requestMatchers("/api/chat/**").permitAll()
-                        .requestMatchers("/api/chat/**").authenticated()  // 명시적으로 인증 필요함을 표시
                         .requestMatchers(PERMITTED_PATHS).permitAll()
                         .anyRequest().authenticated()
                 )

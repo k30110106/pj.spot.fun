@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@stomp/stompjs": "^7.0.0",
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
     "@mui/icons-material": "^6.1.10",
@@ -24,7 +23,6 @@
     "react-scripts": "5.0.1",
     "react-slick": "^0.30.2",
     "slick-carousel": "^1.8.1",
-    "sockjs-client": "^1.6.1",
     "styled-components": "^6.1.13",
     "web-vitals": "^2.1.4"
   },

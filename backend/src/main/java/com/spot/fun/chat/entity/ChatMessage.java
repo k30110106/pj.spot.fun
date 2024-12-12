@@ -1,4 +1,4 @@
-package com.spot.fun.usr.chat.entity;
+package com.spot.fun.chat.entity;
 
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -19,11 +19,11 @@ public class ChatMessage {
     @Column(name = "chat_id", unique = true, updatable = false, nullable = false)
     private Long chatId;
 
-    @Column(name = "from_idx", nullable = false)
-    private Long fromIdx;
+    @Column(name = "from_id", nullable = false)
+    private Long fromId;
 
-    @Column(name = "to_idx", nullable = false)
-    private Long toIdx;
+    @Column(name = "to_id", nullable = false)
+    private Long toId;
 
     @Column(name = "msg", updatable = false, nullable = false)
     private String msg;
@@ -34,29 +34,18 @@ public class ChatMessage {
     @Column(name = "timestamp", updatable = false, nullable = false)
     private Timestamp timestamp;
 
-    @Column(name = "is_read", nullable = false)
+    @Column(name = "checked", nullable = false)
     @ColumnDefault("0")
-    private boolean isRead;
+    private boolean checked;
 
     @Builder
-    public ChatMessage(Long fromIdx, Long toIdx, String msg, Long roomId, boolean isRead) {
+    public ChatMessage(Long fromId, Long toId, String msg, Long roomId, boolean checked) {
 //        this.chatId = chatId;
-        this.fromIdx = fromIdx;
-        this.toIdx = toIdx;
+        this.fromId = fromId;
+        this.toId = toId;
         this.msg = msg;
         this.roomId = roomId;
         this.timestamp = Timestamp.from(Instant.now());
-        this.isRead = isRead;
-    }
-
-    // 채팅 생성
-    public static ChatMessage createChatMessage(Long fromIdx, Long toIdx, String msg, Long roomId, boolean isRead) {
-        return ChatMessage.builder()
-                .fromIdx(fromIdx)
-                .toIdx(toIdx)
-                .msg(msg)
-                .roomId(roomId)
-                .isRead(isRead)
-                .build();
+        this.checked = checked;
     }
 }

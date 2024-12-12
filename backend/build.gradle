@@ -51,9 +51,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'com.sun.mail:jakarta.mail:2.0.1'
 
-//	Chat
-	implementation 'org.springframework.boot:spring-boot-starter-websocket'
-
 // OAuth (외부로그인)
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }

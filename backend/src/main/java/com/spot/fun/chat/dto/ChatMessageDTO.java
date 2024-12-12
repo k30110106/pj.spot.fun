@@ -1,4 +1,4 @@
-package com.spot.fun.usr.chat.dto;
+package com.spot.fun.chat.dto;
 
 public interface ChatMessageDTO {
 }
