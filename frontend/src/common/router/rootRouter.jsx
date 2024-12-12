@@ -2,6 +2,7 @@ import { Suspense, lazy } from "react";
 import feedRouter from "../../usr/feed/router/feedRouter";
 import boardRouter from "../../usr/board/router/boardRouter";
 import BasicLayout from "../layout/BasicLayout";
+import chatRouter from "../../usr/chat/router/chatRouter";
 import dateRouter from "../../usr/course/router/DateRouter"; // DateRouter 추가
 import mypageRouter from "../../usr/mypage/router/mypageRouter";
 import customRouter from "../../usr/custom/router/customRouter";
@@ -28,6 +29,8 @@ const SocialSignupPage = lazy(() =>
 const DateCourseListPage = lazy(() =>
   import("../../usr/course/page/DateCourseListpage")
 );
+// const AddDatePage = lazy(() => import("../../usr/course/page/AddDatePage")); // 수정된 부분
+const ChatListPage = lazy(() => import("../../usr/chat/page/ChatListPage"));
 const AddCoursePage = lazy(() => import("../../usr/course/page/AddCoursePage")); // 수정된 부분
 const SignupCheckPage = lazy(() =>
   import("../../usr/signup/page/SignupCheckPage")
@@ -150,6 +153,14 @@ const rootRouter = createBrowserRouter(
     //     </Suspense>
     //   ),
     // },
+    {
+      path: "chat/*", // /* 추가하여 중첩 라우팅 허용
+      element: (
+        <Suspense fallback={Loading}>
+          <ChatListPage />
+        </Suspense>
+      ),
+    },
   ],
   {
     future: {

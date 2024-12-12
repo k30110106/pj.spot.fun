@@ -184,8 +184,9 @@ const SignupComponent = () => {
       if (!value) {
         setAlertModalConfig({
           isOpen: true,
-          message: `${field === "userId" ? "아이디" : "닉네임"
-            }를(을) 입력해주세요.`,
+          message: `${
+            field === "userId" ? "아이디" : "닉네임"
+          }를(을) 입력해주세요.`,
         });
         return;
       }
@@ -194,16 +195,18 @@ const SignupComponent = () => {
       if (response.data.isDuplicate) {
         setAlertModalConfig({
           isOpen: true,
-          message: `${value}은(는) 중복된 ${field === "userId" ? "아이디" : "닉네임"
-            }입니다.`,
+          message: `${value}은(는) 중복된 ${
+            field === "userId" ? "아이디" : "닉네임"
+          }입니다.`,
         });
         if (field === "userId") setIsUserIdChecked(false);
         if (field === "nickname") setIsNicknameChecked(false);
       } else {
         setAlertModalConfig({
           isOpen: true,
-          message: `${value}은(는) 사용 가능한 ${field === "userId" ? "아이디" : "닉네임"
-            }입니다.`,
+          message: `${value}은(는) 사용 가능한 ${
+            field === "userId" ? "아이디" : "닉네임"
+          }입니다.`,
         });
         if (field === "userId") setIsUserIdChecked(true);
         if (field === "nickname") setIsNicknameChecked(true);

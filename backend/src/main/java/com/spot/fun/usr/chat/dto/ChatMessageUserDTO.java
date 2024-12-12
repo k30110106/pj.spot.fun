@@ -1,4 +1,4 @@
-package com.spot.fun.chat.dto;
+package com.spot.fun.usr.chat.dto;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -9,13 +9,11 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @ToString
-public class ChatMessageOtherDTO implements ChatMessageDTO{
-    private String otherName;
+public class ChatMessageUserDTO implements ChatMessageDTO {
     private String msg;
     private java.sql.Timestamp timestamp;
 
-    public ChatMessageOtherDTO(String otherName, String msg, java.sql.Timestamp timestamp) {
-        this.otherName = otherName;
+    public ChatMessageUserDTO(String msg, java.sql.Timestamp timestamp) {
         this.msg = msg;
         this.timestamp = timestamp;
     }

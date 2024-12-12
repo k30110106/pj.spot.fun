@@ -4,14 +4,18 @@ import com.spot.fun.config.jwt.JwtTokenProvider;
 import com.spot.fun.token.dto.AuthTokenDTO;
 import com.spot.fun.token.entity.AuthToken;
 import com.spot.fun.token.repository.AuthTokenRepository;
+import com.spot.fun.token.util.AuthTokenUtil;
 import com.spot.fun.usr.user.entity.User;
 import com.spot.fun.usr.user.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
 
 @Log4j2
 @Service
@@ -20,6 +24,9 @@ public class AuthTokenServiceImpl implements AuthTokenService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthTokenRepository authTokenRepository;
     private final UserRepository userRepository;
+    private final HttpServletRequest request;
+    private final HttpServletResponse response;
+    private final AuthTokenUtil authTokenUtil;
 
     @Override
     public AuthTokenDTO doRefreshToken(HttpServletRequest request) {
@@ -106,5 +113,9 @@ public class AuthTokenServiceImpl implements AuthTokenService {
         return null;
     }
 
-
+    public Long getCurrentUserIdx() {
+        System.out.println("getCurrentUserIdx" + Arrays.toString(request.getCookies()));
+        log.info("getCurrentUserIdx : " + authTokenUtil.validateTokenAndGetUserDTO(request, response).getIdx());
+        return authTokenUtil.validateTokenAndGetUserDTO(request, response).getIdx();
+    }
 }
