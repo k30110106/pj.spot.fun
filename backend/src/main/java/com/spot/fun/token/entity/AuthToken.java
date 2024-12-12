@@ -1,15 +1,15 @@
 package com.spot.fun.token.entity;
 
+import com.spot.fun.token.repository.AuthTokenRepository;
+import com.spot.fun.usr.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Table(name = "tbl_auth_token")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
+@RequiredArgsConstructor
 public class AuthToken {
 
     @Id
@@ -33,4 +33,5 @@ public class AuthToken {
         this.refreshToken = refreshToken;
         return this;
     }
+
 }

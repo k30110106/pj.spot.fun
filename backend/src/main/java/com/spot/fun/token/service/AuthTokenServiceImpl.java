@@ -67,27 +67,51 @@ public class AuthTokenServiceImpl implements AuthTokenService {
                 .build();
     }
 
-//    public Long getCurrentUserIdx() {
-////        String authHeader = request.getHeader("Authorization");
-////        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-////            throw new IllegalStateException("인증 토큰이 없거나 유효하지 않습니다.");
-////        }
-////        String token = authHeader.replace("Bearer ", "");
-////        return jwtTokenProvider.getUserIdx(token);
+    /**
+     * OAuth 로그인 시 Refresh Token 생성 및 저장
+     */
+    public void handleOAuthLogin(User user, String refreshToken) {
+        log.info("Handling OAuth login for user: {}", user.getEmail());
+
+        AuthToken authToken = authTokenRepository.findByUserIdx(user.getIdx())
+                .orElse(AuthToken.builder()
+                        .userIdx(user.getIdx())
+                        .refreshToken(refreshToken)
+                        .build());
+        authToken.update(refreshToken); // Refresh Token 갱신
+        authTokenRepository.save(authToken);
+    }
+
+    // 자체로그인 컨트롤러에서 호출시 에러남
+//    /**
+//     * 자체 로그인 시 Refresh Token 생성 및 저장
+//     */
+//    public void handleLocalLogin(User user, String refreshToken) {
+//        log.info("Handling Local login for user: {}", user.getEmail());
 //
-//        Cookie[] cookies = request.getCookies();
-//        String accessToken = null;
-//        if (cookies != null) {
-//            for (Cookie cookie : cookies) {
-//                if ("access_token".equals(cookie.getName())) {
-//                    accessToken = cookie.getValue();
-//                    break;
-//                }
-//            }
-//        }
-//        return jwtTokenProvider.getUserIdx(accessToken);
-//
+//        AuthToken authToken = authTokenRepository.findByUserIdx(user.getIdx())
+//                .orElse(AuthToken.builder()
+//                        .userIdx(user.getIdx())
+//                        .refreshToken(refreshToken)
+//                        .build());
+//        authToken.update(refreshToken); // Refresh Token 갱신
+//        authTokenRepository.save(authToken);
 //    }
+
+    /**
+     * Refresh Token을 쿠키에서 추출
+     */
+    private String extractRefreshTokenFromCookies(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("refresh_token".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
 
     public Long getCurrentUserIdx() {
         System.out.println("getCurrentUserIdx" + Arrays.toString(request.getCookies()));
