@@ -87,9 +87,27 @@ export const putCommentApi = async (param) => {
 export const deleteCommentApi = async (param) => {
   const config = {
     params: { ...param },
-    // data: { ...param },
   };
-  console.log(config);
   const res = await axios.delete(`/api/usr/feed/comment`, config);
+  return res.data;
+};
+
+// 목록 삭제
+export const deleteFeedApi = async (param) => {
+  const config = {
+    params: { ...param },
+  };
+  const res = await axios.delete(`/api/usr/feed`, config);
+  return res.data;
+};
+
+// 수정등록
+export const putFeedModifyApi = async (form) => {
+  const header = {
+    header: {
+      "Content-Type": "multipart/form-data",
+    },
+  };
+  const res = await axios.put(`/api/usr/feed`, form, header);
   return res.data;
 };
