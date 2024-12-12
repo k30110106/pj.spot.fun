@@ -1,7 +1,7 @@
 package com.spot.fun.usr.feed.dto.comment;
 
 import com.spot.fun.usr.feed.dto.FeedDTO;
-import com.spot.fun.usr.user.dto.UserDTO;
+import com.spot.fun.usr.user.dto.profile.UserProfileResponseDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -20,11 +20,13 @@ public class FeedCommentDTO {
   private LocalDateTime regDate;
 
   private FeedDTO feedDTO;
-  private UserDTO user;
+  //private UserDTO user;
   private String regDateStr;
   private Long userIdx;
   private Boolean likedYn;
   private Long feedIdx;
   private Long parentIdx;
   private List<FeedCommentDTO> replyList;
+
+  private UserProfileResponseDTO user;
 }

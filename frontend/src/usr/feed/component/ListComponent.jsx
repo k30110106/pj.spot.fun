@@ -3,7 +3,13 @@ import ImageComponent from "./item/ImageComponent";
 import ButtonComponent from "./item/ButtonComponent";
 import ContentComponent from "./item/ContentComponent";
 
-const ListComponent = ({ feedList, handleSelectedFeed, handleLikesEvent }) => {
+const ListComponent = ({
+  feedList,
+  openDetailModal,
+  handleLikesEvent,
+  handleListDeleteEvent,
+  openModifyModal,
+}) => {
   return (
     <div className="border-2 border-green-200 w-full">
       <h1>Feed List Component</h1>
@@ -13,17 +19,19 @@ const ListComponent = ({ feedList, handleSelectedFeed, handleLikesEvent }) => {
             key={feed.idx}
             className="border border-blue-500 rounded-lg h-1/12 py-4"
           >
-            <div className="flex flex-wrap pl-3 pb-3">
-              <ProfileComponent user={feed.user} />
-            </div>
+            <ProfileComponent
+              feedUserInfo={feed.user}
+              pageType={"list"}
+              handleListDeleteEvent={() => handleListDeleteEvent(feed.idx)}
+              openModifyModal={() => openModifyModal(feed.idx)}
+            />
 
             <div className="flex">
               <div className="w-full relative">
                 {feed.feedImages.length > 0 && (
                   <ImageComponent
-                    handleSelectedFeed={handleSelectedFeed}
+                    openDetailModal={() => openDetailModal(feed.idx)}
                     feedImages={feed.feedImages}
-                    feedIdx={feed.idx}
                   />
                 )}
               </div>
@@ -31,13 +39,12 @@ const ListComponent = ({ feedList, handleSelectedFeed, handleLikesEvent }) => {
 
             <ButtonComponent
               feed={feed}
-              handleSelectedFeed={handleSelectedFeed}
+              openDetailModal={() => openDetailModal(feed.idx)}
               handleLikesEvent={handleLikesEvent}
             />
             <ContentComponent
               feed={feed}
-              handleSelectedFeed={handleSelectedFeed}
-              feedIdx={feed.idx}
+              openDetailModal={() => openDetailModal(feed.idx)}
             />
           </div>
         ))

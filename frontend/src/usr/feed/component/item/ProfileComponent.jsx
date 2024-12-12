@@ -1,24 +1,27 @@
 import { useCallback } from "react";
 import { useBasic } from "../../../../common/context/BasicContext";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../api/FeedApi";
+
+const initSrc = `${API_BASE_URL}/api/usr/feed/image/no_image.jpg`;
 
 const ProfileComponent = ({
-  user,
+  feedUserInfo,
   pageType,
   handleListDeleteEvent,
   openModifyModal,
 }) => {
   const navigate = useNavigate();
-  const { idx, nickname } = user;
+  const { userIdx, uploadName, user } = feedUserInfo;
 
   const { userInfo } = useBasic();
   const loginUserIdx = userInfo?.userIdx || "";
 
   const handleProfileEvent = useCallback(() => {
-    if (loginUserIdx !== "" && loginUserIdx !== idx) {
-      navigate(`/mypage/feed/${idx}`);
+    if (loginUserIdx !== "" && loginUserIdx !== userIdx) {
+      navigate(`/mypage/feed/${userIdx}`);
     }
-  }, [idx]);
+  }, [userIdx, loginUserIdx]);
 
   return (
     <>
@@ -27,22 +30,30 @@ const ProfileComponent = ({
         <div
           className={`
             ${
-              loginUserIdx !== "" && loginUserIdx !== idx
+              loginUserIdx !== "" && loginUserIdx !== userIdx
                 ? "cursor-pointer"
                 : ""
             }
             flex items-center space-x-4`}
           onClick={handleProfileEvent}
         >
-          <img src="" alt="프로필 이미지" className="w-12 h-12 rounded-full" />
+          <img
+            src={
+              uploadName
+                ? `${API_BASE_URL}/api/usr/profile/image/s_${uploadName}`
+                : initSrc
+            }
+            alt="프로필 이미지"
+            className="w-12 h-12 rounded-full"
+          />
           <div>
-            <p className="font-semibold text-lg">{nickname}</p>
+            <p className="font-semibold text-lg">{user?.nickname}</p>
           </div>
         </div>
 
         {/* 수정, 삭제 버튼 오른쪽 */}
         <div className="space-x-4">
-          {pageType === "list" && loginUserIdx === idx && (
+          {pageType === "list" && loginUserIdx === userIdx && (
             <>
               <button className="text-blue-500" onClick={openModifyModal}>
                 수정

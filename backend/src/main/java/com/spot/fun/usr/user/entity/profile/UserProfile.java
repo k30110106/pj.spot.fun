@@ -35,6 +35,10 @@ public class UserProfile {
     this.user = user;
   }
 
+  public void changeUserIdx(Long userIdx) {
+    this.userIdx = userIdx;
+  }
+
   public UserProfileResponseDTO toDTO() {
     return UserProfileResponseDTO.builder()
             .userIdx(this.userIdx)

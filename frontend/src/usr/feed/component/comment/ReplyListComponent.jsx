@@ -2,6 +2,10 @@ import { useState } from "react";
 import { MdSubdirectoryArrowRight } from "react-icons/md";
 import InputComponent from "./InputComponent";
 import { useBasic } from "../../../../common/context/BasicContext";
+import { API_BASE_URL } from "../../api/FeedApi";
+import { useNavigate } from "react-router-dom";
+
+const initSrc = `${API_BASE_URL}/api/usr/feed/image/no_image.jpg`;
 
 const ReplyListComponent = ({
   parentIdx,
@@ -9,6 +13,7 @@ const ReplyListComponent = ({
   handleReplyModifyEvent,
   handleReplyDeleteEvent,
 }) => {
+  const navigate = useNavigate();
   const { userInfo } = useBasic();
   const loginUserIdx = userInfo?.userIdx || "";
 
@@ -25,6 +30,12 @@ const ReplyListComponent = ({
     setActiveComment(null);
   };
 
+  const handleProfileEvent = (userIdx) => {
+    if (loginUserIdx !== "" && loginUserIdx !== userIdx) {
+      navigate(`/mypage/feed/${userIdx}`);
+    }
+  };
+
   return (
     <>
       {/* 대댓글 (reply) */}
@@ -36,17 +47,37 @@ const ReplyListComponent = ({
               size={16}
             />
             <img
-              src=""
+              src={
+                reply.user.uploadName
+                  ? `${API_BASE_URL}/api/usr/profile/image/${reply.user.uploadName}`
+                  : initSrc
+              }
               alt="프로필 이미지"
-              className="w-8 h-8 rounded-full object-cover"
+              className={`
+                 ${
+                   loginUserIdx !== "" && loginUserIdx !== reply.user.userIdx
+                     ? "cursor-pointer"
+                     : ""
+                 }
+                w-8 h-8 rounded-full object-cover`}
+              onClick={() => handleProfileEvent(reply.user.userIdx)}
             />
             <div className="flex flex-col w-full">
               <div className="flex justify-between items-center text-xs text-gray-500">
-                <p className="font-semibold text-gray-800">
-                  {reply.user.nickname}
+                <p
+                  className={`
+                    ${
+                      loginUserIdx !== "" && loginUserIdx !== reply.user.userIdx
+                        ? "cursor-pointer"
+                        : ""
+                    }
+                    font-semibold text-gray-800`}
+                  onClick={() => handleProfileEvent(reply.user.userIdx)}
+                >
+                  {reply.user.user.nickname}
                 </p>
                 <div className="flex items-center">
-                  {replyList.user.idx === loginUserIdx && (
+                  {reply.user.userIdx === loginUserIdx && (
                     <>
                       <button
                         className="text-blue-500"

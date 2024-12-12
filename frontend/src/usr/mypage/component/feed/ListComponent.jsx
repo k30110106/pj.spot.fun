@@ -206,7 +206,7 @@ const ListComponent = () => {
             <img
               src={
                 (feed.feedImages ?? []).length > 0
-                  ? `${API_BASE_URL}/api/usr/feed/image/${feed.feedImages[0].uploadName}`
+                  ? `${API_BASE_URL}/api/usr/feed/image/s_${feed.feedImages[0].uploadName}`
                   : initSrc
               }
               alt="업로드 이미지"

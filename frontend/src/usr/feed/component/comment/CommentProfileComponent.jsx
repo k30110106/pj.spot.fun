@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useBasic } from "../../../../common/context/BasicContext";
 import InputComponent from "./InputComponent";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../api/FeedApi";
+
+const initSrc = `${API_BASE_URL}/api/usr/feed/image/no_image.jpg`;
 
 const CommentProfileComponent = ({
   comment,
@@ -36,33 +39,37 @@ const CommentProfileComponent = ({
   return (
     <div className="flex space-x-3">
       <img
-        src=""
+        src={
+          comment.user.uploadName
+            ? `${API_BASE_URL}/api/usr/profile/image/${comment.user.uploadName}`
+            : initSrc
+        }
         alt="프로필 이미지"
         className={`
           ${
-            loginUserIdx !== "" && loginUserIdx !== comment.user.idx
+            loginUserIdx !== "" && loginUserIdx !== comment.user.userIdx
               ? "cursor-pointer"
               : ""
           }
           w-10 h-10 rounded-full object-cover`}
-        onClick={() => handleProfileEvent(comment.user.idx)}
+        onClick={() => handleProfileEvent(comment.user.userIdx)}
       />
       <div className="flex flex-col w-full">
         <div className="flex justify-between items-center">
           <p
             className={`
               ${
-                loginUserIdx !== "" && loginUserIdx !== comment.user.idx
+                loginUserIdx !== "" && loginUserIdx !== comment.user.userIdx
                   ? "cursor-pointer"
                   : ""
               }
               font-semibold text-gray-800`}
-            onClick={() => handleProfileEvent(comment.user.idx)}
+            onClick={() => handleProfileEvent(comment.user.userIdx)}
           >
-            {comment.user.nickname}
+            {comment.user.user.nickname}
           </p>
           <div className="flex text-xs text-gray-500 items-center">
-            {comment.user.idx === loginUserIdx && (
+            {comment.user.userIdx === loginUserIdx && (
               <>
                 <button
                   className="text-blue-500"

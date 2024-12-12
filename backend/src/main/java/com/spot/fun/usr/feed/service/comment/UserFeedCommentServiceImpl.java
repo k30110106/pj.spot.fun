@@ -6,9 +6,10 @@ import com.spot.fun.usr.feed.entity.comment.FeedComment;
 import com.spot.fun.usr.feed.repository.UserFeedRepository;
 import com.spot.fun.usr.feed.repository.comment.UserFeedCommentRepository;
 import com.spot.fun.usr.feed.util.UserFeedUtil;
-import com.spot.fun.usr.user.dto.UserDTO;
+import com.spot.fun.usr.user.dto.profile.UserProfileRequestDTO;
 import com.spot.fun.usr.user.entity.User;
 import com.spot.fun.usr.user.repository.UserRepository;
+import com.spot.fun.usr.user.service.profile.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,8 @@ public class UserFeedCommentServiceImpl implements UserFeedCommentService {
   private final UserFeedRepository userFeedRepository;
   private final UserRepository userRepository;
 
+  private final UserProfileService userProfileService;
+
   private final UserFeedUtil userFeedUtil;
 
   @Override
@@ -38,25 +41,16 @@ public class UserFeedCommentServiceImpl implements UserFeedCommentService {
                       .content(comment.getContent())
                       .regDateStr(userFeedUtil.getDateFormat(comment.getRegDate()))
                       .likedYn(likedYn)
-                      .user(UserDTO.builder()
-                              .idx(comment.getUser().getIdx())
-                              .userId(comment.getUser().getUserId())
-                              .nickname(comment.getUser().getNickname())
-                              .build()
-                      )
+                      .user(userProfileService.getProfile(UserProfileRequestDTO.builder().userIdx(comment.getUser().getIdx()).build()))
                       .replyList(
                               userFeedCommentRepository.findByParentIdxAndDelYnFalse(comment.getIdx()).stream()
                                       .map((reply) ->
+
                                               FeedCommentDTO.builder()
                                                       .idx(reply.getIdx())
                                                       .content(reply.getContent())
                                                       .regDateStr(userFeedUtil.getDateFormat(reply.getRegDate()))
-                                                      .user(UserDTO.builder()
-                                                              .idx(reply.getUser().getIdx())
-                                                              .userId(reply.getUser().getUserId())
-                                                              .nickname(reply.getUser().getNickname())
-                                                              .build()
-                                                      )
+                                                      .user(userProfileService.getProfile(UserProfileRequestDTO.builder().userIdx(reply.getUser().getIdx()).build()))
                                                       .build()
                                       ).toList()
                       )
@@ -70,7 +64,7 @@ public class UserFeedCommentServiceImpl implements UserFeedCommentService {
     try {
       Feed feed = userFeedRepository.findByIdxAndDelYnFalse(feedCommentDTO.getFeedIdx())
               .orElseThrow(IllegalArgumentException::new);
-      User user = userRepository.findByIdx(feedCommentDTO.getUser().getIdx())
+      User user = userRepository.findByIdx(feedCommentDTO.getUserIdx())
               .orElseThrow(IllegalArgumentException::new);
 
       FeedComment comment = userFeedCommentRepository.save(
@@ -85,12 +79,7 @@ public class UserFeedCommentServiceImpl implements UserFeedCommentService {
               .content(comment.getContent())
               .regDateStr(userFeedUtil.getDateFormat(comment.getRegDate()))
               .likedYn(false)
-              .user(UserDTO.builder()
-                      .idx(comment.getUser().getIdx())
-                      .userId(comment.getUser().getUserId())
-                      //.name(comment.getUser().getName())
-                      .nickname(comment.getUser().getNickname())
-                      .build())
+              .user(userProfileService.getProfile(UserProfileRequestDTO.builder().userIdx(comment.getUser().getIdx()).build()))
               .build();
     } catch (Exception e) {
       log.info("comment insert error .. {}", e.getMessage());
@@ -104,7 +93,7 @@ public class UserFeedCommentServiceImpl implements UserFeedCommentService {
     try {
       Feed feed = userFeedRepository.findByIdxAndDelYnFalse(feedCommentDTO.getFeedIdx())
               .orElseThrow(IllegalArgumentException::new);
-      User user = userRepository.findByIdx(feedCommentDTO.getUser().getIdx())
+      User user = userRepository.findByIdx(feedCommentDTO.getUserIdx())
               .orElseThrow(IllegalArgumentException::new);
       FeedComment feedComment = userFeedCommentRepository.findByIdxAndDelYnFalse(feedCommentDTO.getParentIdx())
               .orElseThrow(IllegalArgumentException::new);
@@ -122,12 +111,7 @@ public class UserFeedCommentServiceImpl implements UserFeedCommentService {
               .content(reply.getContent())
               .regDateStr(userFeedUtil.getDateFormat(reply.getRegDate()))
               .likedYn(false)
-              .user(UserDTO.builder()
-                      .idx(reply.getUser().getIdx())
-                      .userId(reply.getUser().getUserId())
-                      //.name(comment.getUser().getName())
-                      .nickname(reply.getUser().getNickname())
-                      .build())
+              .user(userProfileService.getProfile(UserProfileRequestDTO.builder().userIdx(reply.getUser().getIdx()).build()))
               .parentIdx(reply.getParent().getIdx())
               .build();
     } catch (Exception e) {
@@ -151,12 +135,7 @@ public class UserFeedCommentServiceImpl implements UserFeedCommentService {
               .content(update.getContent())
               .regDateStr(userFeedUtil.getDateFormat(update.getRegDate()))
               .likedYn(false)
-              .user(UserDTO.builder()
-                      .idx(update.getUser().getIdx())
-                      .userId(update.getUser().getUserId())
-                      //.name(comment.getUser().getName())
-                      .nickname(update.getUser().getNickname())
-                      .build())
+              .user(userProfileService.getProfile(UserProfileRequestDTO.builder().userIdx(update.getUser().getIdx()).build()))
               //.parentIdx(ObjectUtils.isEmpty(feedCommentDTO.getParentIdx()) ? null : feedCommentDTO.getParentIdx())
               .build();
     } catch (Exception e) {

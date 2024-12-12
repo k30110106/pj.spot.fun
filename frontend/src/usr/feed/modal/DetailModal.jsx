@@ -21,7 +21,7 @@ const DetailModal = ({
   handleCommentCountEvent,
 }) => {
   const { userInfo } = useBasic();
-  //console.log(userInfo);
+  const loginUserIdx = userInfo?.userIdx || "";
 
   // 댓글목록 조회
   const [commentList, setCommentList] = useState([]);
@@ -32,6 +32,7 @@ const DetailModal = ({
           setCommentList(data);
         })
         .catch((err) => {
+          console.log("[댓글목록] 조회를 실패했습니다");
           console.log(err);
         });
     }
@@ -53,6 +54,7 @@ const DetailModal = ({
           }
         })
         .catch((err) => {
+          console.log("[댓글등록] 등록을 실패했습니다");
           console.log(err);
         });
     },
@@ -75,6 +77,7 @@ const DetailModal = ({
         }
       })
       .catch((err) => {
+        console.log("[댓글수정] 등록을 실패했습니다");
         console.log(err);
       });
   };
@@ -91,6 +94,7 @@ const DetailModal = ({
         }
       })
       .catch((err) => {
+        console.log("[댓글삭제] 삭제를 실패했습니다");
         console.log(err);
       });
   };
@@ -98,9 +102,7 @@ const DetailModal = ({
   // 답글 등록
   const handleReplyEvent = useCallback(
     (obj) => {
-      const param = { ...obj, feedIdx: feed.idx };
-      //console.log(param);
-      postReplyApi(param)
+      postReplyApi({ ...obj, feedIdx: feed.idx })
         .then((data) => {
           setCommentList((prevList) => {
             return prevList.map((item) => {
@@ -116,6 +118,7 @@ const DetailModal = ({
           });
         })
         .catch((err) => {
+          console.log("[답글등록] 등록을 실패했습니다");
           console.log(err);
         });
     },
@@ -127,7 +130,6 @@ const DetailModal = ({
     const param = { ...obj, feedIdx: feed.idx };
     putCommentApi(param)
       .then((data) => {
-        //console.log(data);
         if (data) {
           setCommentList((prevList) => {
             return prevList.map((comment) => {
@@ -148,6 +150,7 @@ const DetailModal = ({
         }
       })
       .catch((err) => {
+        console.log("[답글수정] 등록을 실패했습니다");
         console.log(err);
       });
   };
@@ -156,7 +159,6 @@ const DetailModal = ({
   const handleReplyDeleteEvent = (idx, parentIdx) => {
     deleteCommentApi({ idx: idx })
       .then((data) => {
-        //console.log(data);
         if (data) {
           setCommentList((prevList) => {
             return prevList.map((comment) => {
@@ -174,6 +176,7 @@ const DetailModal = ({
         }
       })
       .catch((err) => {
+        console.log("[답글삭제] 삭제를 실패했습니다");
         console.log(err);
       });
   };
@@ -184,16 +187,18 @@ const DetailModal = ({
         <div className="w-3/5 relative">
           {/* 왼쪽 영역 */}
           {/* 이미지 */}
-          {(feed.feedImages ?? []).length > 0 && (
-            <ImageComponent feedImages={feed.feedImages} />
-          )}
+          {/* {(feed.feedImages ?? []).length > 0 && ( */}
+          <ImageComponent feedImages={feed.feedImages} />
+          {/* )} */}
         </div>
 
         <div className="w-2/5 pl-3 h-full flex flex-col justify-center">
           {/* 오른쪽 영역 */}
           <div className="flex justify-between mb-4 items-start">
             {/* 프로필 */}
-            {feed.user && <ProfileComponent user={feed.user} />}
+            {feed.user && (
+              <ProfileComponent feedUserInfo={feed.user} pageType={"detail"} />
+            )}
 
             {/* 상단 툴바 X 버튼 */}
             <button
@@ -237,7 +242,7 @@ const DetailModal = ({
 
           <div className="flex justify-center w-full">
             {/*댓글 입력 + 등록*/}
-            {userInfo != null && (
+            {loginUserIdx && (
               <InputComponent handleCommentEvent={handleCommentEvent} />
             )}
           </div>

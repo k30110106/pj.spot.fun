@@ -40,6 +40,7 @@ public class UserProfileServiceImpl implements UserProfileService {
       User user = userRepository.findByIdx(userIdx)
               .orElseThrow(IllegalArgumentException::new);
       profile.changeUser(user);
+      profile.changeUserIdx(user.getIdx());
     }
 
     return profile.toDTO();

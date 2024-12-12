@@ -12,9 +12,10 @@ import com.spot.fun.usr.feed.repository.comment.UserFeedCommentRepository;
 import com.spot.fun.usr.feed.repository.hashtag.UserFeedHashtagRepository;
 import com.spot.fun.usr.feed.repository.like.UserFeedLikeRepository;
 import com.spot.fun.usr.feed.util.UserFeedUtil;
-import com.spot.fun.usr.user.dto.UserDTO;
+import com.spot.fun.usr.user.dto.profile.UserProfileRequestDTO;
 import com.spot.fun.usr.user.entity.User;
 import com.spot.fun.usr.user.repository.UserRepository;
+import com.spot.fun.usr.user.service.profile.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.ObjectUtils;
@@ -36,6 +37,7 @@ public class UserFeedLikeServiceImpl implements UserFeedLikeService{
   private final UserRepository userRepository;
   private final UserFeedCommentRepository userFeedCommentRepository;
   private final UserFeedHashtagRepository userFeedHashtagRepository;
+  private final UserProfileService userProfileService;
 
   private final UserFeedUtil userFeedUtil;
 
@@ -112,20 +114,14 @@ public class UserFeedLikeServiceImpl implements UserFeedLikeService{
               Feed feed = like.getFeed();
               Long likeIdx = like.getIdx();
               Long feedIdx = like.getFeed().getIdx();
+              Long userIdx = like.getUser().getIdx();
               boolean likedYn = true;
 
               return FeedDTO.builder()
                       .idx(likeIdx)
                       .content(feed.getContent())
                       .regDateStr(userFeedUtil.getDateFormat(feed.getRegDate()))
-                      .user(
-                              UserDTO.builder()
-                                      .idx(feed.getUser().getIdx())
-                                      .userId(feed.getUser().getUserId())
-                                      //.name(feed.getUser().getName())
-                                      .nickname(feed.getUser().getNickname())
-                                      .build()
-                      )
+                      .user(userProfileService.getProfile(UserProfileRequestDTO.builder().userIdx(userIdx).build()))
                       .feedImages(
                               feed.getFeedImages().stream()
                                       .filter((img) -> !img.isDelYn())

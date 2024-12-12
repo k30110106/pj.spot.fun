@@ -3,7 +3,6 @@ import { API_BASE_URL } from "../api/MypageApi";
 const initSrc = `${API_BASE_URL}/api/usr/feed/image/no_image.jpg`;
 
 const ProfileComponent = ({ feedCount, followCount, mypageInfo }) => {
-  console.log(mypageInfo);
   const { uploadName, description, user } = mypageInfo;
 
   return (
@@ -13,7 +12,7 @@ const ProfileComponent = ({ feedCount, followCount, mypageInfo }) => {
         <img
           src={
             uploadName
-              ? `${API_BASE_URL}/api/usr/profile/image/${uploadName}`
+              ? `${API_BASE_URL}/api/usr/profile/image/s_${uploadName}`
               : initSrc
           }
           alt="프로필 이미지"

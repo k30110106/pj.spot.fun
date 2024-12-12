@@ -40,7 +40,7 @@ public class UserFeedCommentController {
     if(Objects.isNull(loginUserIdx)) { // 로그인상태가 아님!!
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
     }
-    feedCommentDTO.setUser(loginUserDTO);
+    feedCommentDTO.setUserIdx(loginUserIdx);
 
     FeedCommentDTO result = userFeedCommentService.insert(feedCommentDTO);
     if(ObjectUtils.isEmpty(result)) {
@@ -56,7 +56,7 @@ public class UserFeedCommentController {
     if(Objects.isNull(loginUserIdx)) { // 로그인상태가 아님!!
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
-    feedCommentDTO.setUser(loginUserDTO);
+    feedCommentDTO.setUserIdx(loginUserIdx);
 
     FeedCommentDTO result = userFeedCommentService.insertReply(feedCommentDTO);
 
@@ -70,7 +70,7 @@ public class UserFeedCommentController {
     if(Objects.isNull(loginUserIdx)) { // 로그인상태가 아님!!
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
     }
-    feedCommentDTO.setUser(loginUserDTO);
+    feedCommentDTO.setUserIdx(loginUserIdx);
 
     FeedCommentDTO result = userFeedCommentService.update(feedCommentDTO);
     if(ObjectUtils.isEmpty(result)) {
@@ -87,7 +87,7 @@ public class UserFeedCommentController {
     if(Objects.isNull(loginUserIdx)) { // 로그인상태가 아님!!
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
     }
-    feedCommentDTO.setUser(loginUserDTO);
+    feedCommentDTO.setUserIdx(loginUserIdx);
 
     FeedCommentDTO result = userFeedCommentService.delete(feedCommentDTO);
     if(ObjectUtils.isEmpty(result)) {

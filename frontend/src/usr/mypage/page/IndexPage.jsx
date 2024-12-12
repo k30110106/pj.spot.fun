@@ -9,7 +9,6 @@ import {
   followStatusApi,
   getFollowCountAllApi,
   getFollowStatusApi,
-  getMypageUserApi,
   getProfileApi,
 } from "../api/MypageApi";
 
@@ -114,7 +113,6 @@ const IndexPage = () => {
         //const data = await getMypageUserApi({ idx: userIdx });
         const data = await getProfileApi({ userIdx });
         setMypageInfo(data);
-        console.log(data);
       } catch (err) {
         console.log("[사용자정보] 조회를 실패했습니다");
         console.log(err);

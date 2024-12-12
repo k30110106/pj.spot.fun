@@ -1,19 +1,28 @@
 import { useEffect, useRef, useState } from "react";
-import HashTagModal from "./HashTagModal";
-import { postFeedInsertApi } from "../api/FeedApi";
-import ImageComponent from "../component/insert/ImageComponent";
-import ProfileComponent from "../component/item/ProfileComponent";
 import { useBasic } from "../../../common/context/BasicContext";
-import ContentComponent from "../component/insert/ContentComponent";
-import HashtagComponent from "../component/insert/HashtagComponent";
-import { getProfileApi } from "../../mypage/api/MypageApi";
+import HashTagModal from "./HashTagModal";
+import ProfileComponent from "../component/item/ProfileComponent";
+import ContentComponent from "../component/modify/ContentComponent";
+import HashtagComponent from "../component/modify/HashtagComponent";
+import ImageComponent from "../component/modify/ImageComponent";
+import { API_BASE_URL, putFeedModifyApi } from "../api/FeedApi";
 
-const InsertModal = ({ closeInsertModal }) => {
+const ModifyModal = ({ feed, closeModifyModal }) => {
   const { userInfo } = useBasic();
   const loginUserIdx = userInfo?.userIdx || "";
 
   // 이미지
   const useFileRef = useRef([]);
+  const [imgList, setImgList] = useState([]);
+  const [delImgList, setDelImgList] = useState([]);
+  const handleDeleteOriginImageIdx = (idx) => {
+    setDelImgList((prevList) => {
+      if (prevList.find((item) => item === idx)) {
+        return [...prevList];
+      }
+      return [...prevList, idx];
+    });
+  };
 
   // 콘텐츠
   const useTextRef = useRef(null);
@@ -24,7 +33,7 @@ const InsertModal = ({ closeInsertModal }) => {
     setIsHashtagModalOpen(false);
   };
 
-  // 해시태그 추가
+  // 해시태그 이벤트
   const [hashtagList, setHashtagList] = useState([]);
   const handleSelectHashTagEvent = (tag) => {
     const tagObj = {
@@ -47,11 +56,11 @@ const InsertModal = ({ closeInsertModal }) => {
     });
   };
 
-  // 글 등록
+  // 수정 등록
   const handleFeedSubmit = () => {
     const content = useTextRef.current.value;
     if (content.trim().length < 1) {
-      console.log("[임시] 컨텐츠 내용을 입력해주세요");
+      console.log("[임시] 내용을 입력해주세요");
       return false;
     }
 
@@ -63,6 +72,11 @@ const InsertModal = ({ closeInsertModal }) => {
         form.append("uploadFiles", itemFile);
       }
     });
+    delImgList.forEach((item) => {
+      if (item) {
+        form.append("deleteFiles", item);
+      }
+    });
     form.append("content", content);
 
     hashtagList.map((item, index) =>
@@ -72,33 +86,30 @@ const InsertModal = ({ closeInsertModal }) => {
       )
     );
 
-    postFeedInsertApi(form)
+    form.append("idx", feed.idx);
+
+    putFeedModifyApi(form)
       .then((data) => {
         if (data) {
-          closeInsertModal(data);
+          closeModifyModal(data);
           return;
         }
       })
       .catch((err) => {
-        console.log("[피드등록] 등록을 실패했습니다");
+        console.log("[피드수정] 등록을 실패했습니다");
         console.log(err);
       });
   };
 
-  // 프로필정보
-  const [feedUserInfo, setFeedUserInfo] = useState({});
-
   useEffect(() => {
-    const getProfile = async () => {
-      try {
-        const data = await getProfileApi({ userIdx: loginUserIdx });
-        setFeedUserInfo(data);
-      } catch (err) {
-        console.log("[프로필정보] 조회를 실패했습니다");
-        console.log(err);
-      }
-    };
-    getProfile();
+    const getImgList = feed.feedImages.map((item) => {
+      return {
+        ...item,
+        imgSrc: `${API_BASE_URL}/api/usr/feed/image/${item.uploadName}`,
+      };
+    });
+    setImgList([...getImgList]);
+    setHashtagList([...feed.feedHashtags]);
   }, []);
 
   return (
@@ -107,7 +118,7 @@ const InsertModal = ({ closeInsertModal }) => {
         {/* 상단 툴바 X 버튼 */}
         <div className="flex justify-end items-center mb-4">
           <button
-            onClick={() => closeInsertModal(null)}
+            onClick={() => closeModifyModal(null)}
             className="text-gray-500 hover:text-gray-800"
           >
             <svg
@@ -128,12 +139,12 @@ const InsertModal = ({ closeInsertModal }) => {
         </div>
 
         {/* 상단영역: 프로필 정보 */}
-        <ProfileComponent feedUserInfo={feedUserInfo} pageType={"insert"} />
+        <ProfileComponent feedUserInfo={feed.user} pageType={"modify"} />
 
         {/* 중간영역: 글 내용 및 해시태그 */}
         <div className="mt-4">
           {/* 컨텐츠 */}
-          <ContentComponent useTextRef={useTextRef} />
+          <ContentComponent useTextRef={useTextRef} feed={feed} />
 
           {/* 해시태그 */}
           <div className="mt-2 flex items-center space-x-4">
@@ -162,14 +173,20 @@ const InsertModal = ({ closeInsertModal }) => {
             <ImageComponent
               id={"upload1"}
               useFileRef={(e) => (useFileRef.current[0] = e)}
+              img={imgList[0]}
+              handleDeleteOriginImageIdx={handleDeleteOriginImageIdx}
             />
             <ImageComponent
               id={"upload2"}
               useFileRef={(e) => (useFileRef.current[1] = e)}
+              img={imgList[1]}
+              handleDeleteOriginImageIdx={handleDeleteOriginImageIdx}
             />
             <ImageComponent
               id={"upload3"}
               useFileRef={(e) => (useFileRef.current[2] = e)}
+              img={imgList[2]}
+              handleDeleteOriginImageIdx={handleDeleteOriginImageIdx}
             />
           </div>
         </div>
@@ -180,7 +197,7 @@ const InsertModal = ({ closeInsertModal }) => {
             onClick={handleFeedSubmit}
             className="bg-blue-500 text-white py-2 px-6 rounded-md"
           >
-            등록
+            수정
           </button>
         </div>
 
@@ -197,4 +214,4 @@ const InsertModal = ({ closeInsertModal }) => {
   );
 };
 
-export default InsertModal;
+export default ModifyModal;
