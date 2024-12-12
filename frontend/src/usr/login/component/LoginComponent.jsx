@@ -81,7 +81,7 @@ const LoginComponent = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white">
+    <div className="flex flex-col items-center justify-center min-h-screen py-5 bg-white">
       <h1 className="mb-6 text-2xl font-bold">로그인</h1>
       <form className="flex flex-col items-center" id="login-form">
         <div className="mb-4">
@@ -148,17 +148,18 @@ const LoginComponent = () => {
           로그인
         </button>
       </form>
+
       <div id="search-user-info" className="mt-6 text-center">
         <div>
           <b
-            className="ml-4 cursor-pointer text-gray-400 hover:text-custom-cyan"
+            className="ml-4 mr-2 cursor-pointer text-gray-400 hover:text-custom-cyan"
             onClick={() => setIsIdModalOpen(true)}
           >
             아이디 찾기
           </b>
           <span className="text-gray-300"> | </span>
           <b
-            className="cursor-pointer text-gray-400 hover:text-custom-cyan"
+            className="cursor-pointer ml-2 text-gray-400 hover:text-custom-cyan"
             onClick={() => setIsPwModalOpen(true)}
           >
             비밀번호 찾기

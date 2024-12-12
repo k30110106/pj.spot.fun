@@ -26,12 +26,12 @@ public class UserFeedLikeController {
   public ResponseEntity<?> insert(HttpServletRequest request, HttpServletResponse response, @PathVariable("idx") Long idx) {
     UserDTO loginUserDTO = authTokenUtil.validateTokenAndGetUserDTO(request, response);
     Long loginUserIdx = loginUserDTO.getIdx();
-    if(Objects.isNull(loginUserIdx)) { // 로그인상태가 아님!!
+    if (Objects.isNull(loginUserIdx)) { // 로그인상태가 아님!!
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
     }
 
     boolean result = userFeedLikeService.insert(idx, loginUserIdx);
-    if(!result) {
+    if (!result) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
     }
     return ResponseEntity.status(HttpStatus.CREATED).body(true);
@@ -41,12 +41,12 @@ public class UserFeedLikeController {
   public ResponseEntity<?> delete(HttpServletRequest request, HttpServletResponse response, @PathVariable("idx") Long idx) {
     UserDTO loginUserDTO = authTokenUtil.validateTokenAndGetUserDTO(request, response);
     Long loginUserIdx = loginUserDTO.getIdx();
-    if(Objects.isNull(loginUserIdx)) { // 로그인상태가 아님!!
+    if (Objects.isNull(loginUserIdx)) { // 로그인상태가 아님!!
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
     }
 
     boolean result = userFeedLikeService.delete(idx, loginUserIdx);
-    if(!result) {
+    if (!result) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
     }
     return ResponseEntity.status(HttpStatus.CREATED).body(true);

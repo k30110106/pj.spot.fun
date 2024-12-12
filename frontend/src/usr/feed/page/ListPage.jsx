@@ -1,26 +1,48 @@
 import { useEffect, useState } from "react";
-import { feedLikeApi, getFeedDetailApi, getFeedListApi } from "../api/FeedApi";
+import {
+  deleteFeedApi,
+  feedLikeApi,
+  getFeedDetailApi,
+  getFeedListApi,
+} from "../api/FeedApi";
 import ListComponent from "../component/ListComponent";
 import InsertModal from "../modal/InsertModal";
 import DetailModal from "../modal/DetailModal";
 import { useBasic } from "../../../common/context/BasicContext";
+import ModifyModal from "../modal/ModifyModal";
 
 const ListPage = () => {
   const { userInfo } = useBasic();
-  //console.log(userInfo);
 
   // 모달
   const [isInsertModalOpen, setIsInsertModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const closeInsertModal = (newIdx) => {
+  const [isModifyModalOpen, setIsModifyModalOpen] = useState(false);
+  const [selectedFeed, setSelectedFeed] = useState({});
+  const closeInsertModal = (idx) => {
     setIsInsertModalOpen(false);
-    newIdx && handleDetailEvent(newIdx); // 목록 재조회
+    idx && handleResearchEvent(idx, "new"); // 목록 재조회
   };
-  const openDetailModal = () => {
+  const openDetailModal = (idx) => {
+    handleSelectedFeed(idx);
     setIsDetailModalOpen(true);
   };
   const closeDetailModal = () => {
     setIsDetailModalOpen(false);
+    setSelectedFeed({});
+  };
+  const openModifyModal = (idx) => {
+    handleSelectedFeed(idx);
+    setIsModifyModalOpen(true);
+  };
+  const closeModifyModal = (idx) => {
+    setIsModifyModalOpen(false);
+    setSelectedFeed({});
+    idx && handleResearchEvent(idx, "update"); // 목록 재조회
+  };
+  const handleSelectedFeed = (idx) => {
+    const feed = feedList.find((item) => item.idx === idx);
+    setSelectedFeed(feed);
   };
 
   // 스크롤 위치
@@ -47,7 +69,7 @@ const ListPage = () => {
       return;
     }
     setLoading(true);
-    getFeedListApi({ lastId: lastId, pageSize: 1 })
+    getFeedListApi({ lastId: lastId, pageSize: 6 })
       .then((data) => {
         const { feedDTOS, hasNext } = data;
         setFeedList((prevList) => [...prevList, ...feedDTOS]);
@@ -57,6 +79,7 @@ const ListPage = () => {
         }
       })
       .catch((error) => {
+        console.log("[피드목록] 조회를 실패했습니다");
         console.log(error);
       })
       .finally(() => {
@@ -64,24 +87,42 @@ const ListPage = () => {
       });
   };
 
-  // 상세정보 조회
-  const handleDetailEvent = (idx) => {
-    getFeedDetailApi(idx)
+  // 피드 삭제
+  const handleListDeleteEvent = (idx) => {
+    deleteFeedApi({ idx: idx })
       .then((data) => {
-        console.log(data);
-        setFeedList((prevList) => [data, ...prevList]);
+        if (data) {
+          setFeedList((prevlist) =>
+            prevlist.filter((feed) => feed.idx !== data.idx)
+          );
+        }
       })
       .catch((err) => {
+        console.log("[피드삭제] 삭제를 실패했습니다");
         console.log(err);
       });
   };
 
-  // 상세모달 조회
-  const [selectedFeed, setSelectedFeed] = useState({});
-  const handleSelectedFeed = (idx) => {
-    const feed = feedList.find((item) => item.idx === idx);
-    setSelectedFeed(feed);
-    openDetailModal();
+  // 재조회
+  const handleResearchEvent = (idx, type) => {
+    getFeedDetailApi(idx)
+      .then((data) => {
+        setFeedList((prevList) => {
+          if (type === "new") {
+            // 신규등록
+            return [data, ...prevList];
+          } else {
+            // 수정등록
+            return prevList.map((item) => {
+              return item.idx === idx ? { ...item, ...data } : { ...item };
+            });
+          }
+        });
+      })
+      .catch((err) => {
+        console.log("[피드조회] 조회를 실패했습니다");
+        console.log(err);
+      });
   };
 
   // 좋아요
@@ -103,6 +144,7 @@ const ListPage = () => {
         }));
       })
       .catch((err) => {
+        console.log("[좋아요] 등록을 실패했습니다");
         console.log(err);
       });
   };
@@ -174,8 +216,10 @@ const ListPage = () => {
       )}
       <ListComponent
         feedList={feedList}
-        handleSelectedFeed={handleSelectedFeed}
+        openDetailModal={openDetailModal}
         handleLikesEvent={handleLikesEvent}
+        handleListDeleteEvent={handleListDeleteEvent}
+        openModifyModal={openModifyModal}
       />
       {isInsertModalOpen && <InsertModal closeInsertModal={closeInsertModal} />}
       {(selectedFeed.idx ?? null) && isDetailModalOpen && (
@@ -185,6 +229,9 @@ const ListPage = () => {
           handleLikesEvent={handleLikesEvent}
           handleCommentCountEvent={handleCommentCountEvent}
         />
+      )}
+      {(selectedFeed.idx ?? null) && isModifyModalOpen && (
+        <ModifyModal feed={selectedFeed} closeModifyModal={closeModifyModal} />
       )}
     </div>
   );

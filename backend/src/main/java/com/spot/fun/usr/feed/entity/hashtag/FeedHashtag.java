@@ -11,25 +11,26 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 public class FeedHashtag {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idx", unique = true, updatable = false)
-    private Long idx;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "idx", unique = true, updatable = false)
+  private Long idx;
 
-    @ManyToOne
-    @JoinColumn(name = "feed_idx")
-    private Feed feed;
+  @ManyToOne
+  @JoinColumn(name = "feed_idx")
+  private Feed feed;
 
-    @ManyToOne
-    @JoinColumn(name = "hashtag_idx")
-    private Hashtag hashtag;
+  @ManyToOne
+  @JoinColumn(name = "hashtag_idx")
+  private Hashtag hashtag;
 
-    @Column(name = "del_yn", columnDefinition = "TINYINT(1) DEFAULT 0")
-    private boolean delYn;
+  @Column(name = "del_yn", columnDefinition = "TINYINT(1) DEFAULT 0")
+  private boolean delYn;
 
-    @Builder
-    public FeedHashtag(Feed feed, Hashtag hashtag) {
-        this.feed = feed;
-        this.hashtag = hashtag;
-    }
+
+  @Builder
+  public FeedHashtag(Feed feed, Hashtag hashtag) {
+    this.feed = feed;
+    this.hashtag = hashtag;
+  }
 }

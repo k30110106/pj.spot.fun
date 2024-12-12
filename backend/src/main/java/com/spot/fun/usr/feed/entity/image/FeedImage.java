@@ -12,36 +12,36 @@ import lombok.Setter;
 @Getter
 @Entity
 public class FeedImage {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idx", unique = true, updatable = false)
-    private Long idx;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "idx", unique = true, updatable = false)
+  private Long idx;
 
 //    @Column(name = "file_path", nullable = false)
 //    private String filePath;
 
-    @Column(name = "upload_name", nullable = false)
-    private String uploadName;
+  @Column(name = "upload_name", nullable = false)
+  private String uploadName;
 
-    @Column(name = "origin_name", nullable = false)
-    private String originName;
+  @Column(name = "origin_name", nullable = false)
+  private String originName;
 
-    @Column(name = "del_yn", columnDefinition = "TINYINT(1) DEFAULT 0")
-    private boolean delYn;
+  @Column(name = "del_yn", columnDefinition = "TINYINT(1) DEFAULT 0")
+  private boolean delYn;
 
-    @Setter
-    @ManyToOne
-    @JoinColumn(name = "feed_idx")
-    private Feed feed;
+  @Setter
+  @ManyToOne
+  @JoinColumn(name = "feed_idx")
+  private Feed feed;
 
-    @Builder
-    public FeedImage(boolean delYn, String uploadName, String originName) {
-        this.delYn = delYn;
-        this.uploadName = uploadName;
-        this.originName = originName;
-    }
+  @Builder
+  public FeedImage(boolean delYn, String uploadName, String originName) {
+    this.delYn = delYn;
+    this.uploadName = uploadName;
+    this.originName = originName;
+  }
 
-    public void changeDelYn(boolean delYn) {
-        this.delYn = delYn;
-    }
+  public void changeDelYn(boolean delYn) {
+    this.delYn = delYn;
+  }
 }

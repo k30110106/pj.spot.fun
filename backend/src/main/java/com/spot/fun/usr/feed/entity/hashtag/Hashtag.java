@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 public class Hashtag {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idx", unique = true, updatable = false)
-    private Long idx;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "idx", unique = true, updatable = false)
+  private Long idx;
 
-    @Column(name = "tag_name", nullable = false)
-    private String tagName;
+  @Column(name = "tag_name", nullable = false)
+  private String tagName;
 
-    @Column(name = "del_yn", columnDefinition = "TINYINT(1) DEFAULT 0")
-    private boolean delYn;
+  @Column(name = "del_yn", columnDefinition = "TINYINT(1) DEFAULT 0")
+  private boolean delYn;
 }

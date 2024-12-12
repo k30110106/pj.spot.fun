@@ -153,14 +153,14 @@ const rootRouter = createBrowserRouter(
     //     </Suspense>
     //   ),
     // },
-      {
-          path: "chat/*",  // /* 추가하여 중첩 라우팅 허용
-          element: (
-              <Suspense fallback={Loading}>
-                  <ChatListPage />
-              </Suspense>
-          )
-      },
+    {
+      path: "chat/*", // /* 추가하여 중첩 라우팅 허용
+      element: (
+        <Suspense fallback={Loading}>
+          <ChatListPage />
+        </Suspense>
+      ),
+    },
   ],
   {
     future: {

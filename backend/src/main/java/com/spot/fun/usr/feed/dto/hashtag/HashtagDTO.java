@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class HashtagDTO {
-    private Long idx;
-    private String tagName;
-    private Boolean delYn;
+  private Long idx;
+  private String tagName;
+  private Boolean delYn;
 }

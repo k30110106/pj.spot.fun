@@ -8,8 +8,11 @@ import java.util.Optional;
 
 public interface UserFeedCommentRepository extends JpaRepository<FeedComment, Long> {
   List<FeedComment> findByFeedIdxAndDelYnFalseAndParentIdxIsNull(Long feedIdx);
+
   List<FeedComment> findByParentIdxAndDelYnFalse(Long feedIdx);
+
   Long countByFeedIdxAndDelYnFalseAndParentIdxIsNull(Long feedIdx);
+
   Optional<FeedComment> findByIdxAndDelYnFalse(Long idx);
 
 }

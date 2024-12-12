@@ -12,7 +12,7 @@ const LoginSuccess = () => {
       try {
         const response = await axios.post("/api/usr/login/token/check");
         if (response.status === 200 && response.data) {
-          alert(`${response.data}님, 환영합니다!`);
+          alert(`${response.data.nickname}님, 환영합니다!`);
           setUserInfo(response.data); // 사용자 정보 업데이트
           setUserInfo(response.data.userId);
           setUserInfo(response.data.nickname);

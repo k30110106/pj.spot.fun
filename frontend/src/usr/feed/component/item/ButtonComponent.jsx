@@ -3,7 +3,7 @@ import { FaHeart } from "react-icons/fa";
 import { BiMessageRoundedDots } from "react-icons/bi";
 import { useBasic } from "../../../../common/context/BasicContext";
 
-const ButtonComponent = ({ feed, handleSelectedFeed, handleLikesEvent }) => {
+const ButtonComponent = ({ feed, openDetailModal, handleLikesEvent }) => {
   const { userIdx } = useBasic();
   const { idx, commentCount, likeCount, likedYn, regDateStr } = feed;
 
@@ -41,11 +41,11 @@ const ButtonComponent = ({ feed, handleSelectedFeed, handleLikesEvent }) => {
             <button
               className={`flex items-center rounded-full p-1 justify-center border border-transparent 
                             ${
-                              handleSelectedFeed
+                              openDetailModal
                                 ? "hover:bg-red-100 focus:outline-none transition-all duration-200"
                                 : ""
                             }`}
-              onClick={() => handleSelectedFeed && handleSelectedFeed(idx)}
+              onClick={openDetailModal}
             >
               <BiMessageRoundedDots size="1.8rem" />
             </button>

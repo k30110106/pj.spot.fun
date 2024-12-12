@@ -1,21 +1,29 @@
 package com.spot.fun.usr.login.controller;
 
 import com.spot.fun.token.dto.AuthTokenDTO;
+import com.spot.fun.token.entity.AuthToken;
+import com.spot.fun.token.repository.AuthTokenRepository;
 import com.spot.fun.token.util.AuthTokenUtil;
 import com.spot.fun.usr.login.service.UserLoginService;
 import com.spot.fun.usr.user.dto.UserDTO;
+import com.spot.fun.usr.user.entity.User;
+import com.spot.fun.usr.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.PriorityQueue;
 
 @Log4j2
 @RestController

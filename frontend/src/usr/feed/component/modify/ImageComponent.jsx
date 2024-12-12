@@ -1,10 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { API_BASE_URL } from "../../api/FeedApi";
 
 const initSrc = `${API_BASE_URL}/api/usr/feed/image/no_image.jpg`;
 
-const ImageComponent = ({ id, useFileRef }) => {
+const ImageComponent = ({
+  id,
+  useFileRef,
+  img,
+  handleDeleteOriginImageIdx,
+}) => {
   // 이미지 파일 선택
+  //console.log(img);
   const [imageSrc, setImageSrc] = useState(initSrc);
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -12,6 +18,10 @@ const ImageComponent = ({ id, useFileRef }) => {
     if (file && file.type.startsWith("image")) {
       setImageSrc(URL.createObjectURL(file));
       setShowDeleteButton(true);
+
+      if (img?.idx) {
+        handleDeleteOriginImageIdx(img.idx);
+      }
     } else {
       setImageSrc(initSrc);
       e.target.value = "";
@@ -25,7 +35,18 @@ const ImageComponent = ({ id, useFileRef }) => {
     setImageSrc(initSrc); // 이미지 삭제
     setShowDeleteButton(false); // 삭제 버튼 숨기기
     document.querySelector(`#${id}`).value = "";
+
+    if (img?.idx) {
+      handleDeleteOriginImageIdx(img.idx);
+    }
   };
+
+  useEffect(() => {
+    if (img?.imgSrc) {
+      setImageSrc(img.imgSrc);
+      setShowDeleteButton(true);
+    }
+  }, [img]);
 
   return (
     <>

@@ -1,15 +1,13 @@
-import React from "react";
-
-const ContentComponent = ({ feed, handleSelectedFeed, feedIdx }) => {
+const ContentComponent = ({ feed, openDetailModal }) => {
   const { content, feedHashtags } = feed;
   return (
     <>
       {/* 컨텐츠 내용 */}
       <div
-        className={`flex flex-col justify-start pl-3 
+        className={`flex flex-col justify-start px-3 
       space-y-2 w-full break-words whitespace-normal
-      ${handleSelectedFeed ? "cursor-pointer" : ""}`}
-        onClick={() => handleSelectedFeed && handleSelectedFeed(feedIdx)}
+      ${openDetailModal ? "cursor-pointer" : ""}`}
+        onClick={openDetailModal}
       >
         {content}
 

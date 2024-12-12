@@ -12,24 +12,22 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 public class FeedLike {
-    // 복합키 지정해야하는데.. 일단 보류
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "idx", unique = true, updatable = false)
+  private Long idx;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idx", unique = true, updatable = false)
-    private Long idx;
+  @ManyToOne
+  @JoinColumn(name = "feed_idx")
+  private Feed feed;
 
-    @ManyToOne
-    @JoinColumn(name = "feed_idx")
-    private Feed feed;
+  @ManyToOne
+  @JoinColumn(name = "user_idx")
+  private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "user_idx")
-    private User user;
-
-    @Builder
-    public FeedLike(Feed feed, User user) {
-        this.feed = feed;
-        this.user = user;
-    }
+  @Builder
+  public FeedLike(Feed feed, User user) {
+    this.feed = feed;
+    this.user = user;
+  }
 }

@@ -20,6 +20,6 @@ public class UserFeedHashtagController {
 
   @GetMapping("")
   public List<HashtagDTO> list() {
-   return userFeedHashtagService.getList();
+    return userFeedHashtagService.getList();
   }
 }

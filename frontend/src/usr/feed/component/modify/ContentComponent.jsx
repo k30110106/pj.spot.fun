@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-const ContentComponent = ({ useTextRef }) => {
-  const [feedContent, setFeedContent] = useState("");
+const ContentComponent = ({ useTextRef, feed }) => {
+  const [feedContent, setFeedContent] = useState(feed.content);
 
   const handleContentEvent = (e) => {
     setFeedContent(e.target.value);

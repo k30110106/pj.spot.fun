@@ -176,7 +176,9 @@ const Searchpw = ({ onClose }) => {
     <div>
       {!isPasswordModalOpen ? (
         <>
-          <h2 className="flex flex-col justify-center items-center text-2xl font-bold m-5">비밀번호 찾기</h2>
+          <h2 className="flex flex-col justify-center items-center text-2xl font-bold m-5">
+            비밀번호 찾기
+          </h2>
           <div>
             <p className="font-bold">아이디</p>
             <input
@@ -184,7 +186,7 @@ const Searchpw = ({ onClose }) => {
               name="userId"
               placeholder="영문, 숫자 포함 4~12자"
               onChange={handleInputChange}
-              className="mt-1 p-2 mb-2 w-52 rounded-3xl border
+              className="mt-1 p-2 mb-2 w-52 rounded-3xl border 
             focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
             />
             {errors.userId && <p style={{ color: "red" }}>{errors.userId}</p>}
@@ -196,15 +198,18 @@ const Searchpw = ({ onClose }) => {
               name="name"
               placeholder="한글 또는 영문"
               onChange={handleInputChange}
-              className="mt-1 p-2 mb-2 w-52 rounded-3xl border
+              className="mt-1 p-2 mb-2 w-52 rounded-3xl border 
             focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
             />
             {errors.name && <p style={{ color: "red" }}>{errors.name}</p>}
           </div>
           <div>
             <p className="font-bold">생년월일</p>
-            <input type="date" name="birthDate" onChange={handleInputChange}
-              className="mt-1 p-2 mb-2 w-52 rounded-3xl border
+            <input
+              type="date"
+              name="birthDate"
+              onChange={handleInputChange}
+              className="mt-1 p-2 mb-2 w-52 rounded-3xl border 
             focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
             />
             {errors.birthDate && (
@@ -219,7 +224,7 @@ const Searchpw = ({ onClose }) => {
               placeholder="example@naver.com"
               onChange={handleInputChange}
               disabled={isEmailVerified}
-              className="mt-1 p-2 w-52 mb-2 rounded-3xl border
+              className="mt-1 p-2 w-52 mb-2 rounded-3xl border 
             focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
             />
             <button
@@ -241,7 +246,7 @@ const Searchpw = ({ onClose }) => {
               value={verificationCode}
               onChange={(e) => setVerificationCode(e.target.value)}
               disabled={isEmailVerified}
-              className="mt-1 p-2 mb-2 w-52 rounded-3xl border
+              className="mt-1 p-2 mb-2 w-52 rounded-3xl border 
             focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
             />
             <button
@@ -253,12 +258,18 @@ const Searchpw = ({ onClose }) => {
               인증 확인
             </button>
           </div>
-          <button onClick={handleSubmit}
-            className="bg-custom-cyan rounded-3xl mt-1 ml-2 p-2 w-32 hover:bg-emerald-400">비밀번호 찾기</button>
+          <button
+            onClick={handleSubmit}
+            className="bg-custom-cyan rounded-3xl mt-1 ml-2 p-2 w-32 hover:bg-emerald-400"
+          >
+            비밀번호 찾기
+          </button>
         </>
       ) : (
         <div>
-          <h2 className="flex flex-col justify-center items-center text-2xl font-bold m-5">새 비밀번호 설정</h2>
+          <h2 className="flex flex-col justify-center items-center text-2xl font-bold m-5">
+            새 비밀번호 설정
+          </h2>
           <div>
             <p className="font-bold">새 비밀번호</p>
             <input
@@ -266,7 +277,7 @@ const Searchpw = ({ onClose }) => {
               name="newPassword"
               placeholder="영문, 숫자, 특수문자 포함 8~16자"
               onChange={handlePasswordChange}
-              className="mt-1 p-2 mb-2 w-52 rounded-3xl border
+              className="mt-1 p-2 mb-2 w-52 rounded-3xl border 
             focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
               onBlur={() =>
                 setIsTouched((prevState) => ({
@@ -286,7 +297,7 @@ const Searchpw = ({ onClose }) => {
               name="confirmPassword"
               placeholder="새 비밀번호 확인"
               onChange={handlePasswordChange}
-              className="mt-1 p-2 w-52 rounded-3xl border
+              className="mt-1 p-2 w-52 rounded-3xl border 
             focus:outline-none focus:ring-1 focus:border-custom-cyan focus:ring-custom-cyan bg-gray-200"
               onBlur={() =>
                 setIsTouched((prevState) => ({
@@ -299,8 +310,12 @@ const Searchpw = ({ onClose }) => {
               <p style={{ color: "red" }}>{errors.confirmPassword}</p>
             )}
           </div>
-          <button onClick={handlePasswordSubmit}
-            className="bg-custom-cyan rounded-3xl mt-1 ml-2 p-2 w-32 hover:bg-emerald-400">비밀번호 변경</button>
+          <button
+            onClick={handlePasswordSubmit}
+            className="bg-custom-cyan rounded-3xl mt-1 ml-2 p-2 w-32 hover:bg-emerald-400"
+          >
+            비밀번호 변경
+          </button>
         </div>
       )}
     </div>

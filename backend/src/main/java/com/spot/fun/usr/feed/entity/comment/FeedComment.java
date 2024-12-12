@@ -41,7 +41,7 @@ public class FeedComment {
   @JoinColumn(name = "user_idx")
   private User user;
 
-//  @ManyToOne(fetch = FetchType.LAZY)
+  //  @ManyToOne(fetch = FetchType.LAZY)
   @ManyToOne
   @JoinColumn(name = "feed_idx")
   private Feed feed;

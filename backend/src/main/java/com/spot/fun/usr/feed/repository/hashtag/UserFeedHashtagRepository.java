@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface UserFeedHashtagRepository extends JpaRepository<FeedHashtag, Long> {
-    List<FeedHashtag> findByFeedIdx(Long feedIdx);
+  List<FeedHashtag> findByFeedIdx(Long feedIdx);
 
-    void deleteByFeedIdx(Long feedIdx);
+  void deleteByFeedIdx(Long feedIdx);
 }

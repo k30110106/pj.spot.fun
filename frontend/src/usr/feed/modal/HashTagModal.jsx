@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getHashtagApi } from "../api/FeedApi";
 
 const HashTagModal = ({
@@ -11,10 +11,10 @@ const HashTagModal = ({
   useEffect(() => {
     getHashtagApi()
       .then((data) => {
-        //console.log(data);
         setList(data);
       })
       .catch((err) => {
+        console.log("[해시태그 목록] 조회를 실패했습니다");
         console.log(err);
       });
   }, []);
