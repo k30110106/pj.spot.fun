@@ -18,6 +18,7 @@ const useCheckLogin = () => {
     const config = {
       headers: { Authorization: `Bearer ${accessToken}` },
     };
+    console.log("postAccessTokenApiConfig : " + config);
 
     return await axios.post(`${API_BASE_URL}/api/token/access`, null, config);
   };
@@ -26,6 +27,7 @@ const useCheckLogin = () => {
     const config = {
       withCredentials: true,
     };
+    console.log("postRefreshTokenApiConfig : " + config);
 
     await axios
       .post(`${API_BASE_URL}/api/token/refresh`, null, config)
@@ -42,6 +44,8 @@ const useCheckLogin = () => {
   };
 
   const checkLogin = async () => {
+    console.log("checkLogin");
+
     try {
       const response = await postAccessTokenApi();
       if (response.status === 200) {
