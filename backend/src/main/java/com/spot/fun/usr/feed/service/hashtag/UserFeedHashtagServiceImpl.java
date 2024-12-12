@@ -2,7 +2,6 @@ package com.spot.fun.usr.feed.service.hashtag;
 
 import com.spot.fun.usr.feed.dto.hashtag.HashtagDTO;
 import com.spot.fun.usr.feed.entity.hashtag.Hashtag;
-import com.spot.fun.usr.feed.repository.hashtag.UserFeedHashtagRepository;
 import com.spot.fun.usr.feed.repository.hashtag.UserHashtagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

@@ -37,7 +37,7 @@ public class Feed {
   @Column(name = "mod_date")
   private LocalDateTime modDate;
 
-//  @ManyToOne(fetch = FetchType.LAZY)
+  //  @ManyToOne(fetch = FetchType.LAZY)
   @ManyToOne
   @JoinColumn(name = "user_idx")
   private User user;
@@ -71,5 +71,17 @@ public class Feed {
     if (modDate == null) {
       modDate = LocalDateTime.now();
     }
+  }
+
+  public void changeDelYn(boolean delYn) {
+    this.delYn = delYn;
+  }
+
+  public void changeContent(String content) {
+    this.content = content;
+  }
+
+  public void changeUser(User user) {
+    this.user = user;
   }
 }
